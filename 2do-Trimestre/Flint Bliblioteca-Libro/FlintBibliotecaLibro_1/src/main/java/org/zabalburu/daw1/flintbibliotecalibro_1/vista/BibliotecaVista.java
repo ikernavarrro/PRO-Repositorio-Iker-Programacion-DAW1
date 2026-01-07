@@ -6,6 +6,7 @@ package org.zabalburu.daw1.flintbibliotecalibro_1.vista;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -36,6 +37,7 @@ public class BibliotecaVista extends JFrame {
     private JList<Biblioteca> listaBibliotecas;
     private JTextField txtNombre, txtUbicacion, txtTelefono;
     private JButton btnNuevo, btnEditar, btnEliminar, btnGuardar, btnCancelar, btnVerLibros;
+    private JLabel lblImagen;
 
     // Constructor
     public BibliotecaVista() {
@@ -43,7 +45,7 @@ public class BibliotecaVista extends JFrame {
         this.estado = Estado.CONSULTA;
         this.setTitle("Gestión de Bibliotecas");
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setSize(700, 400);
+        this.setSize(700, 600);
         this.setLocationRelativeTo(null);
 
         this.crearComponentes();
@@ -72,28 +74,43 @@ public class BibliotecaVista extends JFrame {
         btnGuardar = new JButton("Guardar");
         btnCancelar = new JButton("Cancelar");
         btnVerLibros = new JButton("Ver Libros");
+        
+        // JLabel
+        lblImagen = new JLabel(new ImageIcon("iconos/biblioteca.png"));
     }
 
     private void configurarLayout() {
         // Panel principal con BorderLayout
         JPanel panelPrincipal = new JPanel(new BorderLayout(10, 10));
         panelPrincipal.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        // NORTE: Lista de bibliotecas
-        JScrollPane scrollLista = new JScrollPane(listaBibliotecas);
-        JPanel panelLista = new JPanel(new BorderLayout());
-        panelLista.add(new JLabel("Bibliotecas:"), BorderLayout.NORTH);
-        panelLista.add(scrollLista, BorderLayout.CENTER);
-
-        // CENTRO: Campos de texto
-        JPanel panelCampos = new JPanel(new GridLayout(3, 2, 5, 5));
+        
+        // NORTE: Imagen
+        JPanel pnlNorte = new JPanel();
+        pnlNorte.add(lblImagen);
+        
+        // CENTRO: Campos de texto y Lista de bibliotecas
+        JPanel pnlCentro = new JPanel(new BorderLayout());
+        
+        JPanel panelCampos = new JPanel(new GridLayout(6, 1));
         panelCampos.add(new JLabel("Nombre:"));
         panelCampos.add(txtNombre);
         panelCampos.add(new JLabel("Ubicación:"));
         panelCampos.add(txtUbicacion);
         panelCampos.add(new JLabel("Teléfono:"));
         panelCampos.add(txtTelefono);
-
+        pnlCentro.add(panelCampos,BorderLayout.NORTH);
+        
+        JScrollPane scrollLista = new JScrollPane(listaBibliotecas);
+        JPanel panelLista = new JPanel(new BorderLayout());
+        panelLista.add(new JLabel("Bibliotecas:"), BorderLayout.NORTH);
+        JPanel scrollListaPanel = new JPanel(new BorderLayout());
+        scrollListaPanel.add(scrollLista);
+        scrollListaPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 10));
+        panelLista.add(scrollListaPanel, BorderLayout.CENTER);
+        pnlCentro.add(panelLista,BorderLayout.SOUTH);
+        
+        pnlCentro.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createRaisedBevelBorder(), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        
         // SUR: Botones
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
         btnNuevo.setIcon(new ImageIcon("iconos/nuevo.png"));
@@ -110,8 +127,8 @@ public class BibliotecaVista extends JFrame {
         panelBotones.add(btnVerLibros);
 
         // Añadir paneles al principal
-        panelPrincipal.add(panelCampos, BorderLayout.NORTH);
-        panelPrincipal.add(panelLista, BorderLayout.CENTER);
+        panelPrincipal.add(pnlNorte, BorderLayout.NORTH);
+        panelPrincipal.add(pnlCentro, BorderLayout.CENTER);
         panelPrincipal.add(panelBotones, BorderLayout.SOUTH);
 
         // Añadir panel principal al JFrame

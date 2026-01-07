@@ -95,6 +95,6 @@ public class Biblioteca {
 
     @Override
     public String toString() {
-        return "Biblioteca{" + "id=" + id + ", nombre=" + nombre + ", ubicacion=" + ubicacion + ", telefono=" + telefono + ", libros=" + libros + '}';
+        return "[ID: " + id + "] " + nombre;
     }
 }

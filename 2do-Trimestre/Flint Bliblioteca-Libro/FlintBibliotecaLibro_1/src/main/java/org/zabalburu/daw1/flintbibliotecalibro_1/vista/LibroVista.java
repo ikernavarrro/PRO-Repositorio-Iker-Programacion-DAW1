@@ -88,7 +88,7 @@ public class LibroVista extends JDialog {
         panelLista.add(new JLabel("Libros:"), BorderLayout.NORTH);
         panelLista.add(scrollLista, BorderLayout.CENTER);
 
-        JPanel panelCampos = new JPanel(new GridLayout(6, 2, 5, 5));
+        JPanel panelCampos = new JPanel(new GridLayout(12, 1));
         panelCampos.add(new JLabel("Categoría:"));
         panelCampos.add(cmbCategoria);
         panelCampos.add(new JLabel("Título:"));
