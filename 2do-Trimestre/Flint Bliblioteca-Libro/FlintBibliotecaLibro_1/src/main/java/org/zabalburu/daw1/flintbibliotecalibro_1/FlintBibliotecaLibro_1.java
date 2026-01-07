@@ -4,6 +4,9 @@
 
 package org.zabalburu.daw1.flintbibliotecalibro_1;
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import org.zabalburu.daw1.flintbibliotecalibro_1.vista.BibliotecaVista;
+
 /**
  *
  * @author Iker Navarro Pérez
@@ -11,6 +14,7 @@ package org.zabalburu.daw1.flintbibliotecalibro_1;
 public class FlintBibliotecaLibro_1 {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        FlatDarkLaf.setup();
+        BibliotecaVista m = new BibliotecaVista();
     }
 }
