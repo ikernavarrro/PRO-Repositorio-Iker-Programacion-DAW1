@@ -4,6 +4,7 @@
 package org.zabalburu.daw1.gestionempleados;
 
 import com.formdev.flatlaf.intellijthemes.FlatArcDarkOrangeIJTheme;
+import org.zabalburu.daw1.gestionempleados.vista.EmpleadosVista;
 import org.zabalburu.daw1.gestionempleados.vista.LoginView;
 
 /**
@@ -20,7 +21,7 @@ public class GestionEmpleados {
         }*/
         
         FlatArcDarkOrangeIJTheme.setup();
-        //new EmpleadosVista();
-        new LoginView().setVisible(true);
+        new EmpleadosVista();
+        
     }
 }
