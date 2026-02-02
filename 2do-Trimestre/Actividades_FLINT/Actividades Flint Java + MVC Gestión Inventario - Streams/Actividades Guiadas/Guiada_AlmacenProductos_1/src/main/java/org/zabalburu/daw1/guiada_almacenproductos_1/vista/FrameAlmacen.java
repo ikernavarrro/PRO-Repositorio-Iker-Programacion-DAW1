@@ -17,7 +17,7 @@ import org.zabalburu.daw1.guiada_almacenproductos_1.util.Tabla;
 
 /**
  *
- * @author Focus Mode
+ * @author Iker Navarro Pérez
  */
 public class FrameAlmacen extends javax.swing.JFrame {
 
@@ -454,13 +454,24 @@ public class FrameAlmacen extends javax.swing.JFrame {
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnNuevoProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoProductoActionPerformed
-        new FrameProducto(this,true, almacenes.get(pos)).setVisible(true);
+        new FrameProducto(this, true, almacenes.get(pos)).setVisible(true);
         almacenes = servicio.getAlmacenes();
         mostrar();
     }//GEN-LAST:event_btnNuevoProductoActionPerformed
 
     private void btnEliminarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarProductoActionPerformed
-        // TODO add your handling code here:
+        int filaSeleccionada = tblProductos.getSelectedRow();
+        if (filaSeleccionada == -1) {
+            JOptionPane.showMessageDialog(this,
+                    "Debe seleccionar el Producto que desee ELIMINAR",
+                    "Error",
+                    JOptionPane.WARNING_MESSAGE);
+        } else {
+            Producto eliminar = almacenes.get(pos).getProductos().get(filaSeleccionada);
+            servicio.removeProducto(eliminar.getId());
+            almacenes = servicio.getAlmacenes();
+            mostrar();
+        }
     }//GEN-LAST:event_btnEliminarProductoActionPerformed
 
     private void btnMostrarMaxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMostrarMaxActionPerformed
@@ -535,6 +546,8 @@ public class FrameAlmacen extends javax.swing.JFrame {
         if (estado == Estado.ALTA) {
             lblContadorAlmacenes.setText("Nuevo");
             txtId.setText(" | Automático | ");
+            fxtValorTotalInventario.setText("0 €");
+            lblContadorTotalProductos.setText("Total Productos: 0");
             txtNombre.setText("");
             txtUbicacion.setText("");
             txtCapacidadMaxima.setText("");
@@ -556,6 +569,10 @@ public class FrameAlmacen extends javax.swing.JFrame {
         btnModificar.setEnabled(estado == Estado.CONSULTA);
         btnNuevo.setEnabled(estado == Estado.CONSULTA);
         btnEliminar.setEnabled(estado == Estado.CONSULTA);
+        btnNuevoProducto.setEnabled(estado == Estado.CONSULTA);
+        btnEliminarProducto.setEnabled(estado == Estado.CONSULTA);
+        btnMostrarMax.setEnabled(estado == Estado.CONSULTA);
+        btnMostrarMin.setEnabled(estado == Estado.CONSULTA);
         txtId.setEnabled(false);
         txtNombre.setEnabled(estado != Estado.CONSULTA);
         txtUbicacion.setEnabled(estado != Estado.CONSULTA);
@@ -578,7 +595,7 @@ public class FrameAlmacen extends javax.swing.JFrame {
         if (tipoCarga == Tabla.CARGAR_TODOS_LOS_PRODUCTOS) {
             for (Producto p : almacenes.get(pos).getProductos()) {
                 vctDatos.add(añadirFilaProducto(p));
-                totalInventario += p.getPrecio();
+                totalInventario += p.getPrecio() * p.getCantidad();
                 contadorProductos++;
             }
         }
@@ -587,7 +604,7 @@ public class FrameAlmacen extends javax.swing.JFrame {
                 Double precioMin = Double.parseDouble(JOptionPane.showInputDialog(this, "Introduzca el Precio Mínimo: ", "0.0"));
                 for (Producto p : servicio.getProductosPrecioMin(precioMin)) {
                     vctDatos.add(añadirFilaProducto(p));
-                    totalInventario += p.getPrecio();
+                    totalInventario += p.getPrecio() * p.getCantidad();
                     contadorProductos++;
                 }
             } catch (Exception e) {
@@ -600,7 +617,7 @@ public class FrameAlmacen extends javax.swing.JFrame {
                 Double precioMax = Double.parseDouble(JOptionPane.showInputDialog(this, "Introduzca el Precio Máximo: ", "0.0"));
                 for (Producto p : servicio.getProductosPrecioMax(precioMax)) {
                     vctDatos.add(añadirFilaProducto(p));
-                    totalInventario += p.getPrecio();
+                    totalInventario += p.getPrecio() * p.getCantidad();
                     contadorProductos++;
                 }
             } catch (Exception e) {

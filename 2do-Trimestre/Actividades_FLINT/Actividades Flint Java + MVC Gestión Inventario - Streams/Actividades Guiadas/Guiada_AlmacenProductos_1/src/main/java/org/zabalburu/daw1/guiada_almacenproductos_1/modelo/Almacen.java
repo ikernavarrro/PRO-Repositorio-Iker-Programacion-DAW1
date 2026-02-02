@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  *
@@ -19,13 +20,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
 public class Almacen {
 
     @EqualsAndHashCode.Include
+    @ToString.Include
     private Integer id;
+    @ToString.Include
     private String nombre;
     private String ubicacion;
     private Integer capacidadMaxima;
+    @ToString.Exclude
     private List<Producto> productos = new ArrayList<>();
+    
 
 }

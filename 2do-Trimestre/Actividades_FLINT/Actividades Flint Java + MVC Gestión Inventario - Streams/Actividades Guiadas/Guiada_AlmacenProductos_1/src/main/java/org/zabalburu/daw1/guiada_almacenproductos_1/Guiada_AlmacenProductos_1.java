@@ -5,7 +5,6 @@
 package org.zabalburu.daw1.guiada_almacenproductos_1;
 
 import org.zabalburu.daw1.guiada_almacenproductos_1.vista.FrameAlmacen;
-import org.zabalburu.daw1.guiada_almacenproductos_1.vista.VentanaInventarioFrame;
 
 /**
  *

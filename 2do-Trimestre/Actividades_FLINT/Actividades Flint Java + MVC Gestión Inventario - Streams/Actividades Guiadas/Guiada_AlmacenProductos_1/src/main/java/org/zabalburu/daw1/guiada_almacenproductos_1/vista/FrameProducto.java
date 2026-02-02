@@ -4,12 +4,14 @@
  */
 package org.zabalburu.daw1.guiada_almacenproductos_1.vista;
 
+import javax.swing.JOptionPane;
 import org.zabalburu.daw1.guiada_almacenproductos_1.modelo.Almacen;
+import org.zabalburu.daw1.guiada_almacenproductos_1.modelo.Producto;
 import org.zabalburu.daw1.guiada_almacenproductos_1.servicio.InventarioServicio;
 
 /**
  *
- * @author Focus Mode
+ * @author Iker Navarro Pérez
  */
 public class FrameProducto extends javax.swing.JDialog {
     
@@ -48,9 +50,9 @@ public class FrameProducto extends javax.swing.JDialog {
         txtCantidad = new javax.swing.JTextField();
         btnAñadirProducto = new javax.swing.JButton();
         btnVolver = new javax.swing.JButton();
-        fxtPrecio = new javax.swing.JFormattedTextField();
         cbxAlmacen = new javax.swing.JComboBox<>();
         lblAlmacen = new javax.swing.JLabel();
+        txtPrecio = new javax.swing.JTextField();
 
         jLabel4.setText("Código");
 
@@ -68,10 +70,18 @@ public class FrameProducto extends javax.swing.JDialog {
         lblCantidad.setText("Cantidad");
 
         btnAñadirProducto.setText("Añadir Producto");
+        btnAñadirProducto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAñadirProductoActionPerformed(evt);
+            }
+        });
 
         btnVolver.setText("Volver");
-
-        cbxAlmacen.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        btnVolver.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVolverActionPerformed(evt);
+            }
+        });
 
         lblAlmacen.setText("Almacén");
 
@@ -80,38 +90,38 @@ public class FrameProducto extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(45, 45, 45)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lblCantidad)
-                                .addGap(38, 38, 38)
-                                .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(lblCodigo)
-                                    .addComponent(lblPrecio)
-                                    .addComponent(lblNombre)
-                                    .addComponent(lblAlmacen))
-                                .addGap(38, 38, 38)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
-                                    .addComponent(fxtPrecio)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lblTitulo)
-                                .addGap(29, 29, 29))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(33, 33, 33)
-                        .addComponent(btnAñadirProducto)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnVolver))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(45, 45, 45)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(lblCantidad)
+                                    .addGap(38, 38, 38)
+                                    .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(lblTitulo)
+                                    .addGap(29, 29, 29))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(lblCodigo)
+                                        .addComponent(lblPrecio)
+                                        .addComponent(lblNombre)
+                                        .addComponent(lblAlmacen))
+                                    .addGap(324, 324, 324))))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(33, 33, 33)
+                            .addComponent(btnAñadirProducto)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnVolver)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(131, 131, 131)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(cbxAlmacen, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtNombre, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE))))
-                .addContainerGap(45, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(txtNombre, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtCodigo, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cbxAlmacen, 0, 285, Short.MAX_VALUE)
+                            .addComponent(txtPrecio))))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -133,7 +143,7 @@ public class FrameProducto extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblPrecio)
-                    .addComponent(fxtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblCantidad)
@@ -142,11 +152,28 @@ public class FrameProducto extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAñadirProducto)
                     .addComponent(btnVolver))
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAñadirProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAñadirProductoActionPerformed
+        Producto p = new Producto();
+        Almacen a = (Almacen) cbxAlmacen.getSelectedItem();
+        p.setAlmacen(a);
+        p.setNombre(txtNombre.getText());
+        p.setCodigo(txtCodigo.getText());
+        p.setPrecio(Double.parseDouble(txtPrecio.getText()));
+        p.setCantidad(Integer.parseInt(txtCantidad.getText()));
+        servicio.addProducto(p);
+        JOptionPane.showMessageDialog(this, "Producto registrado con Éxito!");
+        this.dispose();
+    }//GEN-LAST:event_btnAñadirProductoActionPerformed
+
+    private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnVolverActionPerformed
 
     /**
      * @param args the command line arguments
@@ -176,8 +203,7 @@ public class FrameProducto extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAñadirProducto;
     private javax.swing.JButton btnVolver;
-    private javax.swing.JComboBox<String> cbxAlmacen;
-    private javax.swing.JFormattedTextField fxtPrecio;
+    private javax.swing.JComboBox<Almacen> cbxAlmacen;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JLabel lblAlmacen;
@@ -189,9 +215,13 @@ public class FrameProducto extends javax.swing.JDialog {
     private javax.swing.JTextField txtCantidad;
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JTextField txtNombre;
+    private javax.swing.JTextField txtPrecio;
     // End of variables declaration//GEN-END:variables
 
     private void cargarAlmacenes() {
-        
+        for (Almacen a : servicio.getAlmacenes()) {
+            cbxAlmacen.addItem(a);
+        }
+        cbxAlmacen.setSelectedItem(almacen);
     }
 }
