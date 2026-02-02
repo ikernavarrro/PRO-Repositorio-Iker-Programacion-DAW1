@@ -6,9 +6,14 @@ package org.zabalburu.daw1.guiada_almacenproductos_1.vista;
 
 import java.text.NumberFormat;
 import java.util.List;
+import java.util.Vector;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import org.zabalburu.daw1.guiada_almacenproductos_1.modelo.Almacen;
+import org.zabalburu.daw1.guiada_almacenproductos_1.modelo.Producto;
 import org.zabalburu.daw1.guiada_almacenproductos_1.servicio.InventarioServicio;
 import org.zabalburu.daw1.guiada_almacenproductos_1.util.Estado;
+import org.zabalburu.daw1.guiada_almacenproductos_1.util.Tabla;
 
 /**
  *
@@ -23,12 +28,19 @@ public class FrameAlmacen extends javax.swing.JFrame {
     int pos = 0; //En que posición estamos.
     private List<Almacen> almacenes = servicio.getAlmacenes();
     private NumberFormat nfMoneda = NumberFormat.getCurrencyInstance();
+    private Vector<String> vctTitulosTabla = new Vector<>();
 
     /**
      * Creates new form FrameInventario
      */
     public FrameAlmacen() {
         initComponents();
+        vctTitulosTabla.add("ID");
+        vctTitulosTabla.add("Nombre");
+        vctTitulosTabla.add("Código");
+        vctTitulosTabla.add("Cantidad");
+        vctTitulosTabla.add("ID_Almacén");
+        vctTitulosTabla.add("Precio");
         this.setLocationRelativeTo(null);
         mostrar();
     }
@@ -57,19 +69,19 @@ public class FrameAlmacen extends javax.swing.JFrame {
         txtCapacidadMaxima = new javax.swing.JTextField();
         txtNombre = new javax.swing.JTextField();
         jspProductos = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblProductos = new javax.swing.JTable();
         lblTitulo = new javax.swing.JLabel();
         btnNuevo = new javax.swing.JButton();
         btnModificar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
         btnEliminar = new javax.swing.JButton();
         btnGuardar = new javax.swing.JButton();
-        jFormattedTextField1 = new javax.swing.JFormattedTextField();
-        jButton10 = new javax.swing.JButton();
-        jButton11 = new javax.swing.JButton();
-        jLabel7 = new javax.swing.JLabel();
-        jButton12 = new javax.swing.JButton();
-        jButton13 = new javax.swing.JButton();
+        fxtValorTotalInventario = new javax.swing.JFormattedTextField();
+        btnNuevoProducto = new javax.swing.JButton();
+        btnEliminarProducto = new javax.swing.JButton();
+        lblContadorTotalProductos = new javax.swing.JLabel();
+        btnMostrarMax = new javax.swing.JButton();
+        btnMostrarMin = new javax.swing.JButton();
 
         jTextField4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -141,7 +153,7 @@ public class FrameAlmacen extends javax.swing.JFrame {
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblProductos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -152,7 +164,7 @@ public class FrameAlmacen extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jspProductos.setViewportView(jTable1);
+        jspProductos.setViewportView(tblProductos);
 
         lblTitulo.setFont(new java.awt.Font("sansserif", 0, 24)); // NOI18N
         lblTitulo.setText("Gestión Almacenes");
@@ -192,27 +204,37 @@ public class FrameAlmacen extends javax.swing.JFrame {
             }
         });
 
-        jFormattedTextField1.setText("€0");
+        fxtValorTotalInventario.setText("€0");
 
-        jButton10.setText("Nuevo Producto");
-        jButton10.addActionListener(new java.awt.event.ActionListener() {
+        btnNuevoProducto.setText("Nuevo Producto");
+        btnNuevoProducto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton10ActionPerformed(evt);
+                btnNuevoProductoActionPerformed(evt);
             }
         });
 
-        jButton11.setText("Eliminar Producto");
-        jButton11.addActionListener(new java.awt.event.ActionListener() {
+        btnEliminarProducto.setText("Eliminar Producto");
+        btnEliminarProducto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton11ActionPerformed(evt);
+                btnEliminarProductoActionPerformed(evt);
             }
         });
 
-        jLabel7.setText("Total Productos: 0");
+        lblContadorTotalProductos.setText("Total Productos: 0");
 
-        jButton12.setText("Mostrar € Max");
+        btnMostrarMax.setText("Mostrar € Max");
+        btnMostrarMax.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMostrarMaxActionPerformed(evt);
+            }
+        });
 
-        jButton13.setText("Mostrar € Min");
+        btnMostrarMin.setText("Mostrar € Min");
+        btnMostrarMin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMostrarMinActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -225,18 +247,18 @@ public class FrameAlmacen extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton10)
+                                .addComponent(btnNuevoProducto)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton11)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(btnEliminarProducto)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(fxtValorTotalInventario, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jspProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 494, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton13)
+                                .addComponent(btnMostrarMin)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton12)
+                                .addComponent(btnMostrarMax)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel7)))
+                                .addComponent(lblContadorTotalProductos)))
                         .addGap(31, 31, 31)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(lblUbicacion)
@@ -284,9 +306,9 @@ public class FrameAlmacen extends javax.swing.JFrame {
                 .addComponent(lblTitulo)
                 .addGap(4, 4, 4)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(jButton12)
-                    .addComponent(jButton13))
+                    .addComponent(lblContadorTotalProductos)
+                    .addComponent(btnMostrarMax)
+                    .addComponent(btnMostrarMin))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -308,9 +330,9 @@ public class FrameAlmacen extends javax.swing.JFrame {
                     .addComponent(jspProductos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton10)
-                    .addComponent(jButton11))
+                    .addComponent(fxtValorTotalInventario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnNuevoProducto)
+                    .addComponent(btnEliminarProducto))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnPrimero)
@@ -330,19 +352,23 @@ public class FrameAlmacen extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnPrimeroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrimeroActionPerformed
-        // TODO add your handling code here:
+        pos = 0;
+        mostrar();
     }//GEN-LAST:event_btnPrimeroActionPerformed
 
     private void btnSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguienteActionPerformed
-        // TODO add your handling code here:
+        pos++;
+        mostrar();
     }//GEN-LAST:event_btnSiguienteActionPerformed
 
     private void btnAnteriorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnteriorActionPerformed
-        // TODO add your handling code here:
+        pos--;
+        mostrar();
     }//GEN-LAST:event_btnAnteriorActionPerformed
 
     private void btnUltimoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUltimoActionPerformed
-        // TODO add your handling code here:
+        pos = almacenes.size() - 1;
+        mostrar();
     }//GEN-LAST:event_btnUltimoActionPerformed
 
     private void txtUbicacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUbicacionActionPerformed
@@ -366,32 +392,84 @@ public class FrameAlmacen extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNombreActionPerformed
 
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
-        // TODO add your handling code here:
+        estado = Estado.ALTA;
+        mostrar();
     }//GEN-LAST:event_btnNuevoActionPerformed
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
-        // TODO add your handling code here:
+        estado = Estado.MODIFICACION;
+        mostrar();
     }//GEN-LAST:event_btnModificarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        // TODO add your handling code here:
+        estado = Estado.CONSULTA;
+        mostrar();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-        // TODO add your handling code here:
+        if (JOptionPane.showConfirmDialog(this, "Eliminar el Almacén: { %s [ ID: %d ]}".formatted(almacenes.get(pos).getNombre(), almacenes.get(pos).getId()), "Eliminar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            servicio.removeAlmacen(almacenes.get(pos).getId());
+            almacenes = servicio.getAlmacenes();
+            if (pos == almacenes.size()) {
+                pos--;
+            }
+            mostrar();
+        }
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        // TODO add your handling code here:
+        Almacen a = new Almacen();
+        if (estado == Estado.MODIFICACION) {
+            a.setId(almacenes.get(pos).getId());
+        }
+        if (txtNombre.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "El Nombre es OBLIGATORIO!", "Error", JOptionPane.ERROR_MESSAGE);
+            txtNombre.requestFocus();
+        } else if (txtUbicacion.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "La Ubicación es OBLIGATORIA!", "Error", JOptionPane.ERROR_MESSAGE);
+            txtUbicacion.requestFocus();
+        } else if (txtCapacidadMaxima.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "La Capacidad Máxima es OBLIGATORIA!", "Error", JOptionPane.ERROR_MESSAGE);
+            txtCapacidadMaxima.requestFocus();
+        } else {
+            a.setNombre(txtNombre.getText());
+            a.setUbicacion(txtUbicacion.getText());
+            try {
+                a.setCapacidadMaxima(Integer.parseInt(txtCapacidadMaxima.getText()));
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Formato NO VÁLIDO en Capacidad Máxima! Por defecto: 100", "Error", JOptionPane.ERROR_MESSAGE);
+                a.setCapacidadMaxima(100);
+            }
+            if (estado == Estado.ALTA) {
+                servicio.addAlmacen(a);
+            } else {
+                servicio.modifyAlmacen(a);
+            }
+            almacenes = servicio.getAlmacenes();
+            pos = almacenes.indexOf(a);
+            estado = Estado.CONSULTA;
+            mostrar();
+        }
+
     }//GEN-LAST:event_btnGuardarActionPerformed
 
-    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton10ActionPerformed
+    private void btnNuevoProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoProductoActionPerformed
+        new FrameProducto(this,true, almacenes.get(pos)).setVisible(true);
+        almacenes = servicio.getAlmacenes();
+        mostrar();
+    }//GEN-LAST:event_btnNuevoProductoActionPerformed
 
-    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+    private void btnEliminarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarProductoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton11ActionPerformed
+    }//GEN-LAST:event_btnEliminarProductoActionPerformed
+
+    private void btnMostrarMaxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMostrarMaxActionPerformed
+        cargarProductos(Tabla.CARGAR_PRECIO_MAX);
+    }//GEN-LAST:event_btnMostrarMaxActionPerformed
+
+    private void btnMostrarMinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMostrarMinActionPerformed
+        cargarProductos(Tabla.CARGAR_PRECIO_MIN);
+    }//GEN-LAST:event_btnMostrarMinActionPerformed
 
     /**
      * @param args the command line arguments
@@ -422,27 +500,27 @@ public class FrameAlmacen extends javax.swing.JFrame {
     private javax.swing.JButton btnAnterior;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnEliminar;
+    private javax.swing.JButton btnEliminarProducto;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnModificar;
+    private javax.swing.JButton btnMostrarMax;
+    private javax.swing.JButton btnMostrarMin;
     private javax.swing.JButton btnNuevo;
+    private javax.swing.JButton btnNuevoProducto;
     private javax.swing.JButton btnPrimero;
     private javax.swing.JButton btnSiguiente;
     private javax.swing.JButton btnUltimo;
-    private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton11;
-    private javax.swing.JButton jButton12;
-    private javax.swing.JButton jButton13;
-    private javax.swing.JFormattedTextField jFormattedTextField1;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JFormattedTextField fxtValorTotalInventario;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JScrollPane jspProductos;
     private javax.swing.JLabel lblCapacidadMaxima;
     private javax.swing.JLabel lblContadorAlmacenes;
+    private javax.swing.JLabel lblContadorTotalProductos;
     private javax.swing.JLabel lblId;
     private javax.swing.JLabel lblNombre;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JLabel lblUbicacion;
+    private javax.swing.JTable tblProductos;
     private javax.swing.JTextField txtCapacidadMaxima;
     private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtNombre;
@@ -456,7 +534,7 @@ public class FrameAlmacen extends javax.swing.JFrame {
         }
         if (estado == Estado.ALTA) {
             lblContadorAlmacenes.setText("Nuevo");
-            txtId.setText("");
+            txtId.setText(" | Automático | ");
             txtNombre.setText("");
             txtUbicacion.setText("");
             txtCapacidadMaxima.setText("");
@@ -473,10 +551,80 @@ public class FrameAlmacen extends javax.swing.JFrame {
         btnPrimero.setEnabled(pos > 0 && estado == Estado.CONSULTA);
         btnSiguiente.setEnabled(pos < almacenes.size() - 1 && estado == Estado.CONSULTA);
         btnUltimo.setEnabled(pos < almacenes.size() - 1 && estado == Estado.CONSULTA);
-        btnCancelar.setEnabled(estado != Estado.CONSULTA && almacenes.size() > 0 );
+        btnCancelar.setEnabled(estado != Estado.CONSULTA && almacenes.size() > 0);
         btnGuardar.setEnabled(estado != Estado.CONSULTA);
         btnModificar.setEnabled(estado == Estado.CONSULTA);
         btnNuevo.setEnabled(estado == Estado.CONSULTA);
         btnEliminar.setEnabled(estado == Estado.CONSULTA);
+        txtId.setEnabled(false);
+        txtNombre.setEnabled(estado != Estado.CONSULTA);
+        txtUbicacion.setEnabled(estado != Estado.CONSULTA);
+        txtCapacidadMaxima.setEnabled(estado != Estado.CONSULTA);
+        fxtValorTotalInventario.setEnabled(false);
+        if (estado == Estado.ALTA) {
+            DefaultTableModel dtmModelo = (DefaultTableModel) tblProductos.getModel();
+            dtmModelo.setDataVector(null, vctTitulosTabla);
+        } else {
+            cargarProductos(Tabla.CARGAR_TODOS_LOS_PRODUCTOS);
+        }
+
+    }
+
+    private void cargarProductos(Tabla tipoCarga) {
+        Vector<Vector<String>> vctDatos = new Vector<>();
+        Double totalInventario = 0.0;
+        Integer contadorProductos = 0;
+        boolean errorCarga = false;
+        if (tipoCarga == Tabla.CARGAR_TODOS_LOS_PRODUCTOS) {
+            for (Producto p : almacenes.get(pos).getProductos()) {
+                vctDatos.add(añadirFilaProducto(p));
+                totalInventario += p.getPrecio();
+                contadorProductos++;
+            }
+        }
+        if (tipoCarga == Tabla.CARGAR_PRECIO_MIN) {
+            try {
+                Double precioMin = Double.parseDouble(JOptionPane.showInputDialog(this, "Introduzca el Precio Mínimo: ", "0.0"));
+                for (Producto p : servicio.getProductosPrecioMin(precioMin)) {
+                    vctDatos.add(añadirFilaProducto(p));
+                    totalInventario += p.getPrecio();
+                    contadorProductos++;
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Introduzca una cantidad VÁLIDA!", "Error", JOptionPane.ERROR_MESSAGE);
+                errorCarga = true;
+            }
+        }
+        if (tipoCarga == Tabla.CARGAR_PRECIO_MAX) {
+            try {
+                Double precioMax = Double.parseDouble(JOptionPane.showInputDialog(this, "Introduzca el Precio Máximo: ", "0.0"));
+                for (Producto p : servicio.getProductosPrecioMax(precioMax)) {
+                    vctDatos.add(añadirFilaProducto(p));
+                    totalInventario += p.getPrecio();
+                    contadorProductos++;
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Introduzca una cantidad VÁLIDA!", "Error", JOptionPane.ERROR_MESSAGE);
+                errorCarga = true;
+            }
+        }
+        lblContadorTotalProductos.setText("Total Productos: %d".formatted(contadorProductos));
+        fxtValorTotalInventario.setValue(nfMoneda.format(totalInventario));
+        DefaultTableModel dtmModelo = (DefaultTableModel) tblProductos.getModel();
+        dtmModelo.setDataVector(vctDatos, vctTitulosTabla);
+        if (errorCarga) {
+            cargarProductos(Tabla.CARGAR_TODOS_LOS_PRODUCTOS);
+        }
+    }
+
+    private Vector<String> añadirFilaProducto(Producto p) {
+        Vector<String> vctFilaTabla = new Vector<>();
+        vctFilaTabla.add(p.getId().toString());
+        vctFilaTabla.add(p.getNombre());
+        vctFilaTabla.add(p.getCodigo());
+        vctFilaTabla.add(p.getCantidad().toString());
+        vctFilaTabla.add(p.getAlmacen().getId().toString());
+        vctFilaTabla.add(nfMoneda.format(p.getPrecio()));
+        return vctFilaTabla;
     }
 }

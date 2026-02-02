@@ -4,19 +4,27 @@
  */
 package org.zabalburu.daw1.guiada_almacenproductos_1.vista;
 
+import org.zabalburu.daw1.guiada_almacenproductos_1.modelo.Almacen;
+import org.zabalburu.daw1.guiada_almacenproductos_1.servicio.InventarioServicio;
+
 /**
  *
  * @author Focus Mode
  */
-public class FrameProducto extends javax.swing.JFrame {
+public class FrameProducto extends javax.swing.JDialog {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrameProducto.class.getName());
-
+    private static final InventarioServicio servicio = InventarioServicio.getInstance();
+    private Almacen almacen;
     /**
      * Creates new form FrameProducto
      */
-    public FrameProducto() {
+    public FrameProducto(java.awt.Frame parent, boolean modal, Almacen almacen) {
+        super(parent, modal);
+        this.almacen = almacen;
         initComponents();
+        this.setLocationRelativeTo(parent);
+        cargarAlmacenes();
     }
 
     /**
@@ -30,36 +38,42 @@ public class FrameProducto extends javax.swing.JFrame {
 
         jLabel4 = new javax.swing.JLabel();
         jTextField3 = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jFormattedTextField1 = new javax.swing.JFormattedTextField();
+        lblTitulo = new javax.swing.JLabel();
+        lblNombre = new javax.swing.JLabel();
+        txtNombre = new javax.swing.JTextField();
+        lblCodigo = new javax.swing.JLabel();
+        txtCodigo = new javax.swing.JTextField();
+        lblPrecio = new javax.swing.JLabel();
+        lblCantidad = new javax.swing.JLabel();
+        txtCantidad = new javax.swing.JTextField();
+        btnAñadirProducto = new javax.swing.JButton();
+        btnVolver = new javax.swing.JButton();
+        fxtPrecio = new javax.swing.JFormattedTextField();
+        cbxAlmacen = new javax.swing.JComboBox<>();
+        lblAlmacen = new javax.swing.JLabel();
 
         jLabel4.setText("Código");
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jLabel1.setFont(new java.awt.Font("sansserif", 0, 36)); // NOI18N
-        jLabel1.setText("jLabel1");
+        lblTitulo.setFont(new java.awt.Font("sansserif", 0, 36)); // NOI18N
+        lblTitulo.setText("Nuevo Producto");
 
-        jLabel2.setText("Nombre");
+        lblNombre.setText("Nombre");
 
-        jLabel3.setText("Código");
+        lblCodigo.setText("Código");
 
-        jLabel5.setText("Precio");
+        lblPrecio.setText("Precio");
 
-        jLabel6.setText("Cantidad");
+        lblCantidad.setText("Cantidad");
 
-        jButton1.setText("Añadir Producto");
+        btnAñadirProducto.setText("Añadir Producto");
 
-        jButton2.setText("Volver");
+        btnVolver.setText("Volver");
+
+        cbxAlmacen.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        lblAlmacen.setText("Almacén");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -71,55 +85,63 @@ public class FrameProducto extends javax.swing.JFrame {
                         .addGap(45, 45, 45)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel6)
+                                .addComponent(lblCantidad)
                                 .addGap(38, 38, 38)
-                                .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel2)
-                                    .addGap(38, 38, 38)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(jLabel1))
+                                .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(lblCodigo)
+                                    .addComponent(lblPrecio)
+                                    .addComponent(lblNombre)
+                                    .addComponent(lblAlmacen))
                                 .addGap(38, 38, 38)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
-                                    .addComponent(jFormattedTextField1)))))
+                                    .addComponent(txtCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                                    .addComponent(fxtPrecio)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lblTitulo)
+                                .addGap(29, 29, 29))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(33, 33, 33)
-                        .addComponent(jButton1)
+                        .addComponent(btnAñadirProducto)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton2)))
+                        .addComponent(btnVolver))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(131, 131, 131)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(cbxAlmacen, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtNombre, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE))))
                 .addContainerGap(45, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(34, 34, 34)
-                .addComponent(jLabel1)
-                .addGap(39, 39, 39)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(23, 23, 23)
+                .addComponent(lblTitulo)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(cbxAlmacen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblAlmacen))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblNombre)
+                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCodigo)
+                    .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblPrecio)
+                    .addComponent(fxtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCantidad)
+                    .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnAñadirProducto)
+                    .addComponent(btnVolver))
                 .addContainerGap(17, Short.MAX_VALUE))
         );
 
@@ -148,22 +170,28 @@ public class FrameProducto extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new FrameProducto().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new FrameProducto(null, true, servicio.getAlmacenes().get(0)).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JFormattedTextField jFormattedTextField1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JButton btnAñadirProducto;
+    private javax.swing.JButton btnVolver;
+    private javax.swing.JComboBox<String> cbxAlmacen;
+    private javax.swing.JFormattedTextField fxtPrecio;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField5;
+    private javax.swing.JLabel lblAlmacen;
+    private javax.swing.JLabel lblCantidad;
+    private javax.swing.JLabel lblCodigo;
+    private javax.swing.JLabel lblNombre;
+    private javax.swing.JLabel lblPrecio;
+    private javax.swing.JLabel lblTitulo;
+    private javax.swing.JTextField txtCantidad;
+    private javax.swing.JTextField txtCodigo;
+    private javax.swing.JTextField txtNombre;
     // End of variables declaration//GEN-END:variables
+
+    private void cargarAlmacenes() {
+        
+    }
 }
