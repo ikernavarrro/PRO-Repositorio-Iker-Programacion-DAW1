@@ -14,10 +14,11 @@ import org.zabalburu.daw1.guiada_almacenproductos_1.servicio.InventarioServicio;
  * @author Iker Navarro Pérez
  */
 public class FrameProducto extends javax.swing.JDialog {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrameProducto.class.getName());
     private static final InventarioServicio servicio = InventarioServicio.getInstance();
     private Almacen almacen;
+
     /**
      * Creates new form FrameProducto
      */
@@ -161,14 +162,32 @@ public class FrameProducto extends javax.swing.JDialog {
     private void btnAñadirProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAñadirProductoActionPerformed
         Producto p = new Producto();
         Almacen a = (Almacen) cbxAlmacen.getSelectedItem();
-        p.setAlmacen(a);
-        p.setNombre(txtNombre.getText());
-        p.setCodigo(txtCodigo.getText());
-        p.setPrecio(Double.parseDouble(txtPrecio.getText()));
-        p.setCantidad(Integer.parseInt(txtCantidad.getText()));
-        servicio.addProducto(p);
-        JOptionPane.showMessageDialog(this, "Producto registrado con Éxito!");
-        this.dispose();
+        if (txtNombre.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "El Nombre es OBLIGATORIO!", "Error", JOptionPane.ERROR_MESSAGE);
+            txtNombre.requestFocus();
+        } else if (txtCodigo.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "El Código de Barras es OBLIGATORIO!", "Error", JOptionPane.ERROR_MESSAGE);
+            txtCodigo.requestFocus();
+        } else if (txtPrecio.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "En Precio es OBLIGATORIO!", "Error", JOptionPane.ERROR_MESSAGE);
+            txtPrecio.requestFocus();
+        } else if (txtCantidad.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "La Cantidad es OBLIGATORIA!", "Error", JOptionPane.ERROR_MESSAGE);
+            txtCantidad.requestFocus();
+        } else {
+            try {
+                p.setAlmacen(a);
+                p.setNombre(txtNombre.getText());
+                p.setCodigo(txtCodigo.getText());
+                p.setPrecio(Double.parseDouble(txtPrecio.getText()));
+                p.setCantidad(Integer.parseInt(txtCantidad.getText()));
+                servicio.addProducto(p);
+                JOptionPane.showMessageDialog(this, "Producto registrado con Éxito!");
+                this.dispose();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Vaya... Algo ha fallado y NO se ha registrado el Producto", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }//GEN-LAST:event_btnAñadirProductoActionPerformed
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed

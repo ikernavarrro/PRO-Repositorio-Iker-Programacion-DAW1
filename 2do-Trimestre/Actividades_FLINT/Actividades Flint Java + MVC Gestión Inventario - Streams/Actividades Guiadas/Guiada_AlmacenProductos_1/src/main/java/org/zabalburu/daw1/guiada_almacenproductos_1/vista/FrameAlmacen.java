@@ -421,6 +421,7 @@ public class FrameAlmacen extends javax.swing.JFrame {
         Almacen a = new Almacen();
         if (estado == Estado.MODIFICACION) {
             a.setId(almacenes.get(pos).getId());
+            a.setProductos(almacenes.get(pos).getProductos());
         }
         if (txtNombre.getText().isBlank()) {
             JOptionPane.showMessageDialog(this, "El Nombre es OBLIGATORIO!", "Error", JOptionPane.ERROR_MESSAGE);
