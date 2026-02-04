@@ -4,6 +4,8 @@
 
 package org.zabalburu.daw1.prueba_habitacionreserva_1;
 
+import org.zabalburu.daw1.prueba_habitacionreserva_1.vista.HabitacionFrame;
+
 /**
  *
  * @author Iker Navarro Pérez
@@ -11,6 +13,6 @@ package org.zabalburu.daw1.prueba_habitacionreserva_1;
 public class Prueba_HabitacionReserva_1 {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        new HabitacionFrame().setVisible(true);
     }
 }

@@ -143,10 +143,10 @@ public class HotelServicio {
         }
     }
 
-    public List<Habitacion> getHabitacionesDisponiblesFecha(LocalDate fecha) {
+    public List<Habitacion> getHabitacionesDisponibles() {
         return habitacionDAO.getHabitaciones().stream()
                 .filter(h -> h.getReservas().stream()
-                .noneMatch(r -> r.getEstado() != EstadoReserva.CANCELADA && !fecha.isBefore(r.getFechaEntrada()) && fecha.isBefore(r.getFechaSalida())))
+                                            .noneMatch(r -> r.getEstado() == EstadoReserva.PENDIENTE))
                 .toList();
     }
 
