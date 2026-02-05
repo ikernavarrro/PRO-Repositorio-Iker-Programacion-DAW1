@@ -1,0 +1,97 @@
+===============================================================================
+                GUÍA RÁPIDA DE JAVA STREAMS (INTERMEDIOS Y TERMINALES)
+===============================================================================
+
+1. OPERACIONES INTERMEDIAS (Lazy - Devuelven un Stream)
+-------------------------------------------------------------------------------
+Estas operaciones no se ejecutan hasta que se llama a una operación terminal.
+Sirven para transformar o filtrar el flujo de datos.
+
+- filter(Predicate)
+  Filtra los elementos que cumplen una condición.
+  Ej: .filter(n -> n > 10)
+
+- map(Function)
+  Transforma cada elemento en otro objeto o valor.
+  Ej: .map(String::toUpperCase) = .map(n -> n.toUpperCase())
+
+- flatMap(Function)
+  Transforma cada elemento en un Stream y los "aplana" en uno solo.
+  Ej: .flatMap(lista -> lista.stream())
+
+- distinct()
+  Elimina elementos duplicados basándose en el método equals().
+  Ej: .distinct()
+
+- sorted() / sorted(Comparator)
+  Ordena los elementos de forma natural o mediante un comparador.
+  Ej: .sorted(Comparator.reverseOrder())
+
+- peek(Consumer)
+  Realiza una acción sobre cada elemento sin alterarlo (útil para debug).
+  Ej: .peek(e -> System.out.println("Pasando por: " + e))
+
+- limit(long n)
+  Trunca el stream para que no supere los n elementos.
+  Ej: .limit(5)
+
+- skip(long n)
+  Descarta los primeros n elementos del stream.
+  Ej: .skip(2)
+
+
+2. OPERACIONES TERMINALES (Eager - Cierran el Stream)
+-------------------------------------------------------------------------------
+Estas operaciones ejecutan todo el proceso y devuelven un resultado final.
+
+- collect(Collector)
+  Transforma el stream en una colección (List, Set, Map).
+  Ej: .collect(Collectors.toList())
+
+- forEach(Consumer)
+  Realiza una acción para cada elemento (no devuelve nada).
+  Ej: .forEach(System.out::println)
+
+- count()
+  Devuelve el número de elementos en el stream (tipo long).
+  Ej: long total = stream.count();
+
+- reduce(BinaryOperator)
+  Combina los elementos para producir un único valor.
+  Ej: .reduce(0, (a, b) -> a + b) // Suma total
+
+- min(Comparator) / max(Comparator)
+  Encuentra el valor mínimo o máximo según el orden.
+  Ej: .min(Integer::compare)
+
+- anyMatch(Predicate)
+  Devuelve true si AL MENOS UN elemento cumple la condición.
+  Ej: .anyMatch(n -> n < 0)
+
+- allMatch(Predicate)
+  Devuelve true si TODOS los elementos cumplen la condición.
+  Ej: .allMatch(n -> n > 0)
+
+- noneMatch(Predicate)
+  Devuelve true si NINGÚN elemento cumple la condición.
+  Ej: .noneMatch(n -> n == 0)
+
+- findFirst() / findAny()
+  Devuelven un Optional con el primer elemento o uno aleatorio.
+  Ej: .findFirst().orElse("Vacio")
+
+- toArray()
+  Convierte el stream en un array.
+  Ej: String[] array = stream.toArray(String[]::new);
+
+
+3. EJEMPLO COMPLETO DE USO
+-------------------------------------------------------------------------------
+List<String> resultado = lista.stream()
+    .filter(s -> s.startsWith("A"))   // Intermedia
+    .map(String::trim)                // Intermedia
+    .distinct()                       // Intermedia
+    .limit(3)                         // Intermedia
+    .collect(Collectors.toList());    // Terminal
+
+===============================================================================
