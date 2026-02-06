@@ -57,7 +57,7 @@ public class HotelServicio {
 
         List<Habitacion> todasHabitaciones = habitacionDAO.getHabitaciones();
         EstadoReserva[] estados = EstadoReserva.values();
-        String[] nombres = {"Iker", "Ainhoa", "Mikel", "Lucia", "Jon", "Ane", "Pepe", "Elena", "Xabi", "Sara"};
+        String[] nombres = {"Iker", "Ainhoa", "Unax", "Lucia", "Iñigo", "Aaron", "Pepe", "Elena", "Carlos", "Sara"};
 
         // 2. Crear 25 Reservas aleatorias
         for (int i = 0; i < 25; i++) {

@@ -594,3 +594,5 @@ public class ClienteFrame extends javax.swing.JFrame {
         dtmModelo.setDataVector(vctDatos, vctTitulosTabla);
     }
 }
+
+
