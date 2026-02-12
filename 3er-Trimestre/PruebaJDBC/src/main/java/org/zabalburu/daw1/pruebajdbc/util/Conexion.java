@@ -17,26 +17,41 @@ public class Conexion {
     private static Connection cnn;
 
     public static Connection getConnection() {
-        if (cnn == null) {
-            try {
-                OracleDataSource ods = new OracleDataSource();
-                ods.setServerName("localHost");
-                ods.setPortNumber(1521);
-                ods.setServiceName("xe");
-                ods.setUser("daw1");
-                ods.setPassword("tiger");
-                ods.setDriverType("thin");
-                cnn = ods.getConnection();
-            } catch (SQLException ex) {
-                System.getLogger(Conexion.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        try {
+            if (cnn == null || cnn.isClosed()) {
+                try {
+                    OracleDataSource ods = new OracleDataSource();
+                    ods.setServerName("localHost");
+                    ods.setPortNumber(1521);
+                    ods.setServiceName("xe");
+                    ods.setUser("daw1");
+                    ods.setPassword("tiger");
+                    ods.setDriverType("thin");
+                    cnn = ods.getConnection();
+                } catch (SQLException ex) {
+                    System.getLogger(Conexion.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+                }
             }
+        } catch (SQLException ex) {
+            System.getLogger(Conexion.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
         return cnn;
     }
 
     private Conexion() {
     }
-    
+
+    public static void closeConnection() {
+        try {
+            if (cnn != null && !cnn.isClosed()) {
+                cnn.close();
+            }
+        } catch (SQLException ex) {
+            
+        }
+        cnn = null;
+    }
+
     public static void main(String[] args) {
         System.out.println(Conexion.getConnection());
     }
