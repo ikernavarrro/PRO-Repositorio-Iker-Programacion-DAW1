@@ -5,14 +5,19 @@
 package org.zabalburu.daw1.actividad25.corriente_datos.dao.impl;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 import org.zabalburu.daw1.actividad25.corriente_datos.dao.EnvioDAO;
+import org.zabalburu.daw1.actividad25.corriente_datos.modelo.Empleado;
 import org.zabalburu.daw1.actividad25.corriente_datos.modelo.Envio;
 
 /**
@@ -21,27 +26,18 @@ import org.zabalburu.daw1.actividad25.corriente_datos.modelo.Envio;
  */
 public class EnvioDAOImpl implements EnvioDAO {
 
+    private static EnvioDAOImpl instancia;
     private static List<Envio> envios;
 
-    public EnvioDAOImpl() {
-        try {
-            File f = new File("envios.obj");
-            ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(f)));
+    private EnvioDAOImpl() {
+        cargarDatos();
+    }
 
-            this.envios = new ArrayList<>();
-            try {
-                while (true) {
-                    Envio e = (Envio) ois.readObject();
-                    envios.add(e);
-                }
-            } catch (EOFException ex) {
-                // Fin de fichero
-            } catch (ClassNotFoundException ex) {
-                ex.printStackTrace();
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
+    public static EnvioDAOImpl getInstancia() {
+        if (instancia == null) {
+            instancia = new EnvioDAOImpl();
         }
+        return instancia;
     }
 
     @Override
@@ -53,6 +49,7 @@ public class EnvioDAOImpl implements EnvioDAO {
         nuevo.setIdEnvio(idMax + 1);
         nuevo.getEmpleado().getEnvios().add(nuevo);
         envios.add(nuevo);
+        actualizarDatos();
     }
 
     @Override
@@ -73,6 +70,7 @@ public class EnvioDAOImpl implements EnvioDAO {
         int pos = envios.indexOf(modificar);
         if (pos != -1) {
             envios.set(pos, modificar);
+            actualizarDatos();
         }
     }
 
@@ -82,6 +80,46 @@ public class EnvioDAOImpl implements EnvioDAO {
         if (eliminar != null) {
             eliminar.getEmpleado().getEnvios().remove(eliminar);
             envios.remove(eliminar);
+            actualizarDatos();
+        }
+    }
+
+    private void cargarDatos() {
+        try {
+            File f = new File("envios.obj");
+            ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(f)));
+
+            this.envios = new ArrayList<>();
+            try {
+                while (true) {
+                    Envio e = (Envio) ois.readObject();
+                    envios.add(e);
+                }
+            } catch (EOFException ex) {
+                // Fin de fichero
+            } catch (ClassNotFoundException ex) {
+                ex.printStackTrace();
+            }
+            ois.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void actualizarDatos() {
+        File f = new File("envios.obj");
+        try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(f)))) {
+            envios.forEach(e -> {
+                try {
+                    oos.writeObject(e);
+                } catch (IOException ex) {
+                    System.getLogger(EnvioDAOImpl.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+                }
+            });
+            oos.flush();
+            oos.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 }

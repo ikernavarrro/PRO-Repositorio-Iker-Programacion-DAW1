@@ -50,7 +50,7 @@ public class CargarFile {
         try {
             File f = new File("empleados.obj");
             final ObjectOutputStream oosEmpleados = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(f)));
-            Stream.of(empleados).forEach(e -> {
+            List.of(empleados).forEach(e -> {
                 try {
                     oosEmpleados.writeObject(e);
                 } catch (IOException ex) {
@@ -62,7 +62,7 @@ public class CargarFile {
             // ===
             f = new File("envios.obj");
             final ObjectOutputStream oosEnvios = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(f)));
-            Stream.of(envios).forEach(e -> {
+            List.of(envios).forEach(e -> {
                 try {
                     oosEnvios.writeObject(e);
                 } catch (IOException ex) {
