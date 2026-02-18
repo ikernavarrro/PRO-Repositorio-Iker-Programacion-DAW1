@@ -44,7 +44,7 @@ public class ConsultarDatos {
                         .executeQuery("""
                                       SELECT * 
                                       FROM ALUMNOS
-                                      WHERE idcurso = %d
+                                      WHERE idcursohh = %d
                                       ORDER BY nombre
                                       """.formatted(rstCursos.getInt("id")));
                 listado += """
