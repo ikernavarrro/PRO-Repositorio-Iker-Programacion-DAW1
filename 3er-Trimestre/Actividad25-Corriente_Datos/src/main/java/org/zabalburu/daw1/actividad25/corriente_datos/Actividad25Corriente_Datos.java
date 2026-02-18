@@ -4,6 +4,8 @@
 
 package org.zabalburu.daw1.actividad25.corriente_datos;
 
+import java.util.ArrayList;
+import org.zabalburu.daw1.actividad25.corriente_datos.modelo.Empleado;
 import org.zabalburu.daw1.actividad25.corriente_datos.servicio.GestionEnviosServicio;
 
 /**
@@ -15,5 +17,8 @@ public class Actividad25Corriente_Datos {
     public static void main(String[] args) {
         GestionEnviosServicio servicio = GestionEnviosServicio.getInstancia();
         System.out.println(servicio.getEmpleados());
+        System.out.println("====================");
+        System.out.println(servicio.getEnvios());
+        
     }
 }

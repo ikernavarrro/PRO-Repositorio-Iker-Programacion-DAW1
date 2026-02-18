@@ -23,8 +23,8 @@ public class GestionEnviosServicio {
     private EnvioDAO envioDAO;
 
     private GestionEnviosServicio() {
-        this.empleadoDAO = new EmpleadoDAOImpl();
-        this.envioDAO = new EnvioDAOImpl();
+        this.empleadoDAO = EmpleadoDAOImpl.getInstancia();
+        this.envioDAO = EnvioDAOImpl.getInstancia();
     }
 
     public static GestionEnviosServicio getInstancia() {
