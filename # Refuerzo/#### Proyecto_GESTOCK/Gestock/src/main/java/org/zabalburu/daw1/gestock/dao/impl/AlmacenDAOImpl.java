@@ -9,6 +9,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.zabalburu.daw1.gestock.dao.AlmacenDAO;
@@ -90,28 +91,102 @@ public class AlmacenDAOImpl implements AlmacenDAO {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        
+
         return Optional.ofNullable(a);
     }
 
     @Override
     public List<Almacen> getAlmacenes() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        List<Almacen> almacenes = new ArrayList<>();
+        String sql = "SELECT * FROM almacen";
+
+        try (PreparedStatement pstmt = cnn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                Almacen a = new Almacen();
+                a.setIdAlmacen(rs.getInt("id_almacen"));
+                a.setNombre(rs.getString("nombre"));
+                a.setDireccion(rs.getString("direccion"));
+                a.setCapacidadMaxima(rs.getInt("capacidad_maxima"));
+                almacenes.add(a);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return almacenes;
     }
 
     @Override
     public List<Almacen> getAlmacenesBusqueda(String textoBusqueda) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        List<Almacen> almacenes = new ArrayList<>();
+        String sql = "SELECT * FROM almacen WHERE LOWER(nombre) LIKE ? OR LOWER(direccion) LIKE ?";
+
+        try (PreparedStatement pstmt = cnn.prepareStatement(sql)) {
+            String filtro = "%" + textoBusqueda.toLowerCase() + "%";
+            pstmt.setString(1, filtro);
+            pstmt.setString(2, filtro);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Almacen a = new Almacen();
+                    a.setIdAlmacen(rs.getInt("id_almacen"));
+                    a.setNombre(rs.getString("nombre"));
+                    a.setDireccion(rs.getString("direccion"));
+                    a.setCapacidadMaxima(rs.getInt("capacidad_maxima"));
+                    almacenes.add(a);
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return almacenes;
     }
 
     @Override
     public void modifyAlmacen(Almacen modificar) throws AlmacenNoEncontradoException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String sql = "UPDATE almacen SET nombre = ?, direccion = ?, capacidad_maxima = ? WHERE id_almacen = ?";
+
+        try (PreparedStatement pstmt = cnn.prepareStatement(sql)) {
+            pstmt.setString(1, modificar.getNombre());
+            pstmt.setString(2, modificar.getDireccion());
+            pstmt.setInt(3, modificar.getCapacidadMaxima());
+            pstmt.setInt(4, modificar.getIdAlmacen());
+
+            // executeUpdate devuelve el número de filas modificadas. Si es 0, el almacen no existe.
+            int filasAfectadas = pstmt.executeUpdate();
+            if (filasAfectadas == 0) {
+                throw new AlmacenNoEncontradoException("No se encontró el almacén con ID: " + modificar.getIdAlmacen());
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
     public void removeAlmacen(Integer idAlmacen) throws EliminarAlmacenConProductosException, AlmacenNoEncontradoException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String sqlCheck = "SELECT COUNT(*) FROM producto WHERE id_almacen = ?";
+        try (PreparedStatement pstmtCheck = cnn.prepareStatement(sqlCheck)) {
+            pstmtCheck.setInt(1, idAlmacen);
+            try (ResultSet rs = pstmtCheck.executeQuery()) {
+                if (rs.next() && rs.getInt(1) > 0) {
+                    throw new EliminarAlmacenConProductosException("Error: El almacén contiene productos. Vacíelo primero.");
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        
+        String sqlDelete = "DELETE FROM almacen WHERE id_almacen = ?";
+        try (PreparedStatement pstmtDelete = cnn.prepareStatement(sqlDelete)) {
+            pstmtDelete.setInt(1, idAlmacen);
+
+            int filasAfectadas = pstmtDelete.executeUpdate();
+            if (filasAfectadas == 0) {
+                throw new AlmacenNoEncontradoException("No se encontró el almacén con ID: " + idAlmacen);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public int getSiguienteID() {

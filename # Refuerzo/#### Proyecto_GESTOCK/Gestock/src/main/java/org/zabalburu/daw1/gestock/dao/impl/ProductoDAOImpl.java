@@ -9,6 +9,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.zabalburu.daw1.gestock.dao.ProductoDAO;
@@ -27,7 +28,7 @@ public class ProductoDAOImpl implements ProductoDAO {
 
     private Connection cnn;
 
-    public ProductoDAOImpl(Connection cnn) {
+    public ProductoDAOImpl() {
         this.cnn = ConexionBBDD.getConnection();
     }
 
@@ -99,22 +100,136 @@ public class ProductoDAOImpl implements ProductoDAO {
 
     @Override
     public List<Producto> getProductos() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        List<Producto> productos = new ArrayList<>();
+        String sql = """
+                    SELECT p.*, a.id_almacen AS id_almacen_obj, a.nombre, a.direccion, a.capacidad_maxima
+                    FROM producto p JOIN almacen a ON p.id_almacen = a.id_almacen
+                    """;
+        try (PreparedStatement pstmt = cnn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Producto p = new Producto();
+                Almacen a = new Almacen();
+
+                p.setIdProducto(rs.getInt("id_producto"));
+                p.setCodigoBarras(rs.getString("codigo_barras"));
+                p.setDescripcion(rs.getString("descripcion"));
+                p.setMarca(rs.getString("marca"));
+                p.setCategoria(Categoria.valueOf(rs.getString("categoria").toUpperCase()));
+                p.setPrecio(rs.getDouble("precio"));
+                p.setStock(rs.getInt("stock"));
+                Date fechaSQL = rs.getDate("fecha_entrada");
+                if (fechaSQL != null) {
+                    p.setFechaEntrada(fechaSQL.toLocalDate());
+                }
+
+                a.setIdAlmacen(rs.getInt("id_almacen_obj"));
+                a.setNombre(rs.getString("nombre"));
+                a.setDireccion(rs.getString("direccion"));
+                a.setCapacidadMaxima(rs.getInt("capacidad_maxima"));
+
+                p.setAlmacen(a);
+                productos.add(p);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return productos;
     }
 
     @Override
     public List<Producto> getProductosBusqueda(String textoBusqueda) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        List<Producto> productos = new ArrayList<>();
+        String sql = """
+                     SELECT p.*, a.id_almacen AS id_almacen_obj, a.nombre, a.direccion, a.capacidad_maxima
+                     FROM producto p JOIN almacen a ON p.id_almacen = a.id_almacen
+                     WHERE LOWER(p.descripcion) LIKE ? OR LOWER(p.marca) LIKE ?
+                     """;
+
+        try (PreparedStatement pstmt = cnn.prepareStatement(sql)) {
+            String filtro = "%" + textoBusqueda.toLowerCase() + "%";
+            pstmt.setString(1, filtro);
+            pstmt.setString(2, filtro);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Producto p = new Producto();
+                    Almacen a = new Almacen();
+
+                    p.setIdProducto(rs.getInt("id_producto"));
+                    p.setCodigoBarras(rs.getString("codigo_barras"));
+                    p.setDescripcion(rs.getString("descripcion"));
+                    p.setMarca(rs.getString("marca"));
+                    p.setCategoria(Categoria.valueOf(rs.getString("categoria").toUpperCase()));
+                    p.setPrecio(rs.getDouble("precio"));
+                    p.setStock(rs.getInt("stock"));
+
+                    Date fechaSQL = rs.getDate("fecha_entrada");
+                    if (fechaSQL != null) {
+                        p.setFechaEntrada(fechaSQL.toLocalDate());
+                    }
+
+                    a.setIdAlmacen(rs.getInt("id_almacen_obj"));
+                    a.setNombre(rs.getString("nombre"));
+                    a.setDireccion(rs.getString("direccion"));
+                    a.setCapacidadMaxima(rs.getInt("capacidad_maxima"));
+
+                    p.setAlmacen(a);
+                    productos.add(p);
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return productos;
     }
 
     @Override
     public void modifyProducto(Producto modificar) throws StockInsuficienteException, ProductoNoEncontradoException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (modificar.getStock() < 0) {
+            throw new StockInsuficienteException("El stock no puede ser un valor negativo.");
+        }
+
+        String sql = """
+                     UPDATE producto 
+                     SET codigo_barras = ?, descripcion = ?, marca = ?, categoria = ?, 
+                         precio = ?, stock = ?, fecha_entrada = ?, id_almacen = ? 
+                     WHERE id_producto = ?
+                     """;
+
+        try (PreparedStatement pstmt = cnn.prepareStatement(sql)) {
+            pstmt.setString(1, modificar.getCodigoBarras());
+            pstmt.setString(2, modificar.getDescripcion());
+            pstmt.setString(3, modificar.getMarca());
+            pstmt.setString(4, modificar.getCategoria().getValueDB());
+            pstmt.setDouble(5, modificar.getPrecio());
+            pstmt.setInt(6, modificar.getStock());
+            pstmt.setDate(7, modificar.getFechaEntrada() != null ? Date.valueOf(modificar.getFechaEntrada()) : null);
+            pstmt.setInt(8, modificar.getAlmacen().getIdAlmacen());
+            pstmt.setInt(9, modificar.getIdProducto());
+
+            int filasAfectadas = pstmt.executeUpdate();
+            if (filasAfectadas == 0) {
+                throw new ProductoNoEncontradoException("No se encontró el producto con ID: " + modificar.getIdProducto());
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
     public void removeProducto(Integer idProducto) throws ProductoNoEncontradoException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String sql = "DELETE FROM producto WHERE id_producto = ?";
+
+        try (PreparedStatement pstmt = cnn.prepareStatement(sql)) {
+            pstmt.setInt(1, idProducto);
+
+            int filasAfectadas = pstmt.executeUpdate();
+            if (filasAfectadas == 0) {
+                throw new ProductoNoEncontradoException("No se encontró el producto con ID: " + idProducto);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public int getSiguienteID() {
