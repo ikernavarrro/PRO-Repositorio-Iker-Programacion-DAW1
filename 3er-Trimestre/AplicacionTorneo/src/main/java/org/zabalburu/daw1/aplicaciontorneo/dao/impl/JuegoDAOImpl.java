@@ -100,8 +100,10 @@ public class JuegoDAOImpl implements JuegoDAO {
         try {
             PreparedStatement pstmt = cnn.prepareStatement("""
                                                         UPDATE JUEGOS 
-                                                        SET(titulo,descripcion,tipo,imagen)
-                                                        VALUES(?,?,?,?)
+                                                        SET titulo = ?,
+                                                           descripcion = ?,
+                                                           tipo = ?,
+                                                           imagen =?
                                                         WHERE id=?   
                                                         """);
             pstmt.setString(1, modificar.getTitulo());
@@ -143,7 +145,8 @@ public class JuegoDAOImpl implements JuegoDAO {
 
     public static void main(String[] args) {
         JuegoDAO dao = new JuegoDAOImpl();
-        System.out.println(dao.getJuego(2));
-        System.out.println(dao.getJuego(20));
+        Juego nuevo = new Juego();
+        System.out.println(dao.getJuegos());
+        
     }
 }

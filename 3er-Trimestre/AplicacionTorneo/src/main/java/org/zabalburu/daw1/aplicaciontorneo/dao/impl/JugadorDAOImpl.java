@@ -26,9 +26,9 @@ public class JugadorDAOImpl implements JugadorDAO {
     public Jugador addJugador(Jugador nuevo) {
         try {
             PreparedStatement pstmt = cnn.prepareStatement("""
-                                                                       INSERT INTO JUGADORES VALUES
-                                                                       (seqJugadores.nextval, ?, ?, ?, ?)
-                                                                       """);
+                                                        INSERT INTO JUGADORES VALUES
+                                                        (seqJugadores.nextval, ?, ?, ?, ?)
+                                                        """);
             pstmt.setString(1, nuevo.getNombre());
             pstmt.setString(2, nuevo.getApellidos());
             pstmt.setString(3, nuevo.getNick());
@@ -88,8 +88,10 @@ public class JugadorDAOImpl implements JugadorDAO {
         try {
             PreparedStatement pstmt = cnn.prepareStatement("""
                                                         UPDATE JUGADORES 
-                                                        SET(nombre,apellidos,nick,imagen)
-                                                        VALUES(?,?,?,?)
+                                                        SET nombre = ?,
+                                                           apellidos = ?,
+                                                           nick = ?,
+                                                           imagen = ?
                                                         WHERE id=?   
                                                         """);
             pstmt.setString(1, modificar.getNombre());
@@ -128,5 +130,7 @@ public class JugadorDAOImpl implements JugadorDAO {
         j.setImagen(rst.getString("imagen"));
         return j;
     }
-
+    public static void main(String[] args) {
+        
+    }
 }

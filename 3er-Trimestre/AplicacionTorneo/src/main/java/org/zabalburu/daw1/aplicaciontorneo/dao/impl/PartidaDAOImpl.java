@@ -4,19 +4,50 @@
  */
 package org.zabalburu.daw1.aplicaciontorneo.dao.impl;
 
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import org.zabalburu.daw1.aplicaciontorneo.dao.PartidaDAO;
 import org.zabalburu.daw1.aplicaciontorneo.modelo.Partida;
+import org.zabalburu.daw1.aplicaciontorneo.util.Conexion;
 
 /**
  *
  * @author Iker Navarro Pérez
  */
 public class PartidaDAOImpl implements PartidaDAO {
-
+    
+    private Connection cnn = Conexion.getConnection();
+    
     @Override
     public Partida addPartida(Partida nueva) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            PreparedStatement pstmt = cnn.prepareStatement("""
+                                                        INSERT INTO PARTIDAS VALUES
+                                                        (seqPartidas.nextval, ?, ?, ?, ?, ?, ?)
+                                                        """);
+            pstmt.setInt(1, nueva.getJuego().getId());
+            pstmt.setInt(2, nueva.getGana().getId());
+            pstmt.setInt(3, nueva.getPierde().getId());
+            pstmt.setInt(4, nueva.getPuntos());
+            pstmt.setString(5, nueva.getDuracion());
+            pstmt.setDate(6, Date.valueOf(nueva.getFecha().toLocalDate()));
+            pstmt.executeUpdate();
+            ResultSet rst = cnn.createStatement().executeQuery("""
+                                                               SELECT seqPartidas.currval as "id"
+                                                               FROM dual
+                                                               """);
+            rst.next();
+            nueva.setId(rst.getInt("id"));
+            rst.close();
+            return nueva;
+        } catch (SQLException ex) {
+            System.getLogger(JugadorDAOImpl.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
+        return null;
     }
 
     @Override
