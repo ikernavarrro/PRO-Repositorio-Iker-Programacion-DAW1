@@ -67,9 +67,15 @@ public class InicializarDatos {
                                 fecha DATE
                                )
                                """);
-            
+
             String[] secuencias = {"seqJuegos", "seqJugadores", "seqPartidas"};
             for (String secuencia : secuencias) {
+                try {
+                    stmt.executeUpdate("""
+                               DROP SEQUENCE %s;
+                               """.formatted(secuencia));
+                } catch (SQLException ex) {
+                }
                 stmt.executeUpdate("""
                                CREATE SEQUENCE %s;
                                """.formatted(secuencia));

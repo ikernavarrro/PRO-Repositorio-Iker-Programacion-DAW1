@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package org.zabalburu.daw1.aplicaciontorneo.dao;
+package org.zabalburu.daw1.aplicaciontorneo.dao.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import org.zabalburu.daw1.aplicaciontorneo.dao.JuegoDAO;
 import org.zabalburu.daw1.aplicaciontorneo.modelo.Juego;
 import org.zabalburu.daw1.aplicaciontorneo.util.Conexion;
 
@@ -96,12 +97,38 @@ public class JuegoDAOImpl implements JuegoDAO {
 
     @Override
     public void modifyJuego(Juego modificar) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            PreparedStatement pstmt = cnn.prepareStatement("""
+                                                        UPDATE JUEGOS 
+                                                        SET(titulo,descripcion,tipo,imagen)
+                                                        VALUES(?,?,?,?)
+                                                        WHERE id=?   
+                                                        """);
+            pstmt.setString(1, modificar.getTitulo());
+            pstmt.setString(2,modificar.getDescripcion());
+            pstmt.setString(3, modificar.getTipo());
+            pstmt.setString(4, modificar.getImagen());
+            pstmt.setInt(5, modificar.getId());
+            pstmt.executeUpdate();
+            pstmt.close();
+        } catch (SQLException ex) {
+            System.getLogger(JuegoDAOImpl.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
     }
 
     @Override
     public void removeJuego(Integer id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            PreparedStatement pstmt = cnn.prepareStatement("""
+                                                        DELETE JUEGOS
+                                                        WHERE id=?
+                                                        """);
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+            pstmt.close();
+        } catch (SQLException ex) {
+            System.getLogger(JuegoDAOImpl.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
     }
 
     private Juego crearJuego(ResultSet rst) throws SQLException {
