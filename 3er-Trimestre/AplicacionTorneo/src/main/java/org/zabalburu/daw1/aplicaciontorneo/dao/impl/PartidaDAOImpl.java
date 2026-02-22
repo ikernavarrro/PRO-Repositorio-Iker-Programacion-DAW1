@@ -9,6 +9,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import org.zabalburu.daw1.aplicaciontorneo.dao.PartidaDAO;
 import org.zabalburu.daw1.aplicaciontorneo.modelo.Partida;
@@ -19,9 +20,9 @@ import org.zabalburu.daw1.aplicaciontorneo.util.Conexion;
  * @author Iker Navarro Pérez
  */
 public class PartidaDAOImpl implements PartidaDAO {
-    
+
     private Connection cnn = Conexion.getConnection();
-    
+
     @Override
     public Partida addPartida(Partida nueva) {
         try {
@@ -52,12 +53,36 @@ public class PartidaDAOImpl implements PartidaDAO {
 
     @Override
     public Partida getPartida(Integer id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Partida p = null;
+        try {
+            PreparedStatement pstmt = cnn.prepareStatement("""
+                                                            SELECT *
+                                                            FROM PARTIDAS
+                                                            WHERE id=?
+                                                            """);
+            ResultSet rst = pstmt.executeQuery();
+            if (rst.next()) {
+                p = crearPartida(rst);
+            }
+            pstmt.close();
+        } catch (SQLException ex) {
+            System.getLogger(PartidaDAOImpl.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
+        return p;
     }
 
     @Override
     public List<Partida> getPartidas() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        List<Partida> partidas = null;
+        try {
+            ResultSet rst = cnn.createStatement().executeQuery("SELECT * FROM PARTIDAS");
+            while (rst.next()) {
+                partidas.add(crearPartida(rst));
+            }
+        } catch (SQLException ex) {
+            System.getLogger(PartidaDAOImpl.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
+        return partidas;
     }
 
     @Override
@@ -69,5 +94,9 @@ public class PartidaDAOImpl implements PartidaDAO {
     public void removePartida(Integer id) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
+    private Partida crearPartida(ResultSet rst) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
 }

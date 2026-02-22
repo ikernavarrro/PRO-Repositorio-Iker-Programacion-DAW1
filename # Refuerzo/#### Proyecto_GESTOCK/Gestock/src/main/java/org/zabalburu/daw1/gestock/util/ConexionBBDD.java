@@ -30,6 +30,7 @@ public class ConexionBBDD {
                 ods.setPassword("gestock");
                 ods.setDriverType("thin");
                 cnn = ods.getConnection();
+                System.out.println("Conectado a base de datos con Éxito!");
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
