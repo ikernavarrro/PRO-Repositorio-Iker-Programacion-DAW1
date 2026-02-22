@@ -32,9 +32,9 @@ public class GestockServicio {
         this.productoDAO = new ProductoDAOImpl();
     }
 
-    private GestockServicio getInstance() {
-        if (this.instancia == null) {
-            this.instancia = new GestockServicio();
+    public static GestockServicio getInstance() {
+        if (instancia == null) {
+            instancia = new GestockServicio();
         }
         return instancia;
     }
