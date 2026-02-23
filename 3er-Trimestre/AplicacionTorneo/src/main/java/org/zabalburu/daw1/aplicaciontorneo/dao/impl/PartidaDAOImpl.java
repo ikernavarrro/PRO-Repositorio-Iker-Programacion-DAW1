@@ -10,8 +10,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import org.zabalburu.daw1.aplicaciontorneo.dao.PartidaDAO;
+import org.zabalburu.daw1.aplicaciontorneo.modelo.Juego;
+import org.zabalburu.daw1.aplicaciontorneo.modelo.Jugador;
 import org.zabalburu.daw1.aplicaciontorneo.modelo.Partida;
 import org.zabalburu.daw1.aplicaciontorneo.util.Conexion;
 
@@ -60,10 +65,12 @@ public class PartidaDAOImpl implements PartidaDAO {
                                                             FROM PARTIDAS
                                                             WHERE id=?
                                                             """);
+            pstmt.setInt(1, id);
             ResultSet rst = pstmt.executeQuery();
             if (rst.next()) {
                 p = crearPartida(rst);
             }
+            rst.close();
             pstmt.close();
         } catch (SQLException ex) {
             System.getLogger(PartidaDAOImpl.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
@@ -73,12 +80,13 @@ public class PartidaDAOImpl implements PartidaDAO {
 
     @Override
     public List<Partida> getPartidas() {
-        List<Partida> partidas = null;
+        List<Partida> partidas = new ArrayList<>();
         try {
             ResultSet rst = cnn.createStatement().executeQuery("SELECT * FROM PARTIDAS");
             while (rst.next()) {
                 partidas.add(crearPartida(rst));
             }
+            rst.close();
         } catch (SQLException ex) {
             System.getLogger(PartidaDAOImpl.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
@@ -87,16 +95,62 @@ public class PartidaDAOImpl implements PartidaDAO {
 
     @Override
     public void modifyPartida(Partida modificar) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            PreparedStatement pstmt = cnn.prepareStatement("""
+                                                        UPDATE PARTIDAS 
+                                                        SET id = ?,
+                                                           idjuego = ?,
+                                                           idgana = ?,
+                                                           idpierde = ?,
+                                                           puntos = ?,
+                                                           duracion = ?,
+                                                           fecha = ?
+                                                        WHERE id=?   
+                                                        """);
+            pstmt.setInt(1, modificar.getId());
+            pstmt.setInt(2, modificar.getJuego().getId());
+            pstmt.setInt(3, modificar.getGana().getId());
+            pstmt.setInt(4, modificar.getPierde().getId());
+            pstmt.setInt(5, modificar.getPuntos());
+            pstmt.setString(6, modificar.getDuracion());
+            pstmt.setTimestamp(7, Timestamp.valueOf(modificar.getFecha()));
+            pstmt.setInt(8, modificar.getId());
+            pstmt.executeUpdate();
+            pstmt.close();
+        } catch (SQLException ex) {
+            System.getLogger(JuegoDAOImpl.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
     }
 
     @Override
     public void removePartida(Integer id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            PreparedStatement pstmt = cnn.prepareStatement("""
+                                                            DELETE partidas
+                                                            Where id = ?
+                                                            """);
+            pstmt.executeQuery();
+            pstmt.close();
+        } catch (SQLException ex) {
+            System.getLogger(PartidaDAOImpl.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
     }
 
-    private Partida crearPartida(ResultSet rst) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    private Partida crearPartida(ResultSet rst) throws SQLException {
+        Partida p = new Partida();
+        p.setId(rst.getInt("id"));
+        p.setFecha(rst.getTimestamp("fecha").toLocalDateTime());
+        p.setDuracion(rst.getString("duracion"));
+        p.setPuntos(rst.getInt("puntos"));
+        Juego j = new Juego();
+        j.setId(rst.getInt("idJuego"));
+        p.setJuego(j);
+        Jugador gana = new Jugador();
+        gana.setId(rst.getInt("idGana"));
+        p.setGana(gana);
+        Jugador pierde = new Jugador();
+        pierde.setId(rst.getInt("idPierde"));
+        p.setPierde(pierde);
+        return p;
     }
-
 }
