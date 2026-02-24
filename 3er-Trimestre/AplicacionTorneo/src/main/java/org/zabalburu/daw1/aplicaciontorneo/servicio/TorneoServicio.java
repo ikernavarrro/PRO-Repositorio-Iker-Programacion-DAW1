@@ -159,6 +159,30 @@ public final class TorneoServicio {
         }
     }
 
+    public void modifyJuego(Juego j) {
+        juegoDAO.modifyJuego(j);
+        int pos = juegos.indexOf(j);
+        if (pos != -1) {
+            juegos.set(pos, j);
+        }
+    }
+
+    public void modifyJugador(Jugador j) {
+        jugadorDAO.modifyJugador(j);
+        int pos = jugadores.indexOf(j);
+        if (pos != -1) {
+            jugadores.set(pos, j);
+        }
+    }
+
+    public void modifyPartida(Partida p) {
+        partidaDAO.modifyPartida(p);
+        int pos = partidas.indexOf(p);
+        if (pos != -1) {
+            partidas.set(pos, p);
+        }
+    }
+
     public static void main(String[] args) {
         TorneoServicio servicio = TorneoServicio.getServicio();
         for (Juego juego : servicio.getJuegos()) {
