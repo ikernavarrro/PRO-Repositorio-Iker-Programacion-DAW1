@@ -6,9 +6,16 @@ package org.zabalburu.daw1.aplicaciontorneo.vista.paneles;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.time.LocalDateTime;
+import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.table.DefaultTableModel;
+import oracle.jdbc.driver.utils.WalletLocation;
+import org.zabalburu.daw1.aplicaciontorneo.modelo.Juego;
+import org.zabalburu.daw1.aplicaciontorneo.modelo.Jugador;
+import org.zabalburu.daw1.aplicaciontorneo.modelo.Partida;
 import org.zabalburu.daw1.aplicaciontorneo.servicio.TorneoServicio;
 
 /**
@@ -16,30 +23,77 @@ import org.zabalburu.daw1.aplicaciontorneo.servicio.TorneoServicio;
  * @author DAW1
  */
 public class PnlDashboard extends javax.swing.JPanel {
-    
+
     private PnlCard pnlJuegos = new PnlCard("Juegos");
     private PnlCard pnlJugadores = new PnlCard("Jugadores");
     private PnlCard pnlPartidas = new PnlCard("Partidas");
-    
+
     private TorneoServicio servicio = TorneoServicio.getServicio();
-    /**
+    private DefaultTableModel dtm; /**
      * Creates new form pnlDashboard
      */
     public PnlDashboard() {
         initComponents();
-        this.setPreferredSize(new Dimension(0,50));
+        this.setPreferredSize(new Dimension(0, 50));
         pnlCards.add(pnlJuegos);
         pnlCards.add(pnlJugadores);
         pnlCards.add(pnlPartidas);
+        Vector<String> vctColumnas = new Vector<>();
+        vctColumnas.add("ID");
+        vctColumnas.add("Fecha");
+        vctColumnas.add("Título");
+        vctColumnas.add("Duración");
+        vctColumnas.add("Ganador");
+        vctColumnas.add("Perdedor");
+        vctColumnas.add("Puntos");
+        dtm = new DefaultTableModel(vctColumnas, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return switch (columnIndex) {
+                    case 0, 6 ->
+                        Integer.class;
+                    case 1 ->
+                        LocalDateTime.class;
+                    case 2 ->
+                        Juego.class;
+                    case 4, 5 ->
+                        Jugador.class;
+                    default ->
+                        String.class;
+                };
+            }
+        };
+
+        tblUltimas.setModel(dtm);
         actualizarPanel();
         this.setVisible(true);
-
     }
-    
-    public void actualizarPanel(){
+
+    public void actualizarPanel() {
         pnlJuegos.setValor(servicio.getJuegos().size());
         pnlJugadores.setValor(servicio.getJugadores().size());
         pnlPartidas.setValor(servicio.getPartidas().size());
+        dtm.setNumRows(0);
+        for(Partida p : servicio.getPartidas()
+                                .stream()
+                                .sorted((p1,p2) -> p2.getFecha().compareTo(p1.getFecha()))
+                                .limit(5)
+                                .toList()){
+            Vector vctFila = new Vector();
+            vctFila.add(p.getId());
+            vctFila.add(p.getFecha());
+            vctFila.add(p.getJuego());
+            vctFila.add(p.getDuracion());
+            vctFila.add(p.getGana());
+            vctFila.add(p.getPierde());
+            vctFila.add(p.getPuntos());
+            dtm.addRow(vctFila);
+        }
     }
 
     /**
@@ -99,17 +153,6 @@ public class PnlDashboard extends javax.swing.JPanel {
 
         add(pnlSuperior, java.awt.BorderLayout.PAGE_START);
 
-        tblUltimas.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
         jspUltimas.setViewportView(tblUltimas);
 
         add(jspUltimas, java.awt.BorderLayout.CENTER);
@@ -143,7 +186,7 @@ public class PnlDashboard extends javax.swing.JPanel {
             this.setLayout(new BorderLayout(0, 5));
             //lblDescripcion.setFont(lblDescripcion.getFont().deriveFont(14f));
             lblValor.setFont(lblValor.getFont().deriveFont(24f));
-            this.setPreferredSize(new Dimension(0,50));
+            this.setPreferredSize(new Dimension(0, 50));
             this.putClientProperty("FlatLaf.style",
                     """
                     arc:20;
@@ -156,8 +199,8 @@ public class PnlDashboard extends javax.swing.JPanel {
             this.add(lblValor);
             this.setVisible(true);
         }
-        
-        public void setValor(Integer valor){
+
+        public void setValor(Integer valor) {
             lblValor.setText(String.valueOf(valor));
         }
     }
