@@ -117,7 +117,7 @@ public class FrmTorneo extends javax.swing.JFrame {
         pnlPrincipal.setLayout(new java.awt.CardLayout());
         getContentPane().add(pnlPrincipal, java.awt.BorderLayout.CENTER);
 
-        setSize(new java.awt.Dimension(825, 522));
+        setSize(new java.awt.Dimension(1028, 522));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 

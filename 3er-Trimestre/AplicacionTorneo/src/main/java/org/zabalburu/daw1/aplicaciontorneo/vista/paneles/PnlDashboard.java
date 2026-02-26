@@ -5,13 +5,23 @@
 package org.zabalburu.daw1.aplicaciontorneo.vista.paneles;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Image;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Vector;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import oracle.jdbc.driver.utils.WalletLocation;
 import org.zabalburu.daw1.aplicaciontorneo.modelo.Juego;
 import org.zabalburu.daw1.aplicaciontorneo.modelo.Jugador;
@@ -29,7 +39,9 @@ public class PnlDashboard extends javax.swing.JPanel {
     private PnlCard pnlPartidas = new PnlCard("Partidas");
 
     private TorneoServicio servicio = TorneoServicio.getServicio();
-    private DefaultTableModel dtm; /**
+    private DefaultTableModel dtm;
+
+    /**
      * Creates new form pnlDashboard
      */
     public PnlDashboard() {
@@ -38,6 +50,12 @@ public class PnlDashboard extends javax.swing.JPanel {
         pnlCards.add(pnlJuegos);
         pnlCards.add(pnlJugadores);
         pnlCards.add(pnlPartidas);
+        inicializarTabla();
+        actualizarPanel();
+        this.setVisible(true);
+    }
+
+    private void inicializarTabla() {
         Vector<String> vctColumnas = new Vector<>();
         vctColumnas.add("ID");
         vctColumnas.add("Fecha");
@@ -46,6 +64,71 @@ public class PnlDashboard extends javax.swing.JPanel {
         vctColumnas.add("Ganador");
         vctColumnas.add("Perdedor");
         vctColumnas.add("Puntos");
+
+        tblUltimas.setDefaultRenderer(LocalDateTime.class, new TableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table,
+                    Object value,
+                    boolean isSelected,
+                    boolean hasFocus,
+                    int row,
+                    int column) {
+                LocalDateTime time = (LocalDateTime) value;
+                JLabel lbl = new JLabel();
+                lbl.setOpaque(true);
+                lbl.setText(time.format(DateTimeFormatter.ofPattern("dd MMM y HH:mm")));
+                lbl.setHorizontalAlignment(JLabel.CENTER);
+                if (isSelected) {
+                    lbl.setBackground(table.getSelectionBackground());
+                    lbl.setForeground(table.getSelectionForeground());
+                } else {
+                    lbl.setBackground(table.getBackground());
+                    lbl.setForeground(table.getForeground());
+                }
+                return lbl;
+            }
+        });
+
+        tblUltimas.setDefaultRenderer(Juego.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+                Juego j = (Juego) value;
+                lbl.setText("%s [ %s ]".formatted(j.getTitulo(), j.getTipo()));
+                lbl.setToolTipText("""
+                                   Título: %s
+                                   Tipo: %s
+                                   Descripción: %s
+                                   """.formatted(j.getTitulo(), j.getTipo(), j.getDescripcion()));
+                return lbl;
+            }
+
+        });
+
+        tblUltimas.setDefaultRenderer(Jugador.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+                Jugador j = (Jugador) value;
+                lbl.setText(j.getNick());
+                lbl.setToolTipText("%s, %s [id:%d]".formatted(j.getApellidos(), j.getNombre(), j.getId()));
+                /*try {
+                    ImageIcon imag = new ImageIcon(URI.create(j.getImagen()).toURL());
+                    int max = Math.max(imag.getIconWidth(), imag.getIconHeight());
+                    double factor = 40.0 / max;
+                    int alto = (int)(imag.getIconHeight() * factor);
+                    int ancho = (int)(imag.getIconWidth()* factor);
+                    imag.getImage().getScaledInstance(alto, ancho, Image.SCALE_SMOOTH);
+                    lbl.setIcon(imag);
+                } catch (MalformedURLException ex) {
+                    System.getLogger(PnlDashboard.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+                }*/
+                lbl.setIcon(j.getAvatar());
+                return lbl;
+            }
+
+        });
+
         dtm = new DefaultTableModel(vctColumnas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -70,8 +153,6 @@ public class PnlDashboard extends javax.swing.JPanel {
         };
 
         tblUltimas.setModel(dtm);
-        actualizarPanel();
-        this.setVisible(true);
     }
 
     public void actualizarPanel() {
@@ -79,11 +160,11 @@ public class PnlDashboard extends javax.swing.JPanel {
         pnlJugadores.setValor(servicio.getJugadores().size());
         pnlPartidas.setValor(servicio.getPartidas().size());
         dtm.setNumRows(0);
-        for(Partida p : servicio.getPartidas()
-                                .stream()
-                                .sorted((p1,p2) -> p2.getFecha().compareTo(p1.getFecha()))
-                                .limit(5)
-                                .toList()){
+        for (Partida p : servicio.getPartidas()
+                .stream()
+                .sorted((p1, p2) -> p2.getFecha().compareTo(p1.getFecha()))
+                .limit(390)
+                .toList()) {
             Vector vctFila = new Vector();
             vctFila.add(p.getId());
             vctFila.add(p.getFecha());

@@ -38,7 +38,7 @@ public class AplicacionTorneo {
         UIManager.put("Component.innerFocusWidth", 0);
 
         // Tablas más modernas
-        UIManager.put("Table.rowHeight", 30);
+        UIManager.put("Table.rowHeight", 40);
         UIManager.put("Table.showHorizontalLines", false);
         UIManager.put("Table.showVerticalLines", false);
         UIManager.put("Table.intercellSpacing", new Dimension(0, 0));
