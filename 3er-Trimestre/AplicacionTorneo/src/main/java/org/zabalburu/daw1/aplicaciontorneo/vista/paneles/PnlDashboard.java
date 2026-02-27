@@ -126,7 +126,16 @@ public class PnlDashboard extends javax.swing.JPanel {
                 lbl.setIcon(j.getAvatar());
                 return lbl;
             }
-
+        });
+        
+        tblUltimas.setDefaultRenderer(Integer.class, new DefaultTableCellRenderer(){
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+                lbl.setHorizontalAlignment(JLabel.CENTER);
+                return lbl;
+            }
+            
         });
 
         dtm = new DefaultTableModel(vctColumnas, 0) {
