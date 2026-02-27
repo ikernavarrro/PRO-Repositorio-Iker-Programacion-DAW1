@@ -4,19 +4,43 @@
  */
 package org.zabalburu.daw1.gestock.vista;
 
+import java.awt.Component;
+import java.awt.Font;
+import java.text.NumberFormat;
+import java.util.List;
+import java.util.Vector;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import org.zabalburu.daw1.gestock.modelo.Almacen;
+import org.zabalburu.daw1.gestock.modelo.Producto;
+import org.zabalburu.daw1.gestock.servicio.GestockServicio;
+import org.zabalburu.daw1.gestock.util.Estado;
+
 /**
  *
- * @author Focus Mode
+ * @author Iker Navarro Pérez
  */
 public class GestockVista extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GestockVista.class.getName());
+
+    private static GestockServicio servicio = GestockServicio.getInstance();
+    Estado estado = Estado.CONSULTA;
+    int pos = 0;
+    private List<Almacen> almacenes = servicio.getAlmacenes();
+    private List<Producto> productos = servicio.getProductos();
+    private NumberFormat nfMoneda = NumberFormat.getCurrencyInstance();
+    private DefaultTableModel dtm;
 
     /**
      * Creates new form GestockVista
      */
     public GestockVista() {
         initComponents();
+        inicializarTabla();
+        mostrar();
     }
 
     /**
@@ -53,8 +77,10 @@ public class GestockVista extends javax.swing.JFrame {
         lblAlmacen = new javax.swing.JLabel();
         lblTituloGetock = new javax.swing.JLabel();
         lblContador = new javax.swing.JLabel();
+        btnBuscarProductos = new javax.swing.JButton();
+        btnBuscarAlmacenes = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         tblProductos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -99,14 +125,39 @@ public class GestockVista extends javax.swing.JFrame {
         });
 
         btnPrimero.setText("|<");
+        btnPrimero.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrimeroActionPerformed(evt);
+            }
+        });
 
         btnAnterior.setText("<");
+        btnAnterior.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAnteriorActionPerformed(evt);
+            }
+        });
 
         btnSiguiente.setText(">");
+        btnSiguiente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSiguienteActionPerformed(evt);
+            }
+        });
 
         btnUltimo.setText(">|");
+        btnUltimo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUltimoActionPerformed(evt);
+            }
+        });
 
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setText("Eliminar");
         btnEliminar.addActionListener(new java.awt.event.ActionListener() {
@@ -116,8 +167,18 @@ public class GestockVista extends javax.swing.JFrame {
         });
 
         btnModificar.setText("Modificar");
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
 
         btnAñadir.setText("Añadir");
+        btnAñadir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAñadirActionPerformed(evt);
+            }
+        });
 
         btnGuardar.setText("Guardar");
         btnGuardar.addActionListener(new java.awt.event.ActionListener() {
@@ -134,6 +195,20 @@ public class GestockVista extends javax.swing.JFrame {
 
         lblContador.setFont(new java.awt.Font("Segoe UI Historic", 1, 18)); // NOI18N
         lblContador.setText("[0/0]");
+
+        btnBuscarProductos.setText("Buscar Producto");
+        btnBuscarProductos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarProductosActionPerformed(evt);
+            }
+        });
+
+        btnBuscarAlmacenes.setText("Buscar Almacen");
+        btnBuscarAlmacenes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarAlmacenesActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -155,41 +230,47 @@ public class GestockVista extends javax.swing.JFrame {
                     .addComponent(jspProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 682, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lblNombre)
+                            .addComponent(lblDireccion)
+                            .addComponent(lblCapacidadMaxima)
+                            .addComponent(lblId)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lblAlmacen, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnBuscarAlmacenes)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                                .addComponent(btnBuscarProductos))
+                            .addComponent(btnAñadirProducto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnModificarProducto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnEliminarProducto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(ftxCapacidadMaxima)
+                            .addComponent(txtDireccion)
+                            .addComponent(txtNombre)
+                            .addComponent(txtId))
+                        .addContainerGap(25, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(lblTituloGetock, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(32, 32, 32))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(btnPrimero, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnSiguiente, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnUltimo, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(lblContador)
+                                        .addGap(84, 84, 84)))
+                                .addGap(102, 102, 102))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(lblContador)
-                                .addGap(87, 87, 87))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnPrimero, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnSiguiente, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnUltimo, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(lblNombre)
-                                .addComponent(lblDireccion)
-                                .addComponent(lblCapacidadMaxima)
-                                .addComponent(ftxCapacidadMaxima)
-                                .addComponent(txtDireccion)
-                                .addComponent(txtId)
-                                .addComponent(txtNombre)
-                                .addComponent(btnAñadirProducto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnModificarProducto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnEliminarProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lblId)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(53, 53, 53)
-                                .addComponent(lblAlmacen, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap())))
+                                .addComponent(lblTituloGetock, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(108, 108, 108))))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -197,9 +278,22 @@ public class GestockVista extends javax.swing.JFrame {
                 .addGap(21, 21, 21)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(jspProductos, javax.swing.GroupLayout.DEFAULT_SIZE, 476, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnCancelar)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(btnAñadir)
+                                .addComponent(btnModificar)
+                                .addComponent(btnEliminar))
+                            .addComponent(btnGuardar)))
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(lblTituloGetock, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblAlmacen, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lblAlmacen, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnBuscarProductos)
+                            .addComponent(btnBuscarAlmacenes))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lblId)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -222,30 +316,24 @@ public class GestockVista extends javax.swing.JFrame {
                         .addComponent(btnModificarProducto)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnEliminarProducto)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
-                        .addComponent(lblContador))
-                    .addComponent(jspProductos))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnCancelar)
-                        .addComponent(btnPrimero)
-                        .addComponent(btnAnterior)
-                        .addComponent(btnSiguiente)
-                        .addComponent(btnUltimo))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnAñadir)
-                        .addComponent(btnModificar)
-                        .addComponent(btnEliminar))
-                    .addComponent(btnGuardar))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lblContador)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnPrimero)
+                            .addComponent(btnAnterior)
+                            .addComponent(btnSiguiente)
+                            .addComponent(btnUltimo))
+                        .addGap(6, 6, 6)))
                 .addContainerGap())
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAñadirProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAñadirProductoActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_btnAñadirProductoActionPerformed
 
     private void btnModificarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarProductoActionPerformed
@@ -263,6 +351,49 @@ public class GestockVista extends javax.swing.JFrame {
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnPrimeroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrimeroActionPerformed
+        pos = 0;
+        mostrar();
+    }//GEN-LAST:event_btnPrimeroActionPerformed
+
+    private void btnAnteriorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnteriorActionPerformed
+        pos--;
+        mostrar();
+    }//GEN-LAST:event_btnAnteriorActionPerformed
+
+    private void btnSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguienteActionPerformed
+        pos++;
+        mostrar();
+    }//GEN-LAST:event_btnSiguienteActionPerformed
+
+    private void btnUltimoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUltimoActionPerformed
+        pos = almacenes.size() - 1;
+        mostrar();
+    }//GEN-LAST:event_btnUltimoActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        estado = Estado.CONSULTA;
+        mostrar();
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        estado = Estado.MODIFICACION;
+        mostrar();
+    }//GEN-LAST:event_btnModificarActionPerformed
+
+    private void btnAñadirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAñadirActionPerformed
+        estado = Estado.ALTA;
+        mostrar();
+    }//GEN-LAST:event_btnAñadirActionPerformed
+
+    private void btnBuscarProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarProductosActionPerformed
+
+    }//GEN-LAST:event_btnBuscarProductosActionPerformed
+
+    private void btnBuscarAlmacenesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarAlmacenesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnBuscarAlmacenesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -293,6 +424,8 @@ public class GestockVista extends javax.swing.JFrame {
     private javax.swing.JButton btnAnterior;
     private javax.swing.JButton btnAñadir;
     private javax.swing.JButton btnAñadirProducto;
+    private javax.swing.JButton btnBuscarAlmacenes;
+    private javax.swing.JButton btnBuscarProductos;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnEliminarProducto;
@@ -316,4 +449,102 @@ public class GestockVista extends javax.swing.JFrame {
     private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtNombre;
     // End of variables declaration//GEN-END:variables
+
+    private void mostrar() {
+        if (almacenes.isEmpty()) {
+            estado = Estado.ALTA;
+            pos = 0;
+        }
+        if (estado == Estado.ALTA) {
+            lblContador.setText("Nuevo");
+            txtId.setText("|| Automático ||");
+            txtNombre.setText("");
+            txtDireccion.setText("");
+            ftxCapacidadMaxima.setText("1");
+        } else {
+            Almacen a = almacenes.get(pos);
+            lblContador.setText("%02d / %02d".formatted(pos + 1, almacenes.size()));
+            txtId.setText(a.getIdAlmacen().toString());
+            txtNombre.setText(a.getNombre());
+            txtDireccion.setText(a.getDireccion());
+            ftxCapacidadMaxima.setText(a.getCapacidadMaxima().toString());
+        }
+        btnAnterior.setEnabled(pos > 0 && estado == Estado.CONSULTA);
+        btnPrimero.setEnabled(pos > 0 && estado == Estado.CONSULTA);
+        btnSiguiente.setEnabled(pos < almacenes.size() - 1 && estado == Estado.CONSULTA);
+        btnUltimo.setEnabled(pos < almacenes.size() - 1 && estado == Estado.CONSULTA);
+        btnCancelar.setEnabled(estado != Estado.CONSULTA && almacenes.size() > 0);
+        btnGuardar.setEnabled(estado != Estado.CONSULTA);
+        btnModificar.setEnabled(estado == Estado.CONSULTA);
+        btnAñadir.setEnabled(estado == Estado.CONSULTA);
+        btnEliminar.setEnabled(estado == Estado.CONSULTA);
+        btnAñadirProducto.setEnabled(estado == Estado.CONSULTA);
+        btnEliminarProducto.setEnabled(estado == Estado.CONSULTA);
+        btnModificarProducto.setEnabled(estado == Estado.CONSULTA);
+        btnBuscarAlmacenes.setEnabled(estado == Estado.CONSULTA);
+        btnBuscarProductos.setEnabled(estado == Estado.CONSULTA);
+        txtId.setEnabled(false);
+        txtNombre.setEnabled(estado != Estado.CONSULTA);
+        txtDireccion.setEnabled(estado != Estado.CONSULTA);
+        ftxCapacidadMaxima.setEnabled(estado != Estado.CONSULTA);
+        actualizarTabla();
+
+    }
+
+    private void inicializarTabla() {
+        Vector<String> vctTitulosTabla = new Vector<>();
+        vctTitulosTabla.add("ID");
+        vctTitulosTabla.add("Codigo de Barras");
+        vctTitulosTabla.add("Descripción");
+        vctTitulosTabla.add("Marca");
+        vctTitulosTabla.add("Categoria");
+        vctTitulosTabla.add("Precio");
+        vctTitulosTabla.add("Stock");
+
+        tblProductos.setDefaultRenderer(Integer.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+                lbl.setHorizontalAlignment(JLabel.CENTER);
+                lbl.setFont(lbl.getFont().deriveFont(16f));
+                return lbl;
+            }
+        });
+
+        dtm = new DefaultTableModel(vctTitulosTabla, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return switch (columnIndex) {
+                    case 0 ->
+                        Integer.class;
+                    default ->
+                        String.class;
+                };
+            }
+        };
+        tblProductos.setModel(dtm);
+    }
+
+    private void actualizarTabla() {
+        dtm.setNumRows(0);
+        for (Producto p : servicio.getProductos().stream()
+                .filter(p -> p.getAlmacen().getIdAlmacen() == almacenes.get(pos).getIdAlmacen())
+                .sorted((p1, p2) -> p2.getFechaEntrada().compareTo(p2.getFechaEntrada()))
+                .toList()) {
+            Vector vctFila = new Vector();
+            vctFila.add(p.getIdProducto());
+            vctFila.add(p.getCodigoBarras());
+            vctFila.add(p.getDescripcion());
+            vctFila.add(p.getMarca());
+            vctFila.add(p.getCategoria());
+            vctFila.add(p.getPrecio());
+            vctFila.add(p.getStock());
+            dtm.addRow(vctFila);
+        }
+    }
 }

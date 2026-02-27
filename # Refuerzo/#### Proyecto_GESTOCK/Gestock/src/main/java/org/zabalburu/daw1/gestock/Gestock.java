@@ -5,6 +5,7 @@
 package org.zabalburu.daw1.gestock;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import org.zabalburu.daw1.gestock.util.ConexionBBDD;
+import org.zabalburu.daw1.gestock.vista.GestockVista;
 
 /**
  *
@@ -16,5 +17,6 @@ public class Gestock {
         FlatMacDarkLaf.setup();
         System.out.println("Hello Gestock!");
         System.out.println(ConexionBBDD.getConnection());
+        new GestockVista().setVisible(true);
     }
 }
