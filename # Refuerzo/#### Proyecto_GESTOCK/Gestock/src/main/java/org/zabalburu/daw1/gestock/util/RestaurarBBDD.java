@@ -51,6 +51,7 @@ public class RestaurarBBDD {
                                )
                                """);
             cnn.commit();
+            cnn.setAutoCommit(true);
             System.out.println("Base de datos Inicializada con Éxito!");
         } catch (SQLException ex) {
             System.getLogger(RestaurarBBDD.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);

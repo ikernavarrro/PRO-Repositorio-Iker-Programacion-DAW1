@@ -10,9 +10,12 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import org.zabalburu.daw1.gestock.excepciones.AlmacenNoEncontradoException;
+import org.zabalburu.daw1.gestock.excepciones.EliminarAlmacenConProductosException;
 import org.zabalburu.daw1.gestock.modelo.Almacen;
 import org.zabalburu.daw1.gestock.modelo.Producto;
 import org.zabalburu.daw1.gestock.servicio.GestockServicio;
@@ -75,7 +78,6 @@ public class GestockVista extends javax.swing.JFrame {
         lblAlmacen = new javax.swing.JLabel();
         lblTituloGetock = new javax.swing.JLabel();
         lblContador = new javax.swing.JLabel();
-        btnBuscarProductos = new javax.swing.JButton();
         btnBuscarAlmacenes = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -100,6 +102,13 @@ public class GestockVista extends javax.swing.JFrame {
         lblDireccion.setText("Dirección");
 
         lblCapacidadMaxima.setText("Capacidad Máxima");
+
+        ftxCapacidadMaxima.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        ftxCapacidadMaxima.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ftxCapacidadMaximaActionPerformed(evt);
+            }
+        });
 
         btnGestionarProductos.setText("Gestionar Productos Almacén");
         btnGestionarProductos.addActionListener(new java.awt.event.ActionListener() {
@@ -180,13 +189,6 @@ public class GestockVista extends javax.swing.JFrame {
         lblContador.setFont(new java.awt.Font("Segoe UI Historic", 1, 18)); // NOI18N
         lblContador.setText("[0/0]");
 
-        btnBuscarProductos.setText("Localizar Producto");
-        btnBuscarProductos.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBuscarProductosActionPerformed(evt);
-            }
-        });
-
         btnBuscarAlmacenes.setText("Buscar Almacen");
         btnBuscarAlmacenes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -230,9 +232,7 @@ public class GestockVista extends javax.swing.JFrame {
                                     .addGap(295, 295, 295))
                                 .addGroup(layout.createSequentialGroup()
                                     .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(3, 3, 3)
-                                    .addComponent(btnBuscarProductos)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addGap(141, 141, 141)
                                     .addComponent(btnBuscarAlmacenes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                             .addComponent(lblId))
                         .addContainerGap(33, Short.MAX_VALUE))
@@ -246,7 +246,6 @@ public class GestockVista extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(80, 80, 80)
                                 .addComponent(lblContador)
                                 .addGap(82, 82, 82))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -285,8 +284,7 @@ public class GestockVista extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnBuscarAlmacenes)
-                            .addComponent(btnBuscarProductos))
+                            .addComponent(btnBuscarAlmacenes))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lblNombre)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -315,17 +313,64 @@ public class GestockVista extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnGestionarProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGestionarProductosActionPerformed
-        new ProductosAlmacenGestionVista(this,true,almacenes.get(pos)).setVisible(true);
+        new ProductosAlmacenGestionVista(this, true, almacenes.get(pos)).setVisible(true);
         almacenes = servicio.getAlmacenes();
         mostrar();
     }//GEN-LAST:event_btnGestionarProductosActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-        // TODO add your handling code here:
+        if (JOptionPane.showConfirmDialog(this, "Desea eliminar el Almacen: { %s [ ID: %d ]}".formatted(almacenes.get(pos).getNombre(), almacenes.get(pos).getIdAlmacen()), "Eliminar Almacén", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            try {
+                servicio.removeAlmacen(almacenes.get(pos).getIdAlmacen());
+                JOptionPane.showMessageDialog(this, "El Almacén ha sido eliminado de manera satisfactoria!", "Información", JOptionPane.INFORMATION_MESSAGE);
+            } catch (EliminarAlmacenConProductosException ex) {
+                JOptionPane.showMessageDialog(this, "<html><h3>¡No es posible eliminar el Almacén con [ID : %d] porque tiene Productos!</h3></html>".formatted(almacenes.get(pos).getIdAlmacen()), "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (AlmacenNoEncontradoException ex) {
+                JOptionPane.showMessageDialog(this, "<html><h3>¡No se ha encontrado el Almacén!</h3><br /> </html>", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            almacenes = servicio.getAlmacenes();
+            if (pos == almacenes.size()) {
+                pos--;
+            }
+            mostrar();
+        }
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        // TODO add your handling code here:
+        Almacen a = new Almacen();
+        if (estado == Estado.MODIFICACION) {
+            a.setIdAlmacen(almacenes.get(pos).getIdAlmacen());
+        }
+
+        if (txtNombre.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "El Nombre es OBLIGATORIO!", "Error", JOptionPane.ERROR_MESSAGE);
+            txtNombre.requestFocus();
+        } else if (txtDireccion.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "La Dirección es OBLIGATORIA!", "Error", JOptionPane.ERROR_MESSAGE);
+            txtDireccion.requestFocus();
+        } else if (ftxCapacidadMaxima.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "La Capacidad Máxima es OBLIGATORIA!", "Error", JOptionPane.ERROR_MESSAGE);
+            ftxCapacidadMaxima.requestFocus();
+        } else {
+            a.setNombre(txtNombre.getText());
+            a.setDireccion(txtDireccion.getText());
+            a.setCapacidadMaxima(Integer.valueOf(ftxCapacidadMaxima.getText()));
+            if (estado == Estado.ALTA) {
+                servicio.addAlmacen(a);
+                JOptionPane.showMessageDialog(this, "El Almacén ha sido registrado de manera satisfactoria!", "Información", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                try {
+                    servicio.modifyAlmacen(a);
+                } catch (AlmacenNoEncontradoException ex) {
+                    System.getLogger(ProductosAlmacenGestionVista.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+                }
+                JOptionPane.showMessageDialog(this, "El Almacén ha sido modificado de manera satisfactoria!", "Información", JOptionPane.INFORMATION_MESSAGE);
+            }
+            almacenes = servicio.getAlmacenes();
+            pos = almacenes.indexOf(a);
+            estado = Estado.CONSULTA;
+            mostrar();
+        }
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnPrimeroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrimeroActionPerformed
@@ -363,13 +408,13 @@ public class GestockVista extends javax.swing.JFrame {
         mostrar();
     }//GEN-LAST:event_btnAñadirActionPerformed
 
-    private void btnBuscarProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarProductosActionPerformed
-
-    }//GEN-LAST:event_btnBuscarProductosActionPerformed
-
     private void btnBuscarAlmacenesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarAlmacenesActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnBuscarAlmacenesActionPerformed
+
+    private void ftxCapacidadMaximaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ftxCapacidadMaximaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ftxCapacidadMaximaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -400,7 +445,6 @@ public class GestockVista extends javax.swing.JFrame {
     private javax.swing.JButton btnAnterior;
     private javax.swing.JButton btnAñadir;
     private javax.swing.JButton btnBuscarAlmacenes;
-    private javax.swing.JButton btnBuscarProductos;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnGestionarProductos;
@@ -454,7 +498,6 @@ public class GestockVista extends javax.swing.JFrame {
         btnEliminar.setEnabled(estado == Estado.CONSULTA);
         btnGestionarProductos.setEnabled(estado == Estado.CONSULTA);
         btnBuscarAlmacenes.setEnabled(estado == Estado.CONSULTA);
-        btnBuscarProductos.setEnabled(estado == Estado.CONSULTA);
         txtId.setEnabled(false);
         txtNombre.setEnabled(estado != Estado.CONSULTA);
         txtDireccion.setEnabled(estado != Estado.CONSULTA);
@@ -506,7 +549,6 @@ public class GestockVista extends javax.swing.JFrame {
         dtm.setNumRows(0);
         for (Producto p : servicio.getProductos().stream()
                 .filter(p -> p.getAlmacen().getIdAlmacen() == almacenes.get(pos).getIdAlmacen())
-                .sorted((p1, p2) -> p2.getFechaEntrada().compareTo(p2.getFechaEntrada()))
                 .toList()) {
             Vector vctFila = new Vector();
             vctFila.add(p.getIdProducto());
