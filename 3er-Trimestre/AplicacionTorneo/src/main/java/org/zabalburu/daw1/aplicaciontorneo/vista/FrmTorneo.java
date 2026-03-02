@@ -7,7 +7,9 @@ package org.zabalburu.daw1.aplicaciontorneo.vista;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
+import java.awt.CardLayout;
 import org.zabalburu.daw1.aplicaciontorneo.vista.paneles.PnlDashboard;
+import org.zabalburu.daw1.aplicaciontorneo.vista.paneles.PnlJuegos;
 
 /**
  *
@@ -23,6 +25,7 @@ public class FrmTorneo extends javax.swing.JFrame {
     public FrmTorneo() {
         initComponents();
         pnlPrincipal.add(new PnlDashboard(),"DASHBOARD");
+        pnlPrincipal.add(new PnlJuegos(), "JUEGOS");
     }
 
     /**
@@ -70,6 +73,11 @@ public class FrmTorneo extends javax.swing.JFrame {
         tbtDashboard.setMaximumSize(new java.awt.Dimension(160, 35));
         tbtDashboard.setMinimumSize(new java.awt.Dimension(160, 35));
         tbtDashboard.setPreferredSize(new java.awt.Dimension(160, 35));
+        tbtDashboard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tbtDashboardActionPerformed(evt);
+            }
+        });
         pnlAcciones.add(tbtDashboard);
         pnlAcciones.add(filler3);
 
@@ -80,6 +88,11 @@ public class FrmTorneo extends javax.swing.JFrame {
         tbtJuegos.setMaximumSize(new java.awt.Dimension(160, 35));
         tbtJuegos.setMinimumSize(new java.awt.Dimension(160, 35));
         tbtJuegos.setPreferredSize(new java.awt.Dimension(160, 35));
+        tbtJuegos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tbtJuegosActionPerformed(evt);
+            }
+        });
         pnlAcciones.add(tbtJuegos);
         pnlAcciones.add(filler4);
 
@@ -117,9 +130,22 @@ public class FrmTorneo extends javax.swing.JFrame {
         pnlPrincipal.setLayout(new java.awt.CardLayout());
         getContentPane().add(pnlPrincipal, java.awt.BorderLayout.CENTER);
 
-        setSize(new java.awt.Dimension(1028, 522));
+        setSize(new java.awt.Dimension(1177, 522));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void tbtDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tbtDashboardActionPerformed
+        cambiarPanel("DASHBOARD");
+    }//GEN-LAST:event_tbtDashboardActionPerformed
+
+    private void tbtJuegosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tbtJuegosActionPerformed
+        cambiarPanel("JUEGOS");
+    }//GEN-LAST:event_tbtJuegosActionPerformed
+
+    private void cambiarPanel(String nombre) {
+        CardLayout cl = (CardLayout) pnlPrincipal.getLayout();
+        cl.show(pnlPrincipal, nombre);
+    }
 
     /**
      * @param args the command line arguments

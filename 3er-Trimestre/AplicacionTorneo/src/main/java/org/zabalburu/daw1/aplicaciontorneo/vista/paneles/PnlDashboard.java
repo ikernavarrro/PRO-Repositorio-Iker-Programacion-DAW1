@@ -211,7 +211,7 @@ public class PnlDashboard extends javax.swing.JPanel {
         setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setLayout(new java.awt.BorderLayout());
 
-        pnlSuperior.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        pnlSuperior.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 0));
         pnlSuperior.setLayout(new java.awt.BorderLayout());
 
         pnl1.setLayout(new javax.swing.BoxLayout(pnl1, javax.swing.BoxLayout.LINE_AXIS));
@@ -235,7 +235,7 @@ public class PnlDashboard extends javax.swing.JPanel {
 
         pnl3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        lblUltimasPartidas.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
+        lblUltimasPartidas.setFont(new java.awt.Font("Segoe UI Light", 0, 14)); // NOI18N
         lblUltimasPartidas.setText("Últimas Partidas");
         pnl3.add(lblUltimasPartidas);
 
