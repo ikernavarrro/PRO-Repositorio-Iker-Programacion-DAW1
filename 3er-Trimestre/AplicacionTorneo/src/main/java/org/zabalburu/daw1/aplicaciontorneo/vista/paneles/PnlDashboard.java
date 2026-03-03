@@ -19,6 +19,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -162,6 +163,8 @@ public class PnlDashboard extends javax.swing.JPanel {
         };
 
         tblUltimas.setModel(dtm);
+        tblUltimas.setAutoCreateRowSorter(true);
+        tblUltimas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
 
     public void actualizarPanel() {

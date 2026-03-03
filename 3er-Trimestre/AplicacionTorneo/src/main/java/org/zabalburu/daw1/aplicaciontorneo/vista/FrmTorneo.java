@@ -10,6 +10,7 @@ import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import java.awt.CardLayout;
 import org.zabalburu.daw1.aplicaciontorneo.vista.paneles.PnlDashboard;
 import org.zabalburu.daw1.aplicaciontorneo.vista.paneles.PnlJuegos;
+import org.zabalburu.daw1.aplicaciontorneo.vista.paneles.PnlJugadores;
 
 /**
  *
@@ -26,6 +27,8 @@ public class FrmTorneo extends javax.swing.JFrame {
         initComponents();
         pnlPrincipal.add(new PnlDashboard(),"DASHBOARD");
         pnlPrincipal.add(new PnlJuegos(), "JUEGOS");
+        pnlPrincipal.add(new PnlJugadores(), "JUGADORES");
+        
     }
 
     /**
@@ -60,8 +63,8 @@ public class FrmTorneo extends javax.swing.JFrame {
         pnlAcciones.setLayout(new javax.swing.BoxLayout(pnlAcciones, javax.swing.BoxLayout.Y_AXIS));
         pnlAcciones.add(filler2);
 
-        lblCampeonato.setFont(new java.awt.Font("Segoe UI Black", 0, 18)); // NOI18N
-        lblCampeonato.setText("• CAMPEONATO •");
+        lblCampeonato.setFont(new java.awt.Font("Segoe UI Emoji", 0, 18)); // NOI18N
+        lblCampeonato.setText("🏆 CAMPEONATO");
         lblCampeonato.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         pnlAcciones.add(lblCampeonato);
         pnlAcciones.add(filler1);
@@ -103,6 +106,11 @@ public class FrmTorneo extends javax.swing.JFrame {
         tbtJugadores.setMaximumSize(new java.awt.Dimension(160, 35));
         tbtJugadores.setMinimumSize(new java.awt.Dimension(160, 35));
         tbtJugadores.setPreferredSize(new java.awt.Dimension(160, 35));
+        tbtJugadores.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tbtJugadoresActionPerformed(evt);
+            }
+        });
         pnlAcciones.add(tbtJugadores);
         pnlAcciones.add(filler5);
 
@@ -130,7 +138,7 @@ public class FrmTorneo extends javax.swing.JFrame {
         pnlPrincipal.setLayout(new java.awt.CardLayout());
         getContentPane().add(pnlPrincipal, java.awt.BorderLayout.CENTER);
 
-        setSize(new java.awt.Dimension(1177, 522));
+        setSize(new java.awt.Dimension(1265, 522));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -141,6 +149,10 @@ public class FrmTorneo extends javax.swing.JFrame {
     private void tbtJuegosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tbtJuegosActionPerformed
         cambiarPanel("JUEGOS");
     }//GEN-LAST:event_tbtJuegosActionPerformed
+
+    private void tbtJugadoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tbtJugadoresActionPerformed
+         cambiarPanel("JUGADORES");
+    }//GEN-LAST:event_tbtJugadoresActionPerformed
 
     private void cambiarPanel(String nombre) {
         CardLayout cl = (CardLayout) pnlPrincipal.getLayout();
