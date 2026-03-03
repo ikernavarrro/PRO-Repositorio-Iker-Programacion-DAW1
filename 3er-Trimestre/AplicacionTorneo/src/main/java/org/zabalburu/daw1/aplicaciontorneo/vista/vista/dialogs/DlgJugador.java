@@ -4,9 +4,25 @@
  */
 package org.zabalburu.daw1.aplicaciontorneo.vista.vista.dialogs;
 
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.net.URI;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import org.zabalburu.daw1.aplicaciontorneo.modelo.Juego;
+import org.zabalburu.daw1.aplicaciontorneo.modelo.Jugador;
 import org.zabalburu.daw1.aplicaciontorneo.servicio.TorneoServicio;
+import org.zabalburu.daw1.aplicaciontorneo.util.CircleImage;
 
 /**
  *
@@ -16,32 +32,67 @@ public class DlgJugador extends javax.swing.JDialog {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(DlgJugador.class.getName());
 
-    private Juego juego;
+    private Jugador jugador;
     private TorneoServicio servicio = TorneoServicio.getServicio();
 
     /**
      * Creates new form DlgJuego
      */
-    public DlgJugador(java.awt.Frame parent, boolean modal, Juego juego) {
+    public DlgJugador(java.awt.Frame parent, boolean modal, Jugador jugador) {
         super(parent, modal);
-        this.juego = juego;
+        this.jugador = jugador;
         initComponents();
+        lblImagen.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblImagen.setToolTipText("Cargar Imagen");
+        lblImagen.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                abrirFileChooser();
+            }
+
+            private void abrirFileChooser() {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle("Seleccionar imagen");
+                FileNameExtensionFilter filtro = new javax.swing.filechooser.FileNameExtensionFilter("Imágenes (JPG, PNG, GIF, BMP)", "jpg", "jpeg", "png", "gif", "bmp");
+                fileChooser.setFileFilter(filtro);
+                fileChooser.setAcceptAllFileFilterUsed(false);
+                int resultado = fileChooser.showOpenDialog(null);
+                if (resultado == JFileChooser.APPROVE_OPTION) {
+                    File archivoSeleccionado = fileChooser.getSelectedFile();
+                    cargarImagenImportada(archivoSeleccionado);
+                }
+            }
+
+            private void cargarImagenImportada(File archivo) {
+                ImageIcon iconoOriginal = new ImageIcon(archivo.getAbsolutePath());
+                Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+                lblImagen.setIcon(new ImageIcon(imagenEscalada));
+            }
+        });
         mostrar();
     }
 
     private void mostrar() {
-        if (juego != null) {
-            lblId.setText(String.valueOf(juego.getId()));
-            txtTitulo.setText(juego.getTitulo());
-            txaDescripcion.setText(juego.getDescripcion());
-            cbxTipo.setSelectedItem(juego.getTipo());
-            lblTituloForm.setText("Editando - " + juego.getTitulo());
-            this.setTitle("Editando - " + juego.getTitulo());
+        if (jugador != null) {
+            lblId.setText(String.valueOf(jugador.getId()));
+            txtNick.setText(jugador.getNick());
+            txtNombre.setText(jugador.getNombre());
+            txtApellidos.setText(jugador.getApellidos());
+            lblTituloForm.setText("Editando - " + jugador.getNick());
+            lblImagen.setIcon(new ImageIcon(cargarImagen(jugador.getImagen())));
+            this.setTitle("Editando - " + jugador.getNick());
         } else {
             lblId.setText("Nuevo");
-            lblTituloForm.setText("Nuevo Juego");
+            lblTituloForm.setText("Nuevo Jugador");
             this.setTitle("Nuevo");
         }
+    }
+
+    private BufferedImage cargarImagen(ImageIcon imagen) {
+        BufferedImage bfImg = toBufferedImage(imagen.getImage());
+        Image scaled = bfImg.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+        BufferedImage circleImage = (BufferedImage) CircleImage.getCircleImage(scaled);
+        return circleImage;
     }
 
     /**
@@ -58,14 +109,13 @@ public class DlgJugador extends javax.swing.JDialog {
         pnlDatos = new javax.swing.JPanel();
         lblLabelId = new javax.swing.JLabel();
         lblId = new javax.swing.JLabel();
-        lblLabelTitulo = new javax.swing.JLabel();
-        lblDescripcion = new javax.swing.JLabel();
-        jspDescripcion = new javax.swing.JScrollPane();
-        txaDescripcion = new javax.swing.JTextArea();
-        lblLabelTipo = new javax.swing.JLabel();
-        cbxTipo = new javax.swing.JComboBox<>();
+        lblNombre = new javax.swing.JLabel();
         lblImagen = new javax.swing.JLabel();
-        txtTitulo = new javax.swing.JTextField();
+        txtNombre = new javax.swing.JTextField();
+        lblApellidos = new javax.swing.JLabel();
+        txtApellidos = new javax.swing.JTextField();
+        lblNick = new javax.swing.JLabel();
+        txtNick = new javax.swing.JTextField();
         pnlAcciones = new javax.swing.JPanel();
         btnCancelar = new javax.swing.JButton();
         btnGuardar = new javax.swing.JButton();
@@ -73,7 +123,7 @@ public class DlgJugador extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         lblTituloForm.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
-        lblTituloForm.setText("Juego");
+        lblTituloForm.setText("Jugador");
         pnlTitulo.add(lblTituloForm);
 
         getContentPane().add(pnlTitulo, java.awt.BorderLayout.PAGE_START);
@@ -86,79 +136,68 @@ public class DlgJugador extends javax.swing.JDialog {
         lblId.setFont(new java.awt.Font("Segoe UI Semilight", 1, 18)); // NOI18N
         lblId.setText("jLabel2");
 
-        lblLabelTitulo.setFont(new java.awt.Font("Segoe UI Semilight", 0, 14)); // NOI18N
-        lblLabelTitulo.setText("Título:");
-
-        lblDescripcion.setFont(new java.awt.Font("Segoe UI Semilight", 0, 14)); // NOI18N
-        lblDescripcion.setText("Descripción");
-
-        txaDescripcion.setColumns(20);
-        txaDescripcion.setFont(new java.awt.Font("Segoe UI Semilight", 0, 14)); // NOI18N
-        txaDescripcion.setRows(5);
-        jspDescripcion.setViewportView(txaDescripcion);
-
-        lblLabelTipo.setFont(new java.awt.Font("Segoe UI Semilight", 0, 14)); // NOI18N
-        lblLabelTipo.setText("Tipo:");
-
-        cbxTipo.setFont(new java.awt.Font("Segoe UI Semilight", 0, 14)); // NOI18N
-        cbxTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "MOBA", "Tactical Shooter", "Sports", "Board Game", "Fighting", "Hero Shooter", "Battle Royale", "RTS", "Racing", "Card Game", "Auto-Battler", "MOBA Mobile", "Action Mobile", "Adventure", "Strategy Mobile", "Arena Brawler", "Arena Shooter", "Hybrid Shooter", "Sports Brawler", "RPG", "Sandbox" }));
+        lblNombre.setFont(new java.awt.Font("Segoe UI Semilight", 0, 14)); // NOI18N
+        lblNombre.setText("Nombre:");
 
         lblImagen.setFont(new java.awt.Font("Segoe UI Semilight", 0, 14)); // NOI18N
         lblImagen.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/aplicaciontorneo/imagenes/addimage.png"))); // NOI18N
-        lblImagen.setPreferredSize(new java.awt.Dimension(200, 200));
+        lblImagen.setPreferredSize(new java.awt.Dimension(150, 150));
+
+        lblApellidos.setFont(new java.awt.Font("Segoe UI Semilight", 0, 14)); // NOI18N
+        lblApellidos.setText("Apellidos:");
+
+        lblNick.setFont(new java.awt.Font("Segoe UI Semilight", 0, 14)); // NOI18N
+        lblNick.setText("Nick:");
 
         javax.swing.GroupLayout pnlDatosLayout = new javax.swing.GroupLayout(pnlDatos);
         pnlDatos.setLayout(pnlDatosLayout);
         pnlDatosLayout.setHorizontalGroup(
             pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlDatosLayout.createSequentialGroup()
-                .addGap(5, 5, 5)
+                .addContainerGap()
                 .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(pnlDatosLayout.createSequentialGroup()
-                        .addComponent(lblLabelId)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(lblId, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblNombre)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblLabelTitulo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtNombre))
                     .addGroup(pnlDatosLayout.createSequentialGroup()
-                        .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(pnlDatosLayout.createSequentialGroup()
-                                    .addComponent(lblLabelTipo)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(cbxTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(jspDescripcion))
-                            .addComponent(lblDescripcion))
+                        .addComponent(lblApellidos)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtApellidos, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlDatosLayout.createSequentialGroup()
+                        .addComponent(lblLabelId)
                         .addGap(18, 18, 18)
-                        .addComponent(lblImagen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(10, Short.MAX_VALUE))
+                        .addComponent(lblId, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblNick)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtNick, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
+                .addComponent(lblImagen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(46, 46, 46))
         );
         pnlDatosLayout.setVerticalGroup(
             pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlDatosLayout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lblLabelId)
-                        .addComponent(lblId))
-                    .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lblLabelTitulo)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblLabelId)
+                    .addComponent(lblId)
+                    .addComponent(txtNick, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblNick))
+                .addGap(18, 18, 18)
+                .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblNombre))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(pnlDatosLayout.createSequentialGroup()
-                        .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblLabelTipo)
-                            .addComponent(cbxTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lblDescripcion)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jspDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lblImagen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtApellidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblApellidos))
+                .addGap(28, 28, 28))
+            .addGroup(pnlDatosLayout.createSequentialGroup()
+                .addComponent(lblImagen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 12, Short.MAX_VALUE))
         );
 
         getContentPane().add(pnlDatos, java.awt.BorderLayout.CENTER);
@@ -190,20 +229,27 @@ public class DlgJugador extends javax.swing.JDialog {
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        if (txtTitulo.getText().isBlank()) {
-            JOptionPane.showMessageDialog(this, "El título es OBLIGATORIO", "Falta Título", JOptionPane.ERROR_MESSAGE);
+        if (txtNick.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "El Nick es OBLIGATORIO", "Error", JOptionPane.ERROR_MESSAGE);
+            //txtTitulo.putClientProperty("JComponent.outline", "error"); 
+        } else if (txtNombre.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "El Nombre es OBLIGATORIO", "Error", JOptionPane.ERROR_MESSAGE);
+            //txtTitulo.putClientProperty("JComponent.outline", "error"); 
+        } else if (txtApellidos.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "Los Apellidos son OBLIGATORIOS", "Error", JOptionPane.ERROR_MESSAGE);
             //txtTitulo.putClientProperty("JComponent.outline", "error"); 
         } else {
-            if (juego == null) {
-                juego = new Juego();
+            if (jugador == null) {
+                jugador = new Jugador();
             }
-            juego.setTitulo(txtTitulo.getText());
-            juego.setTipo(cbxTipo.getSelectedItem().toString());
-            juego.setDescripcion(txaDescripcion.getText());
+            jugador.setNick(txtNick.getText());
+            jugador.setNombre(txtNombre.getText());
+            jugador.setApellidos(txtApellidos.getText());
+            jugador.setNormal((ImageIcon) lblImagen.getIcon());
             if (lblId.getText().equalsIgnoreCase("nuevo")) {
-                servicio.addJuego(juego);
+                servicio.addJugador(jugador);
             } else {
-                servicio.modifyJuego(juego);
+                servicio.modifyJugador(jugador);
             }
             JOptionPane.showMessageDialog(this, "Datos registrados correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
             this.dispose();
@@ -250,20 +296,37 @@ public class DlgJugador extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnGuardar;
-    private javax.swing.JComboBox<String> cbxTipo;
-    private javax.swing.JScrollPane jspDescripcion;
-    private javax.swing.JLabel lblDescripcion;
+    private javax.swing.JLabel lblApellidos;
     private javax.swing.JLabel lblId;
     private javax.swing.JLabel lblImagen;
     private javax.swing.JLabel lblLabelId;
-    private javax.swing.JLabel lblLabelTipo;
-    private javax.swing.JLabel lblLabelTitulo;
+    private javax.swing.JLabel lblNick;
+    private javax.swing.JLabel lblNombre;
     private javax.swing.JLabel lblTituloForm;
     private javax.swing.JPanel pnlAcciones;
     private javax.swing.JPanel pnlDatos;
     private javax.swing.JPanel pnlTitulo;
-    private javax.swing.JTextArea txaDescripcion;
-    private javax.swing.JTextField txtTitulo;
+    private javax.swing.JTextField txtApellidos;
+    private javax.swing.JTextField txtNick;
+    private javax.swing.JTextField txtNombre;
     // End of variables declaration//GEN-END:variables
+
+    private BufferedImage toBufferedImage(Image image) {
+        if (image instanceof BufferedImage) {
+            return (BufferedImage) image;
+        }
+
+        BufferedImage buffered = new BufferedImage(
+                image.getWidth(null),
+                image.getHeight(null),
+                BufferedImage.TYPE_INT_ARGB
+        );
+
+        Graphics2D g2 = buffered.createGraphics();
+        g2.drawImage(image, 0, 0, null);
+        g2.dispose();
+
+        return buffered;
+    }
 
 }

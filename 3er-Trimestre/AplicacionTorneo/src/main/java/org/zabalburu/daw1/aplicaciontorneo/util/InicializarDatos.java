@@ -41,7 +41,7 @@ public class InicializarDatos {
                     nombre VARCHAR2(100),
                     apellidos VARCHAR2(100),
                     nick VARCHAR2(50),
-                    imagen VARCHAR2(100)
+                    imagen VARCHAR2(500)
                 )
                 """);
 

@@ -28,6 +28,7 @@ import org.zabalburu.daw1.aplicaciontorneo.modelo.Jugador;
 import org.zabalburu.daw1.aplicaciontorneo.modelo.Partida;
 import org.zabalburu.daw1.aplicaciontorneo.servicio.TorneoServicio;
 import org.zabalburu.daw1.aplicaciontorneo.vista.vista.dialogs.DlgJuego;
+import org.zabalburu.daw1.aplicaciontorneo.vista.vista.dialogs.DlgJugador;
 
 /**
  *
@@ -323,7 +324,7 @@ public class PnlJugadores extends javax.swing.JPanel {
     }//GEN-LAST:event_txtBuscarActionPerformed
 
     private void btNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btNuevoActionPerformed
-        //new DlgJuego(null, true, null).setVisible(true);
+        new DlgJugador(null, true, null).setVisible(true);
         lstJugadores.setListData(new Vector<>(servicio.getJugadores()));
         lstJugadores.setSelectedIndex(lstJugadores.getModel().getSize() - 1);
         lstJugadores.requestFocus();
@@ -334,7 +335,7 @@ public class PnlJugadores extends javax.swing.JPanel {
         if (j == null) {
             JOptionPane.showMessageDialog(null, "Debe seleccionar el jugador a Modificar", "Seleccione el jugador", JOptionPane.WARNING_MESSAGE);
         } else {
-            //new DlgJuego(null, true, j).setVisible(true);
+            new DlgJugador(null, true, j).setVisible(true);
             int pos = lstJugadores.getSelectedIndex();
             lstJugadores.setListData(new Vector<>(servicio.getJugadores()));
             lstJugadores.setSelectedIndex(pos);

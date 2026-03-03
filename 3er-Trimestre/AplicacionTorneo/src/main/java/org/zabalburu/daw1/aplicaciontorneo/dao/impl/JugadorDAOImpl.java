@@ -32,7 +32,7 @@ public class JugadorDAOImpl implements JugadorDAO {
             pstmt.setString(1, nuevo.getNombre());
             pstmt.setString(2, nuevo.getApellidos());
             pstmt.setString(3, nuevo.getNick());
-            //pstmt.setString(4, nuevo.getImagen());
+            pstmt.setString(4, nuevo.getNormal().toString());
             pstmt.executeUpdate();
             ResultSet rst = cnn.createStatement().executeQuery("""
                                                                SELECT seqJugadores.currval as "id"
@@ -91,13 +91,14 @@ public class JugadorDAOImpl implements JugadorDAO {
                                                         SET nombre = ?,
                                                            apellidos = ?,
                                                            nick = ?,
+                                                           imagen = ?
                                                         WHERE id=?   
                                                         """);
             pstmt.setString(1, modificar.getNombre());
             pstmt.setString(2, modificar.getApellidos());
             pstmt.setString(3, modificar.getNick());
-            //pstmt.setString(4, modificar.getImagen());
-            pstmt.setInt(4, modificar.getId());
+            pstmt.setString(4, modificar.getNormal().toString());
+            pstmt.setInt(5, modificar.getId());
             pstmt.executeUpdate();
             pstmt.close();
         } catch (SQLException ex) {

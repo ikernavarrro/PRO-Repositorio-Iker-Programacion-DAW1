@@ -4,6 +4,7 @@
  */
 package org.zabalburu.daw1.aplicaciontorneo.vista.vista.dialogs;
 
+import java.awt.Cursor;
 import javax.swing.JOptionPane;
 import org.zabalburu.daw1.aplicaciontorneo.modelo.Juego;
 import org.zabalburu.daw1.aplicaciontorneo.servicio.TorneoServicio;
@@ -26,6 +27,7 @@ public class DlgJuego extends javax.swing.JDialog {
         super(parent, modal);
         this.juego = juego;
         initComponents();
+        lblImagen.setCursor(new Cursor(Cursor.HAND_CURSOR));
         mostrar();
     }
 
@@ -52,7 +54,6 @@ public class DlgJuego extends javax.swing.JDialog {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         pnlTitulo = new javax.swing.JPanel();
         lblTituloForm = new javax.swing.JLabel();
@@ -141,12 +142,13 @@ public class DlgJuego extends javax.swing.JDialog {
             pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlDatosLayout.createSequentialGroup()
                 .addGap(6, 6, 6)
-                .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblLabelTitulo)
+                .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(lblLabelId)
-                        .addComponent(lblId)))
+                        .addComponent(lblId))
+                    .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lblLabelTitulo)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(pnlDatosLayout.createSequentialGroup()
