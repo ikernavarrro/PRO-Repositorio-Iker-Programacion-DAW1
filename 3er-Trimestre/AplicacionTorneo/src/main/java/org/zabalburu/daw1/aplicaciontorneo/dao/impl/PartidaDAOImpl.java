@@ -129,7 +129,9 @@ public class PartidaDAOImpl implements PartidaDAO {
                                                             DELETE partidas
                                                             Where id = ?
                                                             """);
-            pstmt.executeQuery();
+            
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
             pstmt.close();
         } catch (SQLException ex) {
             System.getLogger(PartidaDAOImpl.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);

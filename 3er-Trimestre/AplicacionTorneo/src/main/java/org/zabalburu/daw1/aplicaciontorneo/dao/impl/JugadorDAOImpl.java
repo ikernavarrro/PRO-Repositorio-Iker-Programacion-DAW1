@@ -32,7 +32,7 @@ public class JugadorDAOImpl implements JugadorDAO {
             pstmt.setString(1, nuevo.getNombre());
             pstmt.setString(2, nuevo.getApellidos());
             pstmt.setString(3, nuevo.getNick());
-            pstmt.setString(4, nuevo.getNormal().toString());
+            pstmt.setString(4, nuevo.getImagen());
             pstmt.executeUpdate();
             ResultSet rst = cnn.createStatement().executeQuery("""
                                                                SELECT seqJugadores.currval as "id"
@@ -97,7 +97,7 @@ public class JugadorDAOImpl implements JugadorDAO {
             pstmt.setString(1, modificar.getNombre());
             pstmt.setString(2, modificar.getApellidos());
             pstmt.setString(3, modificar.getNick());
-            pstmt.setString(4, modificar.getNormal().toString());
+            pstmt.setString(4, modificar.getImagen());
             pstmt.setInt(5, modificar.getId());
             pstmt.executeUpdate();
             pstmt.close();
@@ -128,6 +128,8 @@ public class JugadorDAOImpl implements JugadorDAO {
         j.setApellidos(rst.getString("apellidos"));
         j.setNick(rst.getString("nick"));
         j.setImagen(rst.getString("imagen"));
+        j.getImagenAvatar();
+        j.getImagenNormal();
         return j;
     }
     public static void main(String[] args) {

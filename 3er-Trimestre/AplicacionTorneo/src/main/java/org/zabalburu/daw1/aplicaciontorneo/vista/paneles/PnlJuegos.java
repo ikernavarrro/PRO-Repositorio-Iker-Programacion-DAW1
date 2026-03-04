@@ -152,7 +152,7 @@ public class PnlJuegos extends javax.swing.JPanel {
                 } catch (MalformedURLException ex) {
                     System.getLogger(PnlDashboard.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
                 }*/
-                lbl.setIcon(j.getAvatar());
+                lbl.setIcon(j.getImagenAvatar());
                 return lbl;
             }
         });

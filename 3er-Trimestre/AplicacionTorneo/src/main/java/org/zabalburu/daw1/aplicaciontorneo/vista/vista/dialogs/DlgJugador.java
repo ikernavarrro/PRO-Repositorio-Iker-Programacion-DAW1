@@ -6,12 +6,14 @@ package org.zabalburu.daw1.aplicaciontorneo.vista.vista.dialogs;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -33,6 +35,7 @@ public class DlgJugador extends javax.swing.JDialog {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(DlgJugador.class.getName());
 
     private Jugador jugador;
+    private ImageIcon imagenSeleccionada;
     private TorneoServicio servicio = TorneoServicio.getServicio();
 
     /**
@@ -53,7 +56,7 @@ public class DlgJugador extends javax.swing.JDialog {
             private void abrirFileChooser() {
                 JFileChooser fileChooser = new JFileChooser();
                 fileChooser.setDialogTitle("Seleccionar imagen");
-                FileNameExtensionFilter filtro = new javax.swing.filechooser.FileNameExtensionFilter("Imágenes (JPG, PNG, GIF, BMP)", "jpg", "jpeg", "png", "gif", "bmp");
+                FileNameExtensionFilter filtro = new javax.swing.filechooser.FileNameExtensionFilter("Imágenes (PNG)", "png");
                 fileChooser.setFileFilter(filtro);
                 fileChooser.setAcceptAllFileFilterUsed(false);
                 int resultado = fileChooser.showOpenDialog(null);
@@ -65,6 +68,7 @@ public class DlgJugador extends javax.swing.JDialog {
 
             private void cargarImagenImportada(File archivo) {
                 ImageIcon iconoOriginal = new ImageIcon(archivo.getAbsolutePath());
+                imagenSeleccionada = iconoOriginal;
                 Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
                 lblImagen.setIcon(new ImageIcon(imagenEscalada));
             }
@@ -79,20 +83,13 @@ public class DlgJugador extends javax.swing.JDialog {
             txtNombre.setText(jugador.getNombre());
             txtApellidos.setText(jugador.getApellidos());
             lblTituloForm.setText("Editando - " + jugador.getNick());
-            lblImagen.setIcon(new ImageIcon(cargarImagen(jugador.getImagen())));
+            lblImagen.setIcon(jugador.getImagenNormal());
             this.setTitle("Editando - " + jugador.getNick());
         } else {
             lblId.setText("Nuevo");
             lblTituloForm.setText("Nuevo Jugador");
             this.setTitle("Nuevo");
         }
-    }
-
-    private BufferedImage cargarImagen(ImageIcon imagen) {
-        BufferedImage bfImg = toBufferedImage(imagen.getImage());
-        Image scaled = bfImg.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-        BufferedImage circleImage = (BufferedImage) CircleImage.getCircleImage(scaled);
-        return circleImage;
     }
 
     /**
@@ -141,7 +138,7 @@ public class DlgJugador extends javax.swing.JDialog {
 
         lblImagen.setFont(new java.awt.Font("Segoe UI Semilight", 0, 14)); // NOI18N
         lblImagen.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/aplicaciontorneo/imagenes/addimage.png"))); // NOI18N
+        lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/aplicaciontorneo/iconos/imagen_normal.png"))); // NOI18N
         lblImagen.setPreferredSize(new java.awt.Dimension(150, 150));
 
         lblApellidos.setFont(new java.awt.Font("Segoe UI Semilight", 0, 14)); // NOI18N
@@ -245,7 +242,20 @@ public class DlgJugador extends javax.swing.JDialog {
             jugador.setNick(txtNick.getText());
             jugador.setNombre(txtNombre.getText());
             jugador.setApellidos(txtApellidos.getText());
-            jugador.setNormal((ImageIcon) lblImagen.getIcon());
+            if (imagenSeleccionada != null) {
+                BufferedImage bff = toBufferedImage(imagenSeleccionada);
+                String ruta = "imagenes/" + jugador.getNick() + ".png";
+                try {
+                    ImageIO.write(bff, "PNG", new File(ruta)); // Escribimos
+                    jugador.setImagen(ruta); // Asignamos la ruta
+                    jugador.setImagenesNormalAvatar(); // CARGAMOS NORMAL Y AVATAR APARTIR DE LA RUTA
+                    imagenSeleccionada = null;
+                } catch (IOException ex) {
+                    System.getLogger(DlgJugador.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+                }
+            } else {
+                jugador.setImagen("");
+            }
             if (lblId.getText().equalsIgnoreCase("nuevo")) {
                 servicio.addJugador(jugador);
             } else {
@@ -311,22 +321,23 @@ public class DlgJugador extends javax.swing.JDialog {
     private javax.swing.JTextField txtNombre;
     // End of variables declaration//GEN-END:variables
 
-    private BufferedImage toBufferedImage(Image image) {
-        if (image instanceof BufferedImage) {
-            return (BufferedImage) image;
-        }
-
-        BufferedImage buffered = new BufferedImage(
-                image.getWidth(null),
-                image.getHeight(null),
-                BufferedImage.TYPE_INT_ARGB
+    public BufferedImage toBufferedImage(ImageIcon icon) {
+        // 1. Creamos un BufferedImage con el mismo ancho y alto que el icono
+        BufferedImage bi = new BufferedImage(
+                icon.getIconWidth(),
+                icon.getIconHeight(),
+                BufferedImage.TYPE_INT_ARGB // Soporta transparencia
         );
 
-        Graphics2D g2 = buffered.createGraphics();
-        g2.drawImage(image, 0, 0, null);
-        g2.dispose();
+        // 2. Obtenemos el contexto gráfico (el "pincel")
+        Graphics g = bi.createGraphics();
 
-        return buffered;
+        // 3. Pintamos el icono en el BufferedImage
+        icon.paintIcon(null, g, 0, 0);
+
+        // 4. Liberamos recursos
+        g.dispose();
+
+        return bi;
     }
-
 }

@@ -157,7 +157,7 @@ public class PnlJugadores extends javax.swing.JPanel {
                 } catch (MalformedURLException ex) {
                     System.getLogger(PnlDashboard.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
                 }*/
-                lbl.setIcon(j.getAvatar());
+                lbl.setIcon(j.getImagenAvatar());
                 return lbl;
             }
         });
@@ -353,7 +353,7 @@ public class PnlJugadores extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(null, "¡NO es posible ELIMINAR un JUGADOR con Partidas Registradas!", "Error", JOptionPane.ERROR_MESSAGE);
         } else if (JOptionPane.showConfirmDialog(this, "¿Está seguro de ELIMINAR el jugador %s?".formatted(j.getNick()), "Eliminar Jugador", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             int pos = lstJugadores.getSelectedIndex();
-            servicio.removeJuego(j.getId());
+            servicio.removeJugador(j.getId());
             JOptionPane.showMessageDialog(null, "¡Jugador eliminado correctamente!", "Información", JOptionPane.INFORMATION_MESSAGE);
             lstJugadores.setListData(new Vector<>(servicio.getJugadores()));
             if (pos == lstJugadores.getModel().getSize()) {
