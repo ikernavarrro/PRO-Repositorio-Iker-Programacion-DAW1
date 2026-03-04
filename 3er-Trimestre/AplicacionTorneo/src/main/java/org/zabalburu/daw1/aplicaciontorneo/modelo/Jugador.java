@@ -63,13 +63,13 @@ public class Jugador {
                 // === NORMAL ===
                 BufferedImage bffImage = ImageIO.read(f); // Leemos el archivo.
                 Image img = bffImage; //Lo transformamos a Imagen.
-                img = img.getScaledInstance(150, 150, Image.SCALE_SMOOTH); // Escalamos normal 
+                img = img.getScaledInstance(ANCHO_NORMAL, ANCHO_NORMAL, Image.SCALE_SMOOTH); // Escalamos normal 
                 BufferedImage circleImage = (BufferedImage) CircleImage.getCircleImage(img); // Convertimos a circulo
                 ImageIO.write(circleImage, "PNG", new File("imagenes/normal", nick + "normal.png")); // Escribimos
                 normal = new ImageIcon(circleImage); // Asignamos
                 // === AVATAR ===
                 img = bffImage;// Volvemos a transformar para después escalar desde la original y no desde la escalada anteriormente
-                img = img.getScaledInstance(40, 40, Image.SCALE_SMOOTH); // Escalamos avatar
+                img = img.getScaledInstance(ANCHO_AVATAR, ANCHO_AVATAR, Image.SCALE_SMOOTH); // Escalamos avatar
                 circleImage = (BufferedImage) CircleImage.getCircleImage(img); // Convertimos a circulo
                 ImageIO.write(circleImage, "PNG", new File("imagenes/avatares", nick + "avatar.png")); // Escribimos
                 avatar = new ImageIcon(circleImage); // Asignamos
