@@ -24,18 +24,18 @@ public class GenerarImagenesJugadoresPrecargados {
         Connection cnn = Conexion.getConnection();
         try {
             ResultSet rst = cnn.createStatement()
-                    .executeQuery("SELECT id,imagen FROM JUGADORES");
+                    .executeQuery("SELECT nick,imagen FROM JUGADORES");
             while (rst.next()) {                
                 String ruta = rst.getString("imagen");
-                int pos = ruta.lastIndexOf("/");
-                
-                Integer id = rst.getInt("id");
-                ruta = ruta.substring(0,pos+1) + (id % 8 + 1) + ".jpg";
+                String nick = rst.getString("nick");
                 BufferedImage imagen = ImageIO.read(URI.create(ruta).toURL());
-                ImageIO.write(imagen, "PNG", new File("imagenes", "%d.png".formatted(id)));
+                ImageIO.write(imagen, "PNG", new File("imagenes", "%s.png".formatted(nick)));
                 Image scaled = imagen.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
                 BufferedImage circleImage = (BufferedImage) CircleImage.getCircleImage(scaled);
-                ImageIO.write(circleImage, "PNG", new File("imagenes/avatares", "%d.png".formatted(id)));
+                ImageIO.write(circleImage, "PNG", new File("imagenes/avatares", "%s".formatted(nick) +"avatar.png"));
+                scaled = imagen.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+                circleImage = (BufferedImage) CircleImage.getCircleImage(scaled);
+                ImageIO.write(circleImage, "PNG", new File("imagenes/normal", "%s".formatted(nick) +"normal.png"));
             }
         } catch (Exception ex) {
             System.getLogger(GenerarImagenesJugadoresPrecargados.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);

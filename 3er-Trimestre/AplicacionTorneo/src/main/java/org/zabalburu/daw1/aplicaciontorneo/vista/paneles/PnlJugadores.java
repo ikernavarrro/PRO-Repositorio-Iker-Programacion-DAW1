@@ -60,6 +60,7 @@ public class PnlJugadores extends javax.swing.JPanel {
                 lbl.setText(j.getNick());
                 lbl.setIcon(j.getAvatar());
                 lbl.setFont(lbl.getFont().deriveFont(16f));
+                lbl.setToolTipText("%s, %s [id:%d]".formatted(j.getApellidos(), j.getNombre(), j.getId()));
                 return lbl;
             }
 
@@ -327,6 +328,7 @@ public class PnlJugadores extends javax.swing.JPanel {
         new DlgJugador(null, true, null).setVisible(true);
         lstJugadores.setListData(new Vector<>(servicio.getJugadores()));
         lstJugadores.setSelectedIndex(lstJugadores.getModel().getSize() - 1);
+        lstJugadores.ensureIndexIsVisible(lstJugadores.getModel().getSize() - 1);
         lstJugadores.requestFocus();
     }//GEN-LAST:event_btNuevoActionPerformed
 
@@ -339,6 +341,7 @@ public class PnlJugadores extends javax.swing.JPanel {
             int pos = lstJugadores.getSelectedIndex();
             lstJugadores.setListData(new Vector<>(servicio.getJugadores()));
             lstJugadores.setSelectedIndex(pos);
+            lstJugadores.ensureIndexIsVisible(pos);
             lstJugadores.requestFocus();
 
         }
@@ -360,6 +363,7 @@ public class PnlJugadores extends javax.swing.JPanel {
                 pos--;
             }
             lstJugadores.setSelectedIndex(pos);
+            lstJugadores.ensureIndexIsVisible(pos);
             lstJugadores.requestFocus();
         }
     }//GEN-LAST:event_btnEliminarActionPerformed

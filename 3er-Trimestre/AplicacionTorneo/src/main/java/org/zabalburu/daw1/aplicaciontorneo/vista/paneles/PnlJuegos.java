@@ -321,6 +321,7 @@ public class PnlJuegos extends javax.swing.JPanel {
         new DlgJuego(null, true, null).setVisible(true);
         lstJuegos.setListData(new Vector<>(servicio.getJuegos()));
         lstJuegos.setSelectedIndex(lstJuegos.getModel().getSize() - 1);
+        lstJuegos.ensureIndexIsVisible(lstJuegos.getModel().getSize() - 1);
         lstJuegos.requestFocus();
     }//GEN-LAST:event_btNuevoActionPerformed
 
@@ -333,6 +334,7 @@ public class PnlJuegos extends javax.swing.JPanel {
             int pos = lstJuegos.getSelectedIndex();
             lstJuegos.setListData(new Vector<>(servicio.getJuegos()));
             lstJuegos.setSelectedIndex(pos);
+            lstJuegos.ensureIndexIsVisible(pos);
             lstJuegos.requestFocus();
 
         }
@@ -354,6 +356,7 @@ public class PnlJuegos extends javax.swing.JPanel {
                 pos--;
             }
             lstJuegos.setSelectedIndex(pos);
+            lstJuegos.ensureIndexIsVisible(pos);
             lstJuegos.requestFocus();
         }
     }//GEN-LAST:event_btnEliminarActionPerformed

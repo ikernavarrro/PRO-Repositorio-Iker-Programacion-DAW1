@@ -56,9 +56,10 @@ public class DlgJugador extends javax.swing.JDialog {
             private void abrirFileChooser() {
                 JFileChooser fileChooser = new JFileChooser();
                 fileChooser.setDialogTitle("Seleccionar imagen");
-                FileNameExtensionFilter filtro = new javax.swing.filechooser.FileNameExtensionFilter("Imágenes (PNG)", "png");
+                FileNameExtensionFilter filtro = new FileNameExtensionFilter("Imágenes (PNG)", "png");
                 fileChooser.setFileFilter(filtro);
                 fileChooser.setAcceptAllFileFilterUsed(false);
+                fileChooser.setMultiSelectionEnabled(false);
                 int resultado = fileChooser.showOpenDialog(null);
                 if (resultado == JFileChooser.APPROVE_OPTION) {
                     File archivoSeleccionado = fileChooser.getSelectedFile();

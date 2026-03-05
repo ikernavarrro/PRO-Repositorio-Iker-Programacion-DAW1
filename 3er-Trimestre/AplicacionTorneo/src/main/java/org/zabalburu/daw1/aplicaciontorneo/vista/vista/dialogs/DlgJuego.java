@@ -107,7 +107,7 @@ public class DlgJuego extends javax.swing.JDialog {
 
         lblImagen.setFont(new java.awt.Font("Segoe UI Semilight", 0, 14)); // NOI18N
         lblImagen.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/aplicaciontorneo/imagenes/addimage.png"))); // NOI18N
+        lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/aplicaciontorneo/iconos/imagen_normal.png"))); // NOI18N
         lblImagen.setPreferredSize(new java.awt.Dimension(200, 200));
 
         javax.swing.GroupLayout pnlDatosLayout = new javax.swing.GroupLayout(pnlDatos);
