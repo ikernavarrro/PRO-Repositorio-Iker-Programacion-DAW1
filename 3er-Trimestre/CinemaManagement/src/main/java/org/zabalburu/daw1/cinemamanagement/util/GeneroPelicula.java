@@ -9,5 +9,20 @@ package org.zabalburu.daw1.cinemamanagement.util;
  * @author Iker Navarro Pérez
  */
 public enum GeneroPelicula {
-    
+    ACCION,
+    AVENTURA,
+    COMEDIA,
+    DRAMA,
+    TERROR,
+    CIENCIA_FICCION,
+    FANTASIA,
+    ROMANCE,
+    THRILLER,
+    DOCUMENTAL,
+    ANIMACION,
+    POLICIAL,
+    BELICO,
+    MUSICAL,
+    WESTERN,
+    MISTERIO
 }
