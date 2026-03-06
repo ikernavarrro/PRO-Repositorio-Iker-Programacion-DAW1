@@ -245,7 +245,7 @@ public class DlgJugador extends javax.swing.JDialog {
             jugador.setApellidos(txtApellidos.getText());
             if (imagenSeleccionada != null) {
                 BufferedImage bff = toBufferedImage(imagenSeleccionada);
-                String ruta = "imagenes/" + jugador.getNick() + ".png";
+                String ruta = Jugador.DIR_NORMAL + jugador.getNick() + ".png";
                 try {
                     ImageIO.write(bff, "PNG", new File(ruta)); // Escribimos
                     jugador.setImagen(ruta); // Asignamos la ruta

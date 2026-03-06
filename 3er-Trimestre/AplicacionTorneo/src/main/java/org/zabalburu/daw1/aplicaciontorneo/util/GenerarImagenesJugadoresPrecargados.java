@@ -19,6 +19,9 @@ import javax.imageio.ImageIO;
  *
  * @author Iker Navarro Pérez
  */
+// ============================================
+// ================= ARREGLAR =================
+// ============================================
 public class GenerarImagenesJugadoresPrecargados {
     public static void main(String[] args) {
         Connection cnn = Conexion.getConnection();
@@ -30,7 +33,7 @@ public class GenerarImagenesJugadoresPrecargados {
                 String nick = rst.getString("nick");
                 BufferedImage imagen = ImageIO.read(URI.create(ruta).toURL());
                 ImageIO.write(imagen, "PNG", new File("imagenes", "%s.png".formatted(nick)));
-                Image scaled = imagen.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+                Image scaled = imagen.getScaledInstance(40, 40, Image.SCALE_SMOOTH);   
                 BufferedImage circleImage = (BufferedImage) CircleImage.getCircleImage(scaled);
                 ImageIO.write(circleImage, "PNG", new File("imagenes/avatares", "%s".formatted(nick) +"avatar.png"));
                 scaled = imagen.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
@@ -42,3 +45,6 @@ public class GenerarImagenesJugadoresPrecargados {
         } 
     }
 }
+// ============================================
+// ================= ARREGLAR =================
+// ============================================

@@ -4,14 +4,10 @@
  */
 package org.zabalburu.daw1.aplicaciontorneo.modelo;
 
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -43,18 +39,19 @@ public class Jugador {
     private String imagen;
     @ToString.Exclude
     private List<Partida> partidas = new ArrayList<>();
-    @Setter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE) // Evitamos que Lombok cree un setter y obligamos a usar setImagenesNormalAvatar()
     private ImageIcon normal;
-    @Setter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE) // Evitamos que Lombok cree un setter y obligamos a usar setImagenesNormalAvatar()
     private ImageIcon avatar;
-
-    private static final int ANCHO_NORMAL = 150;
-    private static final int ANCHO_AVATAR = 40;
-    private static final String DIR_PRINCIPAL = "imagenes/";
-    private static final String DIR_AVATARES = "imagenes/avatares/";
-    private static final String DIR_NORMAL = "imagenes/normal/";
-    private static final String DIR_IMAGEN_DEFECTO_NORMAL = "imagenes/defecto/imagen_normal.png";
-    private static final String DIR_IMAGEN_DEFECTO_AVATAR = "imagenes/defecto/imagen_avatar.png";
+    
+    // Principio DRY
+    public static final int ANCHO_NORMAL = 150;
+    public static final int ANCHO_AVATAR = 40;
+    public static final String DIR_PRINCIPAL = "imagenes/";
+    public static final String DIR_AVATARES = "imagenes/avatares/";
+    public static final String DIR_NORMAL = "imagenes/normal/";
+    public static final String DIR_IMAGEN_DEFECTO_NORMAL = "imagenes/defecto/imagen_normal.png";
+    public static final String DIR_IMAGEN_DEFECTO_AVATAR = "imagenes/defecto/imagen_avatar.png";
 
     public void setImagenesNormalAvatar() {
         File f = new File(imagen); // Buscamos la original.
