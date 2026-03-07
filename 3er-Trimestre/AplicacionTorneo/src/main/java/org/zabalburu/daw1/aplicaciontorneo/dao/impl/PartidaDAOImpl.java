@@ -126,7 +126,7 @@ public class PartidaDAOImpl implements PartidaDAO {
     public void removePartida(Integer id) {
         try {
             PreparedStatement pstmt = cnn.prepareStatement("""
-                                                            DELETE partidas
+                                                            DELETE FROM partidas
                                                             Where id = ?
                                                             """);
             

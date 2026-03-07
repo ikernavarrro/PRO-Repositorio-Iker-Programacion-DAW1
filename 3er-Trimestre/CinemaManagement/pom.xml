@@ -25,5 +25,11 @@
             <version>1.18.42</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.zabalburu.daw1</groupId>
+            <artifactId>CinemaManagement</artifactId>
+            <version>0.1-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 </project>

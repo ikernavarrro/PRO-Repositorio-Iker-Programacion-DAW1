@@ -122,7 +122,7 @@ public class JuegoDAOImpl implements JuegoDAO {
     public void removeJuego(Integer id) {
         try {
             PreparedStatement pstmt = cnn.prepareStatement("""
-                                                        DELETE JUEGOS
+                                                        DELETE FROM JUEGOS
                                                         WHERE id=?
                                                         """);
             pstmt.setInt(1, id);
