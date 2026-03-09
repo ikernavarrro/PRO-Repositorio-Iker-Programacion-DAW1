@@ -25,7 +25,7 @@ import org.zabalburu.daw1.aplicaciontorneo.util.CircleImage;
  *
  * @author Iker Navarro Pérez
  */
-@Data  
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -39,11 +39,11 @@ public class Jugador {
     private String imagen;
     @ToString.Exclude
     private List<Partida> partidas = new ArrayList<>();
-    @Setter(AccessLevel.NONE) // Evitamos que Lombok cree un setter y obligamos a usar setImagenesNormalAvatar()
+    @Setter(AccessLevel.NONE) 
     private ImageIcon normal;
-    @Setter(AccessLevel.NONE) // Evitamos que Lombok cree un setter y obligamos a usar setImagenesNormalAvatar()
+    @Setter(AccessLevel.NONE) 
     private ImageIcon avatar;
-    
+
     // Principio DRY
     public static final int ANCHO_NORMAL = 150;
     public static final int ANCHO_AVATAR = 40;

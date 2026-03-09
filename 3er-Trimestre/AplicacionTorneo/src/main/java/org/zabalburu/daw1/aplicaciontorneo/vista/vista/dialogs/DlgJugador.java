@@ -245,11 +245,11 @@ public class DlgJugador extends javax.swing.JDialog {
             jugador.setApellidos(txtApellidos.getText());
             if (imagenSeleccionada != null) {
                 BufferedImage bff = toBufferedImage(imagenSeleccionada);
-                String ruta = Jugador.DIR_NORMAL + jugador.getNick() + ".png";
+                String ruta = Jugador.DIR_PRINCIPAL + jugador.getNick() + ".png";
                 try {
                     ImageIO.write(bff, "PNG", new File(ruta)); // Escribimos
-                    jugador.setImagen(ruta); // Asignamos la ruta
-                    jugador.setImagenesNormalAvatar(); // CARGAMOS NORMAL Y AVATAR APARTIR DE LA RUTA
+                    jugador.setImagen(ruta); // Asignamos la ruta y CARGAMOS NORMAL Y AVATAR APARTIR DE LA RUTA
+                    jugador.setImagenesNormalAvatar();
                     imagenSeleccionada = null;
                 } catch (IOException ex) {
                     System.getLogger(DlgJugador.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);

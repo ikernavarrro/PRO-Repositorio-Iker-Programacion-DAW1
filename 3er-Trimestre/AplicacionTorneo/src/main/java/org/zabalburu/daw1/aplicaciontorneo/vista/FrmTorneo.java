@@ -11,6 +11,7 @@ import java.awt.CardLayout;
 import org.zabalburu.daw1.aplicaciontorneo.vista.paneles.PnlDashboard;
 import org.zabalburu.daw1.aplicaciontorneo.vista.paneles.PnlJuegos;
 import org.zabalburu.daw1.aplicaciontorneo.vista.paneles.PnlJugadores;
+import org.zabalburu.daw1.aplicaciontorneo.vista.paneles.PnlPartidas;
 
 /**
  *
@@ -28,6 +29,7 @@ public class FrmTorneo extends javax.swing.JFrame {
         pnlPrincipal.add(new PnlDashboard(),"DASHBOARD");
         pnlPrincipal.add(new PnlJuegos(), "JUEGOS");
         pnlPrincipal.add(new PnlJugadores(), "JUGADORES");
+        pnlPrincipal.add(new PnlPartidas(), "PARTIDAS");
         
     }
 
@@ -121,6 +123,11 @@ public class FrmTorneo extends javax.swing.JFrame {
         tbtPartidas.setMaximumSize(new java.awt.Dimension(160, 35));
         tbtPartidas.setMinimumSize(new java.awt.Dimension(160, 35));
         tbtPartidas.setPreferredSize(new java.awt.Dimension(160, 35));
+        tbtPartidas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tbtPartidasActionPerformed(evt);
+            }
+        });
         pnlAcciones.add(tbtPartidas);
         pnlAcciones.add(filler6);
 
@@ -138,7 +145,7 @@ public class FrmTorneo extends javax.swing.JFrame {
         pnlPrincipal.setLayout(new java.awt.CardLayout());
         getContentPane().add(pnlPrincipal, java.awt.BorderLayout.CENTER);
 
-        setSize(new java.awt.Dimension(1265, 522));
+        setSize(new java.awt.Dimension(1265, 681));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -153,6 +160,10 @@ public class FrmTorneo extends javax.swing.JFrame {
     private void tbtJugadoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tbtJugadoresActionPerformed
          cambiarPanel("JUGADORES");
     }//GEN-LAST:event_tbtJugadoresActionPerformed
+
+    private void tbtPartidasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tbtPartidasActionPerformed
+        cambiarPanel("PARTIDAS");
+    }//GEN-LAST:event_tbtPartidasActionPerformed
 
     private void cambiarPanel(String nombre) {
         CardLayout cl = (CardLayout) pnlPrincipal.getLayout();
