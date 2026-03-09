@@ -4,16 +4,14 @@
  */
 package org.zabalburu.daw1.cinemamanagement.excepciones;
 
-import org.zabalburu.daw1.cinemamanagement.modelo.Pelicula;
-
 /**
  *
  * @author Iker Navarro Pérez
  */
-public class PeliculaConSesionesException extends RuntimeException {
+public class PeliculaNoValida extends Exception {
 
-    public PeliculaConSesionesException(Pelicula p) {
-        super("La pelicula %s no se puede eliminar, tiene sesiones registradas.".formatted(p.getTitulo()));
+    public PeliculaNoValida(String motivo) {
+        super("Validación FALLIDA - %s".formatted(motivo));
     }
 
 }

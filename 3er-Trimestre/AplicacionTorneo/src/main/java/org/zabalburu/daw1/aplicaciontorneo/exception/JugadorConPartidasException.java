@@ -10,7 +10,7 @@ import org.zabalburu.daw1.aplicaciontorneo.modelo.Jugador;
  *
  * @author DAW1
  */
-public class JugadorConPartidasException extends RuntimeException {
+public class JugadorConPartidasException extends Exception {
 
     public JugadorConPartidasException(Jugador j) {
         super("El jugador %s no se puede eliminar, tiene partidas registradas.".formatted(j.getNick()));

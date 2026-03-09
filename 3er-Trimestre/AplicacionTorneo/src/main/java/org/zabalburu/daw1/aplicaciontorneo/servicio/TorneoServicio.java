@@ -119,7 +119,7 @@ public final class TorneoServicio {
         return partidaDAO.addPartida(p);
     }
 
-    public void removeJuego(Integer id) {
+    public void removeJuego(Integer id) throws JuegoConPartidasException {
         Juego j = getJuego(id);
         if (j != null) {
             if (!j.getPartidas().isEmpty()) {
@@ -137,7 +137,7 @@ public final class TorneoServicio {
         }
     }
 
-    public void removeJugador(Integer id) {
+    public void removeJugador(Integer id) throws JugadorConPartidasException {
         Jugador j = getJugador(id);
         if (j != null) {
             if (!j.getPartidas().isEmpty()) {

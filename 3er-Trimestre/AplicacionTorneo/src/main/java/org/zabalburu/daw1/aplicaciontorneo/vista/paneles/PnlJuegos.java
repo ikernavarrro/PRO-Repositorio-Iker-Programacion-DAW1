@@ -23,6 +23,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import org.zabalburu.daw1.aplicaciontorneo.exception.JuegoConPartidasException;
 import org.zabalburu.daw1.aplicaciontorneo.modelo.Juego;
 import org.zabalburu.daw1.aplicaciontorneo.modelo.Jugador;
 import org.zabalburu.daw1.aplicaciontorneo.modelo.Partida;
@@ -349,7 +350,11 @@ public class PnlJuegos extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(null, "¡NO es posible ELIMINAR un JUEGO con Partidas Registradas!", "Error", JOptionPane.ERROR_MESSAGE);
         } else if (JOptionPane.showConfirmDialog(this, "¿Está seguro de ELIMINAR el juego %s?".formatted(j.getTitulo()), "Eliminar Juego", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             int pos = lstJuegos.getSelectedIndex();
-            servicio.removeJuego(j.getId());
+            try {
+                servicio.removeJuego(j.getId());
+            } catch (JuegoConPartidasException ex) {
+                System.getLogger(PnlJuegos.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            }
             JOptionPane.showMessageDialog(null, "¡Juego eliminado correctamente!", "Información", JOptionPane.INFORMATION_MESSAGE);
             lstJuegos.setListData(new Vector<>(servicio.getJuegos()));
             if (pos == lstJuegos.getModel().getSize()) {
