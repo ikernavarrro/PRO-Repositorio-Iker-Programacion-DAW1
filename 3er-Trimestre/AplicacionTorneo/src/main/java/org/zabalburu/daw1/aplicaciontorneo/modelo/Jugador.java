@@ -29,7 +29,7 @@ import org.zabalburu.daw1.aplicaciontorneo.util.CircleImage;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Jugador {
+public class Jugador implements Comparable<Jugador> {
 
     @EqualsAndHashCode.Include
     private Integer id;
@@ -39,9 +39,9 @@ public class Jugador {
     private String imagen;
     @ToString.Exclude
     private List<Partida> partidas = new ArrayList<>();
-    @Setter(AccessLevel.NONE) 
+    @Setter(AccessLevel.NONE)
     private ImageIcon normal;
-    @Setter(AccessLevel.NONE) 
+    @Setter(AccessLevel.NONE)
     private ImageIcon avatar;
 
     // Principio DRY
@@ -126,4 +126,8 @@ public class Jugador {
         return avatar;
     }
 
+    @Override
+    public int compareTo(Jugador o) {
+        return this.nick.compareToIgnoreCase(o.nick);
+    }
 }

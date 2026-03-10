@@ -39,6 +39,13 @@
             <version>3.7</version>
             <type>jar</type>
         </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/com.github.lgooddatepicker/LGoodDatePicker -->
+        <dependency>
+            <groupId>com.github.lgooddatepicker</groupId>
+            <artifactId>LGoodDatePicker</artifactId>
+            <version>11.2.1</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     <build>
         <resources>

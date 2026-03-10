@@ -5,6 +5,7 @@
 package org.zabalburu.daw1.aplicaciontorneo.vista.paneles;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Image;
@@ -226,6 +227,11 @@ public class PnlDashboard extends javax.swing.JPanel {
 
         jButton1.setFont(new java.awt.Font("Segoe UI Semilight", 0, 12)); // NOI18N
         jButton1.setText("Refrescar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         pnl1.add(jButton1);
 
         pnlSuperior.add(pnl1, java.awt.BorderLayout.NORTH);
@@ -266,8 +272,17 @@ public class PnlDashboard extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRegistrarPartidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarPartidaActionPerformed
-        // TODO add your handling code here:
+        JPanel pnl = (JPanel) this.getParent();
+        CardLayout cl = (CardLayout) pnl.getLayout();
+        cl.show(pnl, "REGISTRAR");
+        
     }//GEN-LAST:event_btnRegistrarPartidaActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        servicio.cargarBBDD();
+        actualizarPanel();
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     class PnlCard extends JPanel {
 

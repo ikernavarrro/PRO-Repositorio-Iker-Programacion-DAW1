@@ -4,6 +4,7 @@
  */
 package org.zabalburu.daw1.aplicaciontorneo.vista.paneles;
 
+import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.util.Vector;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -68,6 +70,7 @@ public class PnlPartidas extends javax.swing.JPanel {
         jspPartidas = new javax.swing.JScrollPane();
         tblPartidas = new javax.swing.JTable();
 
+        setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setLayout(new java.awt.BorderLayout());
 
         pnlSuperior.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 0, 5, 0));
@@ -80,6 +83,11 @@ public class PnlPartidas extends javax.swing.JPanel {
 
         btnRefrescar.setFont(new java.awt.Font("Segoe UI Semilight", 0, 12)); // NOI18N
         btnRefrescar.setText("Refrescar");
+        btnRefrescar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefrescarActionPerformed(evt);
+            }
+        });
         pnlSuperior.add(btnRefrescar);
 
         add(pnlSuperior, java.awt.BorderLayout.NORTH);
@@ -103,6 +111,12 @@ public class PnlPartidas extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         pnlCentro.add(lblJugador, gridBagConstraints);
+
+        cbxJugador.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbxJugadorActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
@@ -135,6 +149,11 @@ public class PnlPartidas extends javax.swing.JPanel {
 
         btnRegistrar.setFont(new java.awt.Font("Segoe UI Semilight", 0, 12)); // NOI18N
         btnRegistrar.setText("Registrar");
+        btnRegistrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistrarActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -162,6 +181,21 @@ public class PnlPartidas extends javax.swing.JPanel {
     private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnLimpiarActionPerformed
+
+    private void cbxJugadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxJugadorActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbxJugadorActionPerformed
+
+    private void btnRefrescarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefrescarActionPerformed
+        servicio.cargarBBDD();
+        mostrarPartidas();
+    }//GEN-LAST:event_btnRefrescarActionPerformed
+
+    private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
+        JPanel pnl = (JPanel) this.getParent();
+        CardLayout cl = (CardLayout) pnl.getLayout();
+        cl.show(pnl, "REGISTRAR");
+    }//GEN-LAST:event_btnRegistrarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -254,7 +288,7 @@ public class PnlPartidas extends javax.swing.JPanel {
                 return lbl;
             }
         });
-
+        tblPartidas.setAutoCreateRowSorter(true);
     }
 
     private void cargarJuegosCBX() {

@@ -20,7 +20,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Juego {
+public class Juego implements Comparable<Juego>{
     @EqualsAndHashCode.Include
     private Integer id;
     private String titulo;
@@ -29,4 +29,11 @@ public class Juego {
     private String imagen;
     @ToString.Exclude
     private List<Partida> partidas = new ArrayList<>();
+
+    @Override
+    public int compareTo(Juego o) {
+        return this.titulo.compareToIgnoreCase(o.titulo);
+    }
+
+    
 }

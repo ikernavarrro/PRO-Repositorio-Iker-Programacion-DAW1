@@ -46,7 +46,7 @@ public final class TorneoServicio {
         return servicio;
     }
 
-    private static void cargarBBDD() {
+    public static void cargarBBDD() {
         juegos = juegoDAO.getJuegos();
         jugadores = jugadorDAO.getJugadores();
         partidas = partidaDAO.getPartidas();

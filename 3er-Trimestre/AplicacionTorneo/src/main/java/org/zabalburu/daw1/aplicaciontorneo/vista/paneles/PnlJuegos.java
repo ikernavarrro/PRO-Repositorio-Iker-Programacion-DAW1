@@ -4,6 +4,7 @@
  */
 package org.zabalburu.daw1.aplicaciontorneo.vista.paneles;
 
+import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Font;
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
@@ -228,6 +230,11 @@ public class PnlJuegos extends javax.swing.JPanel {
 
         btnRefrescar.setFont(new java.awt.Font("Segoe UI Semilight", 0, 12)); // NOI18N
         btnRefrescar.setText("Refrescar");
+        btnRefrescar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefrescarActionPerformed(evt);
+            }
+        });
         pnlSuperior.add(btnRefrescar);
 
         add(pnlSuperior, java.awt.BorderLayout.PAGE_START);
@@ -296,6 +303,11 @@ public class PnlJuegos extends javax.swing.JPanel {
 
         btnRegistrar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnRegistrar.setText("Registrar Partida");
+        btnRegistrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistrarActionPerformed(evt);
+            }
+        });
         pnlPartidas.add(btnRegistrar, java.awt.BorderLayout.PAGE_END);
 
         jspPartidasJuego.setViewportView(tblPartidasJuego);
@@ -365,6 +377,17 @@ public class PnlJuegos extends javax.swing.JPanel {
             lstJuegos.requestFocus();
         }
     }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnRefrescarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefrescarActionPerformed
+        servicio.cargarBBDD();
+        actualizarTabla(lstJuegos.getSelectedValue());
+    }//GEN-LAST:event_btnRefrescarActionPerformed
+
+    private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
+        JPanel pnl = (JPanel) this.getParent();
+        CardLayout cl = (CardLayout) pnl.getLayout();
+        cl.show(pnl, "REGISTRAR");
+    }//GEN-LAST:event_btnRegistrarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -12,6 +12,7 @@ import org.zabalburu.daw1.aplicaciontorneo.vista.paneles.PnlDashboard;
 import org.zabalburu.daw1.aplicaciontorneo.vista.paneles.PnlJuegos;
 import org.zabalburu.daw1.aplicaciontorneo.vista.paneles.PnlJugadores;
 import org.zabalburu.daw1.aplicaciontorneo.vista.paneles.PnlPartidas;
+import org.zabalburu.daw1.aplicaciontorneo.vista.paneles.PnlRegistro;
 
 /**
  *
@@ -30,6 +31,7 @@ public class FrmTorneo extends javax.swing.JFrame {
         pnlPrincipal.add(new PnlJuegos(), "JUEGOS");
         pnlPrincipal.add(new PnlJugadores(), "JUGADORES");
         pnlPrincipal.add(new PnlPartidas(), "PARTIDAS");
+        pnlPrincipal.add(new PnlRegistro(), "REGISTRAR");
         
     }
 
@@ -138,6 +140,11 @@ public class FrmTorneo extends javax.swing.JFrame {
         tbtRegistrar.setMaximumSize(new java.awt.Dimension(160, 35));
         tbtRegistrar.setMinimumSize(new java.awt.Dimension(160, 35));
         tbtRegistrar.setPreferredSize(new java.awt.Dimension(160, 35));
+        tbtRegistrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tbtRegistrarActionPerformed(evt);
+            }
+        });
         pnlAcciones.add(tbtRegistrar);
 
         getContentPane().add(pnlAcciones, java.awt.BorderLayout.LINE_START);
@@ -165,7 +172,11 @@ public class FrmTorneo extends javax.swing.JFrame {
         cambiarPanel("PARTIDAS");
     }//GEN-LAST:event_tbtPartidasActionPerformed
 
-    private void cambiarPanel(String nombre) {
+    private void tbtRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tbtRegistrarActionPerformed
+        cambiarPanel("REGISTRAR");
+    }//GEN-LAST:event_tbtRegistrarActionPerformed
+
+    public void cambiarPanel(String nombre) {
         CardLayout cl = (CardLayout) pnlPrincipal.getLayout();
         cl.show(pnlPrincipal, nombre);
     }
