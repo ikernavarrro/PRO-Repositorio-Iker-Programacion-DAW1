@@ -28,117 +28,15 @@ public class PnlDashboard extends javax.swing.JPanel {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        pnlEstadisticas = new javax.swing.JPanel();
-        pnlPeliculaMasVista = new javax.swing.JPanel();
-        lblTituloPeliculaMasVista = new javax.swing.JLabel();
-        lblPeliculaMasVista = new javax.swing.JLabel();
-        pnlTotalPeliculas = new javax.swing.JPanel();
-        lblTituloTotalPeliculas = new javax.swing.JLabel();
-        lblTotalPeliculas = new javax.swing.JLabel();
-        pnlTotalSesiones = new javax.swing.JPanel();
-        lblTituloTotalSesiones = new javax.swing.JLabel();
-        lblTotalSesiones = new javax.swing.JLabel();
-        pnlContenido = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jPanel1 = new javax.swing.JPanel();
 
         setPreferredSize(new java.awt.Dimension(1200, 600));
         setLayout(new java.awt.BorderLayout());
-
-        pnlEstadisticas.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 20, 0, 20));
-        pnlEstadisticas.setLayout(new java.awt.GridBagLayout());
-
-        pnlPeliculaMasVista.setLayout(new java.awt.BorderLayout());
-
-        lblTituloPeliculaMasVista.setFont(new java.awt.Font("Myanmar Text", 1, 18)); // NOI18N
-        lblTituloPeliculaMasVista.setText("Película Más Vista");
-        pnlPeliculaMasVista.add(lblTituloPeliculaMasVista, java.awt.BorderLayout.NORTH);
-
-        lblPeliculaMasVista.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
-        lblPeliculaMasVista.setText("jLabel3");
-        pnlPeliculaMasVista.add(lblPeliculaMasVista, java.awt.BorderLayout.CENTER);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 0.3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 96, 0, 96);
-        pnlEstadisticas.add(pnlPeliculaMasVista, gridBagConstraints);
-
-        pnlTotalPeliculas.setLayout(new java.awt.BorderLayout());
-
-        lblTituloTotalPeliculas.setFont(new java.awt.Font("Myanmar Text", 1, 18)); // NOI18N
-        lblTituloTotalPeliculas.setText("Total Películas");
-        pnlTotalPeliculas.add(lblTituloTotalPeliculas, java.awt.BorderLayout.NORTH);
-
-        lblTotalPeliculas.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
-        lblTotalPeliculas.setText("jLabel3");
-        pnlTotalPeliculas.add(lblTotalPeliculas, java.awt.BorderLayout.CENTER);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 0.3;
-        gridBagConstraints.insets = new java.awt.Insets(5, 102, 5, 102);
-        pnlEstadisticas.add(pnlTotalPeliculas, gridBagConstraints);
-
-        pnlTotalSesiones.setLayout(new java.awt.BorderLayout());
-
-        lblTituloTotalSesiones.setFont(new java.awt.Font("Myanmar Text", 1, 18)); // NOI18N
-        lblTituloTotalSesiones.setText("Total Sesiones");
-        pnlTotalSesiones.add(lblTituloTotalSesiones, java.awt.BorderLayout.NORTH);
-
-        lblTotalSesiones.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
-        lblTotalSesiones.setText("jLabel3");
-        pnlTotalSesiones.add(lblTotalSesiones, java.awt.BorderLayout.CENTER);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 0.3;
-        gridBagConstraints.insets = new java.awt.Insets(5, 102, 5, 102);
-        pnlEstadisticas.add(pnlTotalSesiones, gridBagConstraints);
-
-        add(pnlEstadisticas, java.awt.BorderLayout.NORTH);
-
-        pnlContenido.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        pnlContenido.setLayout(new java.awt.BorderLayout());
-
-        jLabel1.setFont(new java.awt.Font("Myanmar Text", 1, 14)); // NOI18N
-        jLabel1.setText("PRÓXIMAS 10 SESIONES");
-        pnlContenido.add(jLabel1, java.awt.BorderLayout.PAGE_START);
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane1.setViewportView(jTable1);
-
-        pnlContenido.add(jScrollPane1, java.awt.BorderLayout.CENTER);
-
-        add(pnlContenido, java.awt.BorderLayout.CENTER);
+        add(jPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JLabel lblPeliculaMasVista;
-    private javax.swing.JLabel lblTituloPeliculaMasVista;
-    private javax.swing.JLabel lblTituloTotalPeliculas;
-    private javax.swing.JLabel lblTituloTotalSesiones;
-    private javax.swing.JLabel lblTotalPeliculas;
-    private javax.swing.JLabel lblTotalSesiones;
-    private javax.swing.JPanel pnlContenido;
-    private javax.swing.JPanel pnlEstadisticas;
-    private javax.swing.JPanel pnlPeliculaMasVista;
-    private javax.swing.JPanel pnlTotalPeliculas;
-    private javax.swing.JPanel pnlTotalSesiones;
+    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

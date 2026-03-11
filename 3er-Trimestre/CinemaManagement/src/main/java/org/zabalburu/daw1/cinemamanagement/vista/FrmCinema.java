@@ -5,17 +5,20 @@
 package org.zabalburu.daw1.cinemamanagement.vista;
 
 import java.awt.CardLayout;
+import org.zabalburu.daw1.cinemamanagement.servicio.CinemaServicio;
 import org.zabalburu.daw1.cinemamanagement.vista.paneles.PnlDashboard;
 import org.zabalburu.daw1.cinemamanagement.vista.paneles.PnlPeliculas;
 import org.zabalburu.daw1.cinemamanagement.vista.paneles.PnlSesiones;
 
 /**
  *
- * @author Focus Mode
+ * @author Iker Navarro Pérez
  */
 public class FrmCinema extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmCinema.class.getName());
+    
+    private static CinemaServicio servicio = CinemaServicio.getServicio();
 
     /**
      * Creates new form FrmCinema
@@ -38,116 +41,138 @@ public class FrmCinema extends javax.swing.JFrame {
         java.awt.GridBagConstraints gridBagConstraints;
 
         grpBotones = new javax.swing.ButtonGroup();
-        pnlBotones = new javax.swing.JPanel();
-        separador1 = new javax.swing.JSeparator();
+        pnlSuperior = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
         lblTitulo = new javax.swing.JLabel();
-        tbtDashboard = new javax.swing.JToggleButton();
-        tbtPeliculas = new javax.swing.JToggleButton();
-        tbtSesiones = new javax.swing.JToggleButton();
-        separador2 = new javax.swing.JSeparator();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(100, 0), new java.awt.Dimension(32767, 0));
+        jLabel1 = new javax.swing.JLabel();
+        filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(3, 0), new java.awt.Dimension(32767, 0));
+        txtBuscador = new javax.swing.JTextField();
+        filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(250, 0), new java.awt.Dimension(32767, 0));
+        lblUsuario = new javax.swing.JLabel();
+        lblAvatarUsuario = new javax.swing.JLabel();
+        pnlBotones = new javax.swing.JPanel();
+        btnDashboard = new javax.swing.JButton();
+        btnPeliculas = new javax.swing.JButton();
+        btnSesiones = new javax.swing.JButton();
+        pnlEspacioVacio = new javax.swing.JPanel();
         pnlContenido = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1200, 600));
+
+        pnlSuperior.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        pnlSuperior.setLayout(new javax.swing.BoxLayout(pnlSuperior, javax.swing.BoxLayout.LINE_AXIS));
+
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/cinemamanagement/vista/logo_cine.png"))); // NOI18N
+        pnlSuperior.add(jLabel2);
+
+        lblTitulo.setFont(new java.awt.Font("Microsoft New Tai Lue", 1, 24)); // NOI18N
+        lblTitulo.setText("Cine Master");
+        pnlSuperior.add(lblTitulo);
+        pnlSuperior.add(filler1);
+
+        jLabel1.setText("🔎");
+        pnlSuperior.add(jLabel1);
+        pnlSuperior.add(filler3);
+
+        txtBuscador.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtBuscadorActionPerformed(evt);
+            }
+        });
+        pnlSuperior.add(txtBuscador);
+        pnlSuperior.add(filler2);
+
+        lblUsuario.setFont(new java.awt.Font("Trebuchet MS", 0, 14)); // NOI18N
+        lblUsuario.setText("jLabel1");
+        pnlSuperior.add(lblUsuario);
+
+        lblAvatarUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/cinemamanagement/vista/user-244 (1).png"))); // NOI18N
+        pnlSuperior.add(lblAvatarUsuario);
+
+        getContentPane().add(pnlSuperior, java.awt.BorderLayout.PAGE_START);
 
         pnlBotones.setLayout(new java.awt.GridBagLayout());
 
-        separador1.setBackground(new java.awt.Color(255, 255, 255));
+        btnDashboard.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        btnDashboard.setText("Dashboard");
+        btnDashboard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDashboardActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(7, 0, 1, 0);
-        pnlBotones.add(separador1, gridBagConstraints);
+        gridBagConstraints.ipadx = 21;
+        gridBagConstraints.ipady = 21;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.insets = new java.awt.Insets(10, 11, 10, 11);
+        pnlBotones.add(btnDashboard, gridBagConstraints);
 
-        lblTitulo.setFont(new java.awt.Font("Segoe UI Emoji", 1, 24)); // NOI18N
-        lblTitulo.setText("Gestión Cine | Iker Navarro Pérez");
+        btnPeliculas.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        btnPeliculas.setText("Películas");
+        btnPeliculas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPeliculasActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        pnlBotones.add(lblTitulo, gridBagConstraints);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 21;
+        gridBagConstraints.ipady = 21;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.insets = new java.awt.Insets(10, 11, 10, 11);
+        pnlBotones.add(btnPeliculas, gridBagConstraints);
 
-        grpBotones.add(tbtDashboard);
-        tbtDashboard.setFont(new java.awt.Font("Leelawadee UI", 1, 18)); // NOI18N
-        tbtDashboard.setText(" Dashboard ");
-        tbtDashboard.addActionListener(new java.awt.event.ActionListener() {
+        btnSesiones.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        btnSesiones.setText("Sesiones");
+        btnSesiones.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tbtDashboardActionPerformed(evt);
+                btnSesionesActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.ipadx = 100;
-        gridBagConstraints.weightx = 0.2;
-        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 10);
-        pnlBotones.add(tbtDashboard, gridBagConstraints);
-
-        grpBotones.add(tbtPeliculas);
-        tbtPeliculas.setFont(new java.awt.Font("Leelawadee UI", 1, 18)); // NOI18N
-        tbtPeliculas.setText(" Películas ");
-        tbtPeliculas.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tbtPeliculasActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.ipadx = 100;
-        gridBagConstraints.weightx = 0.2;
-        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 10);
-        pnlBotones.add(tbtPeliculas, gridBagConstraints);
-
-        grpBotones.add(tbtSesiones);
-        tbtSesiones.setFont(new java.awt.Font("Leelawadee UI", 1, 18)); // NOI18N
-        tbtSesiones.setText(" Sesiones ");
-        tbtSesiones.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tbtSesionesActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.ipadx = 100;
-        gridBagConstraints.weightx = 0.2;
-        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 10);
-        pnlBotones.add(tbtSesiones, gridBagConstraints);
-
-        separador2.setBackground(new java.awt.Color(255, 255, 255));
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 21;
+        gridBagConstraints.ipady = 21;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.insets = new java.awt.Insets(10, 11, 10, 11);
+        pnlBotones.add(btnSesiones, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(8, 0, 12, 0);
-        pnlBotones.add(separador2, gridBagConstraints);
+        gridBagConstraints.weighty = 1.0;
+        pnlBotones.add(pnlEspacioVacio, gridBagConstraints);
 
-        getContentPane().add(pnlBotones, java.awt.BorderLayout.NORTH);
+        getContentPane().add(pnlBotones, java.awt.BorderLayout.WEST);
 
-        pnlContenido.setPreferredSize(null);
-        pnlContenido.setLayout(new java.awt.CardLayout(10, 10));
+        pnlContenido.setLayout(new java.awt.CardLayout());
         getContentPane().add(pnlContenido, java.awt.BorderLayout.CENTER);
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void tbtDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tbtDashboardActionPerformed
+    private void txtBuscadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscadorActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtBuscadorActionPerformed
+
+    private void btnDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboardActionPerformed
         cambiarPanel("DASHBOARD");
-    }//GEN-LAST:event_tbtDashboardActionPerformed
+    }//GEN-LAST:event_btnDashboardActionPerformed
 
-    private void tbtPeliculasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tbtPeliculasActionPerformed
-         cambiarPanel("PELICULAS"); 
-    }//GEN-LAST:event_tbtPeliculasActionPerformed
+    private void btnPeliculasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPeliculasActionPerformed
+        cambiarPanel("PELICULAS");
+    }//GEN-LAST:event_btnPeliculasActionPerformed
 
-    private void tbtSesionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tbtSesionesActionPerformed
-        cambiarPanel("SESIONES"); 
-    }//GEN-LAST:event_tbtSesionesActionPerformed
+    private void btnSesionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSesionesActionPerformed
+        cambiarPanel("SESIONES");
+    }//GEN-LAST:event_btnSesionesActionPerformed
     private void cambiarPanel(String nombre) {
         CardLayout cl = (CardLayout) pnlContenido.getLayout();
         cl.show(pnlContenido, nombre);
@@ -181,14 +206,22 @@ public class FrmCinema extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnDashboard;
+    private javax.swing.JButton btnPeliculas;
+    private javax.swing.JButton btnSesiones;
+    private javax.swing.Box.Filler filler1;
+    private javax.swing.Box.Filler filler2;
+    private javax.swing.Box.Filler filler3;
     private javax.swing.ButtonGroup grpBotones;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel lblAvatarUsuario;
     private javax.swing.JLabel lblTitulo;
+    private javax.swing.JLabel lblUsuario;
     private javax.swing.JPanel pnlBotones;
     private javax.swing.JPanel pnlContenido;
-    private javax.swing.JSeparator separador1;
-    private javax.swing.JSeparator separador2;
-    private javax.swing.JToggleButton tbtDashboard;
-    private javax.swing.JToggleButton tbtPeliculas;
-    private javax.swing.JToggleButton tbtSesiones;
+    private javax.swing.JPanel pnlEspacioVacio;
+    private javax.swing.JPanel pnlSuperior;
+    private javax.swing.JTextField txtBuscador;
     // End of variables declaration//GEN-END:variables
 }
