@@ -4,21 +4,75 @@
  */
 package org.zabalburu.daw1.cinemamanagement.vista.paneles;
 
+import com.github.lgooddatepicker.components.DatePickerSettings;
+import com.github.lgooddatepicker.components.DateTimePicker;
+import com.github.lgooddatepicker.components.TimePickerSettings;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Vector;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import org.zabalburu.daw1.cinemamanagement.excepciones.PeliculaNoValida;
+import org.zabalburu.daw1.cinemamanagement.excepciones.SesionNoValida;
+import org.zabalburu.daw1.cinemamanagement.modelo.Pelicula;
+import org.zabalburu.daw1.cinemamanagement.modelo.Sesion;
+import org.zabalburu.daw1.cinemamanagement.servicio.CinemaServicio;
+import org.zabalburu.daw1.cinemamanagement.util.Estado;
+import org.zabalburu.daw1.cinemamanagement.util.GeneroPelicula;
 
 /**
  *
- * @author Focus Mode
+ * @author Iker Navarro Pérez
  */
 public class PnlSesiones extends javax.swing.JPanel {
+
+    private CinemaServicio servicio = CinemaServicio.getServicio();
+    private DefaultTableModel dtm;
+    private Sesion sesionSeleccionada;
+    private List<Sesion> sesiones;
+    private int pos = 2;
+    private Estado estado = Estado.CONSULTA;
+    private DateTimePicker datePicker;
 
     /**
      * Creates new form PnlDashboard
      */
     public PnlSesiones() {
+        sesiones = servicio.getSesiones();
         initComponents();
+        Locale lopesp = new Locale("es", "ES");
+        DatePickerSettings dateSettings = new DatePickerSettings(lopesp);
+        TimePickerSettings timeSettings = new TimePickerSettings(lopesp);
+        timeSettings.setFormatForDisplayTime("HH:mm");
+        timeSettings.setFormatForMenuTimes("HH:mm");
+        datePicker = new DateTimePicker(dateSettings, timeSettings);
+        datePicker.setDateTimeStrict(LocalDateTime.now());
+        GridBagConstraints gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        pnlContenido.add(datePicker, gridBagConstraints);
         inicializarBarraBusqueda();
+        cargarComboBox();
+        inicializarTabla();
+        mostrar();
         this.setVisible(true);
     }
 
@@ -40,6 +94,24 @@ public class PnlSesiones extends javax.swing.JPanel {
         fillerGlue1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(100, 0), new java.awt.Dimension(32767, 0));
         fillerGlue2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(50, 0), new java.awt.Dimension(32767, 0));
         pnlCentro = new javax.swing.JPanel();
+        pnlContenido = new javax.swing.JPanel();
+        lblSesiones = new javax.swing.JLabel();
+        jspSesiones = new javax.swing.JScrollPane();
+        tblSesiones = new javax.swing.JTable();
+        lblTextoIdSesion = new javax.swing.JLabel();
+        lblId = new javax.swing.JLabel();
+        lblFecha = new javax.swing.JLabel();
+        lblSala = new javax.swing.JLabel();
+        spiSala = new javax.swing.JSpinner();
+        lblAsientosDisponibles = new javax.swing.JLabel();
+        spiAsientosDisponibles = new javax.swing.JSpinner();
+        cbxPelicula = new javax.swing.JComboBox<>();
+        lblPelicula = new javax.swing.JLabel();
+        btnAñadir = new javax.swing.JButton();
+        btnEditar = new javax.swing.JButton();
+        btnGuardar = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
 
         setPreferredSize(new java.awt.Dimension(1200, 600));
         setLayout(new java.awt.BorderLayout());
@@ -61,6 +133,11 @@ public class PnlSesiones extends javax.swing.JPanel {
         btnActualizar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnActualizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/cinemamanagement/vista/paneles/Sync.png"))); // NOI18N
         btnActualizar.setText("Actualizar");
+        btnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnActualizarActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 0;
@@ -106,22 +183,340 @@ public class PnlSesiones extends javax.swing.JPanel {
         add(pnlNorte, java.awt.BorderLayout.NORTH);
 
         pnlCentro.setBorder(javax.swing.BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        pnlCentro.setLayout(new java.awt.BorderLayout());
+
+        pnlContenido.setLayout(new java.awt.GridBagLayout());
+
+        lblSesiones.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lblSesiones.setText("Sesiones");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 20;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weighty = 0.1;
+        pnlContenido.add(lblSesiones, gridBagConstraints);
+
+        tblSesiones.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        tblSesiones.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jspSesiones.setViewportView(tblSesiones);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.gridheight = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.7;
+        gridBagConstraints.weighty = 0.8;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
+        pnlContenido.add(jspSesiones, gridBagConstraints);
+
+        lblTextoIdSesion.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblTextoIdSesion.setText("ID Sesión");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.ipadx = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 15, 5, 5);
+        pnlContenido.add(lblTextoIdSesion, gridBagConstraints);
+
+        lblId.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblId.setText("[ID]");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 5);
+        pnlContenido.add(lblId, gridBagConstraints);
+
+        lblFecha.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblFecha.setText("Fecha");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.ipadx = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 15, 5, 5);
+        pnlContenido.add(lblFecha, gridBagConstraints);
+
+        lblSala.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblSala.setText("Sala");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.ipadx = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 15, 5, 5);
+        pnlContenido.add(lblSala, gridBagConstraints);
+
+        spiSala.setModel(new javax.swing.SpinnerNumberModel(10, 1, 10, 1));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 5);
+        pnlContenido.add(spiSala, gridBagConstraints);
+
+        lblAsientosDisponibles.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblAsientosDisponibles.setText("Asientos Disponibles");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 7;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 5);
+        pnlContenido.add(lblAsientosDisponibles, gridBagConstraints);
+
+        spiAsientosDisponibles.setModel(new javax.swing.SpinnerNumberModel(0, 0, 300, 1));
+        spiAsientosDisponibles.setToolTipText("");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 5);
+        pnlContenido.add(spiAsientosDisponibles, gridBagConstraints);
+
+        cbxPelicula.setMaximumRowCount(5);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 5);
+        pnlContenido.add(cbxPelicula, gridBagConstraints);
+
+        lblPelicula.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblPelicula.setText("Película");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 5);
+        pnlContenido.add(lblPelicula, gridBagConstraints);
+
+        btnAñadir.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnAñadir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/cinemamanagement/vista/paneles/Plus.png"))); // NOI18N
+        btnAñadir.setText("Añadir");
+        btnAñadir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAñadirActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 30;
+        gridBagConstraints.ipady = 2;
+        gridBagConstraints.weightx = 0.175;
+        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
+        pnlContenido.add(btnAñadir, gridBagConstraints);
+
+        btnEditar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnEditar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/cinemamanagement/vista/paneles/Edit Pencil.png"))); // NOI18N
+        btnEditar.setText("Editar");
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 30;
+        gridBagConstraints.ipady = 2;
+        gridBagConstraints.weightx = 0.175;
+        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 8, 5, 0);
+        pnlContenido.add(btnEditar, gridBagConstraints);
+
+        btnGuardar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/cinemamanagement/vista/paneles/Upload to Cloud.png"))); // NOI18N
+        btnGuardar.setText("Guardar");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 30;
+        gridBagConstraints.ipady = 2;
+        gridBagConstraints.weightx = 0.175;
+        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 8, 5, 0);
+        pnlContenido.add(btnGuardar, gridBagConstraints);
+
+        btnCancelar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/cinemamanagement/vista/paneles/Return.png"))); // NOI18N
+        btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 30;
+        gridBagConstraints.ipady = 2;
+        gridBagConstraints.weightx = 0.175;
+        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 8, 5, 0);
+        pnlContenido.add(btnCancelar, gridBagConstraints);
+
+        btnEliminar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/cinemamanagement/vista/paneles/Trash Can.png"))); // NOI18N
+        btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 30;
+        gridBagConstraints.ipady = 2;
+        gridBagConstraints.weightx = 0.175;
+        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 8, 5, 0);
+        pnlContenido.add(btnEliminar, gridBagConstraints);
+
+        pnlCentro.add(pnlContenido, java.awt.BorderLayout.CENTER);
+
         add(pnlCentro, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtBarraBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBarraBusquedaActionPerformed
-      
+
     }//GEN-LAST:event_txtBarraBusquedaActionPerformed
+
+    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
+
+        if (JOptionPane.showConfirmDialog(this, "¿Está seguro que desea recargar la página?", "Aviso", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE) == JOptionPane.YES_OPTION) {
+            txtBarraBusqueda.setText("");
+            estado = Estado.CONSULTA;
+            CinemaServicio.cargarBBDD();
+            mostrar();
+        }
+    }//GEN-LAST:event_btnActualizarActionPerformed
+
+    private void btnAñadirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAñadirActionPerformed
+        estado = Estado.ALTA;
+        mostrar();
+    }//GEN-LAST:event_btnAñadirActionPerformed
+
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        estado = Estado.MODIFICACION;
+        mostrar();
+    }//GEN-LAST:event_btnEditarActionPerformed
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        Sesion s = new Sesion();
+        if (estado == Estado.MODIFICACION) {
+            s = sesionSeleccionada;
+        }
+        s.setPelicula((Pelicula) cbxPelicula.getSelectedItem());
+        s.setFecha(datePicker.getDateTimeStrict().toLocalDate());
+        s.setHora(String.valueOf(datePicker.getTimePicker().getTime()));
+        s.setSala((Integer) spiSala.getValue());
+        s.setAsientosDisponibles((Integer) spiAsientosDisponibles.getValue());
+        if (estado == Estado.ALTA) {
+            try {
+                servicio.addSesion(s);
+            } catch (SesionNoValida ex) {
+                System.getLogger(PnlSesiones.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            }
+        } else {
+            try {
+                servicio.modifySesion(s);
+            } catch (SesionNoValida ex) {
+                System.getLogger(PnlSesiones.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            }
+        }
+        CinemaServicio.cargarBBDD();
+        sesiones = servicio.getSesiones();
+        pos = sesiones.indexOf(s);
+        estado = Estado.CONSULTA;
+        mostrar();
+        JOptionPane.showMessageDialog(this, "¡Sesión GUARDADA con éxito!");
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        if (sesionSeleccionada != null) {
+            if (JOptionPane.showConfirmDialog(this, "¿Está seguro que desea Eliminar la Sesión [ID:%d]?".formatted(sesionSeleccionada.getIdSesion()), "Aviso", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE) == JOptionPane.YES_OPTION) {
+                servicio.removeSesion(sesionSeleccionada.getIdSesion());
+                pos = 0;
+                estado = Estado.CONSULTA;
+                CinemaServicio.cargarBBDD();
+                sesiones = servicio.getSesiones();
+                mostrar();
+                JOptionPane.showMessageDialog(this, "¡Sesión ELIMINADA con éxito!");
+            }
+        }
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        estado = Estado.CONSULTA;
+        mostrar();
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnActualizar;
+    private javax.swing.JButton btnAñadir;
+    private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnCerrarSesión;
+    private javax.swing.JButton btnEditar;
+    private javax.swing.JButton btnEliminar;
+    private javax.swing.JButton btnGuardar;
+    private javax.swing.JComboBox<Pelicula> cbxPelicula;
     private javax.swing.Box.Filler fillerGlue1;
     private javax.swing.Box.Filler fillerGlue2;
+    private javax.swing.JScrollPane jspSesiones;
+    private javax.swing.JLabel lblAsientosDisponibles;
+    private javax.swing.JLabel lblFecha;
+    private javax.swing.JLabel lblId;
+    private javax.swing.JLabel lblPelicula;
+    private javax.swing.JLabel lblSala;
+    private javax.swing.JLabel lblSesiones;
+    private javax.swing.JLabel lblTextoIdSesion;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JPanel pnlCentro;
+    private javax.swing.JPanel pnlContenido;
     private javax.swing.JPanel pnlNorte;
+    private javax.swing.JSpinner spiAsientosDisponibles;
+    private javax.swing.JSpinner spiSala;
+    private javax.swing.JTable tblSesiones;
     private javax.swing.JTextField txtBarraBusqueda;
     // End of variables declaration//GEN-END:variables
 
@@ -143,10 +538,154 @@ public class PnlSesiones extends javax.swing.JPanel {
             public void changedUpdate(DocumentEvent e) {
                 buscarSesiones();
             }
+        });
+    }
 
-            private void buscarSesiones() {
-                
+    private void buscarSesiones() {
+        String busqueda = txtBarraBusqueda.getText();
+        List<Sesion> sesionesFiltradas = servicio.getSesiones()
+                .stream()
+                .filter(s -> s.getPelicula().getTitulo().toLowerCase().contains(busqueda.toLowerCase()))
+                .toList();
+        sesiones = sesionesFiltradas;
+        actualizarPanel(sesiones);
+    }
+
+    private void inicializarTabla() {
+        Vector<String> vctColumnas = new Vector();
+        vctColumnas.add("ID Sesión");
+        vctColumnas.add("Película");
+        vctColumnas.add("Fecha");
+        vctColumnas.add("Hora");
+        vctColumnas.add("Sala");
+        vctColumnas.add("Asientos Disponibles");
+
+        tblSesiones.setDefaultRenderer(LocalDate.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+                return lbl;
             }
         });
+
+        tblSesiones.setDefaultRenderer(Integer.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+                lbl.setFont(lbl.getFont().deriveFont(18f));
+                lbl.setHorizontalAlignment(JLabel.CENTER);
+                return lbl;
+            }
+        });
+
+        tblSesiones.setDefaultRenderer(Pelicula.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+                Pelicula p = (Pelicula) value;
+                lbl.setText(p.getTitulo());
+                lbl.setToolTipText("ID Película: %d".formatted(p.getIdPelicula()));
+                return lbl;
+            }
+        });
+
+        dtm = new DefaultTableModel(vctColumnas, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return switch (columnIndex) {
+                    case 0, 4, 5 ->
+                        Integer.class;
+                    case 1 ->
+                        Pelicula.class;
+                    case 2 ->
+                        LocalDate.class;
+                    default ->
+                        String.class;
+                };
+            }
+        };
+
+        tblSesiones.setModel(dtm);
+        //tblSesiones.setAutoCreateRowSorter(true);
+        tblSesiones.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tblSesiones.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && tblSesiones.getSelectedRow() != -1) {
+                pos = tblSesiones.getSelectedRow();
+                mostrar();
+            }
+        });
+    }
+
+    private void actualizarPanel(List<Sesion> sesiones) {
+        dtm.setRowCount(0);
+        for (Sesion s : sesiones) {
+            Vector vctFila = new Vector();
+            vctFila.add(s.getIdSesion());
+            vctFila.add(s.getPelicula());
+            vctFila.add(s.getFecha());
+            vctFila.add(s.getHora());
+            vctFila.add(s.getSala());
+            vctFila.add(s.getAsientosDisponibles());
+            dtm.addRow(vctFila);
+        }
+    }
+
+    private void mostrar() {
+        if (servicio.getSesiones().isEmpty()) {
+            estado = Estado.ALTA;
+            pos = 0;
+        }
+        if (estado == Estado.ALTA) {
+            lblId.setText("|Auto|");
+            datePicker.setDateTimeStrict(LocalDateTime.now());
+            cbxPelicula.setSelectedIndex(0);
+            spiSala.setValue(1);
+            spiAsientosDisponibles.setValue(0);
+        } else {
+            sesionSeleccionada = servicio.getSesiones().get(pos);
+            if (sesionSeleccionada != null) {
+                lblId.setText(String.valueOf(sesionSeleccionada.getIdSesion()));
+                datePicker.setDateTimeStrict(setFechaHora());
+                cbxPelicula.setSelectedItem(sesionSeleccionada.getPelicula());
+                spiSala.setValue(sesionSeleccionada.getSala());
+                spiAsientosDisponibles.setValue(sesionSeleccionada.getAsientosDisponibles());
+            }
+        }
+        btnCancelar.setEnabled(estado != Estado.CONSULTA && servicio.getPeliculas().size() > 0);
+        btnGuardar.setEnabled(estado != Estado.CONSULTA);
+        btnEditar.setEnabled(estado == Estado.CONSULTA);
+        btnAñadir.setEnabled(estado == Estado.CONSULTA);
+        btnEliminar.setEnabled(estado == Estado.CONSULTA);
+        txtBarraBusqueda.setEnabled(estado == Estado.CONSULTA);
+        cbxPelicula.setEnabled(estado != Estado.CONSULTA);
+        datePicker.setEnabled(estado != Estado.CONSULTA);
+        spiSala.setEnabled(estado != Estado.CONSULTA);
+        spiAsientosDisponibles.setEnabled(estado != Estado.CONSULTA);
+
+        actualizarPanel(sesiones);
+        cargarComboBox();
+    }
+
+    private void cargarComboBox() {
+        cbxPelicula.removeAllItems();
+        for (Pelicula p : servicio.getPeliculas()) {
+            cbxPelicula.addItem(p);
+        }
+    }
+
+    private LocalDateTime setFechaHora() {
+        LocalDateTime ldt;
+        int año = sesionSeleccionada.getFecha().getYear();
+        int mes = sesionSeleccionada.getFecha().getMonthValue();
+        int dia = sesionSeleccionada.getFecha().getDayOfMonth();
+        int hora = Integer.parseInt(sesionSeleccionada.getHora().substring(0, 2));
+        int min = Integer.parseInt(sesionSeleccionada.getHora().substring(3, 5));
+        ldt = LocalDateTime.of(año, mes, dia, hora, min);
+        return ldt;
     }
 }

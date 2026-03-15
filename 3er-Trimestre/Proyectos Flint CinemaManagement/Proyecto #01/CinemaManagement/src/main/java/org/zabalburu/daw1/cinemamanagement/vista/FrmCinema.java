@@ -54,6 +54,7 @@ public class FrmCinema extends javax.swing.JFrame {
         btnPeliculas = new javax.swing.JButton();
         btnSesiones = new javax.swing.JButton();
         pnlEspacioVacio = new javax.swing.JPanel();
+        btnAjustes = new javax.swing.JButton();
         pnlContenido = new javax.swing.JPanel();
         pnlInferior = new javax.swing.JPanel();
         lblEtiqueta = new javax.swing.JLabel();
@@ -62,7 +63,7 @@ public class FrmCinema extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         setMinimumSize(new java.awt.Dimension(320, 180));
-        setPreferredSize(new java.awt.Dimension(1280, 720));
+        setPreferredSize(new java.awt.Dimension(1408, 792));
 
         pnlSuperior.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
         pnlSuperior.setLayout(new javax.swing.BoxLayout(pnlSuperior, javax.swing.BoxLayout.LINE_AXIS));
@@ -93,7 +94,8 @@ public class FrmCinema extends javax.swing.JFrame {
         pnlBotones.setLayout(new java.awt.GridBagLayout());
 
         btnDashboard.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        btnDashboard.setText("Dashboard");
+        btnDashboard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/cinemamanagement/vista/Bar Chart.png"))); // NOI18N
+        btnDashboard.setToolTipText("Dashboard");
         grpBotones.add(btnDashboard);
         btnDashboard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -109,7 +111,8 @@ public class FrmCinema extends javax.swing.JFrame {
         pnlBotones.add(btnDashboard, gridBagConstraints);
 
         btnPeliculas.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        btnPeliculas.setText("Películas");
+        btnPeliculas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/cinemamanagement/vista/Film Reel.png"))); // NOI18N
+        btnPeliculas.setToolTipText("Películas");
         grpBotones.add(btnPeliculas);
         btnPeliculas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -126,7 +129,8 @@ public class FrmCinema extends javax.swing.JFrame {
         pnlBotones.add(btnPeliculas, gridBagConstraints);
 
         btnSesiones.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        btnSesiones.setText("Sesiones");
+        btnSesiones.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/cinemamanagement/vista/Popcorn.png"))); // NOI18N
+        btnSesiones.setToolTipText("Sesiones");
         grpBotones.add(btnSesiones);
         btnSesiones.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -149,6 +153,24 @@ public class FrmCinema extends javax.swing.JFrame {
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 9, 0, 9);
         pnlBotones.add(pnlEspacioVacio, gridBagConstraints);
+
+        btnAjustes.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        btnAjustes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/cinemamanagement/vista/Settings.png"))); // NOI18N
+        btnAjustes.setToolTipText("Ajustes");
+        grpBotones.add(btnAjustes);
+        btnAjustes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAjustesActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 23;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.insets = new java.awt.Insets(10, 20, 10, 20);
+        pnlBotones.add(btnAjustes, gridBagConstraints);
 
         getContentPane().add(pnlBotones, java.awt.BorderLayout.WEST);
 
@@ -191,6 +213,10 @@ public class FrmCinema extends javax.swing.JFrame {
     private void btnSesionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSesionesActionPerformed
         cambiarPanel("SESIONES");
     }//GEN-LAST:event_btnSesionesActionPerformed
+
+    private void btnAjustesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAjustesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAjustesActionPerformed
     private void cambiarPanel(String nombre) {
         CardLayout cl = (CardLayout) pnlContenido.getLayout();
         cl.show(pnlContenido, nombre);
@@ -224,6 +250,7 @@ public class FrmCinema extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAjustes;
     private javax.swing.JButton btnDashboard;
     private javax.swing.JButton btnPeliculas;
     private javax.swing.JButton btnSesiones;

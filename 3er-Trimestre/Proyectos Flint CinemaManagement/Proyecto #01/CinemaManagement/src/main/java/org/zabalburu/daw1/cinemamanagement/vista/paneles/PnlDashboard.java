@@ -181,6 +181,7 @@ public class PnlDashboard extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 3, 5, 3);
         pnlContenido.add(pnlEstadisticas, gridBagConstraints);
 
+        lblUltimasSesiones.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lblUltimasSesiones.setText("Últimas Sesiones");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -191,6 +192,7 @@ public class PnlDashboard extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(11, 3, 0, 3);
         pnlContenido.add(lblUltimasSesiones, gridBagConstraints);
 
+        tblSesiones.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jspSesiones.setViewportView(tblSesiones);
 
         gridBagConstraints = new java.awt.GridBagConstraints();

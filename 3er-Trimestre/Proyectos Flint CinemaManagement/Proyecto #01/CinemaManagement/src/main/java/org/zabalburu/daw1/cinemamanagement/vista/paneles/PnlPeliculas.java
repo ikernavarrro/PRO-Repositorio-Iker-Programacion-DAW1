@@ -5,16 +5,20 @@
 package org.zabalburu.daw1.cinemamanagement.vista.paneles;
 
 import java.awt.Component;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import org.zabalburu.daw1.cinemamanagement.excepciones.PeliculaNoValida;
 import org.zabalburu.daw1.cinemamanagement.modelo.Pelicula;
 import org.zabalburu.daw1.cinemamanagement.modelo.Sesion;
 import org.zabalburu.daw1.cinemamanagement.servicio.CinemaServicio;
@@ -30,18 +34,20 @@ public class PnlPeliculas extends javax.swing.JPanel {
     private CinemaServicio servicio = CinemaServicio.getServicio();
     private DefaultTableModel dtm;
     private Pelicula peliculaSeleccionada;
+    private List<Pelicula> peliculas;
     private int pos = 0;
     private Estado estado = Estado.CONSULTA;
-    
 
     /**
      * Creates new form PnlDashboard
      */
     public PnlPeliculas() {
+        peliculas = servicio.getPeliculas();
         initComponents();
         inicializarBarraBusqueda();
-        inicializarTabla();
+        cargarComboBox();
         inicializarListaSesiones();
+        inicializarTabla();
         mostrar();
         this.setVisible(true);
     }
@@ -84,6 +90,7 @@ public class PnlPeliculas extends javax.swing.JPanel {
         btnEditar = new javax.swing.JButton();
         btnGuardar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
         lblSesiones = new javax.swing.JLabel();
         jspSesiones = new javax.swing.JScrollPane();
         lstSesiones = new javax.swing.JList<>();
@@ -162,12 +169,14 @@ public class PnlPeliculas extends javax.swing.JPanel {
 
         pnlContenido.setLayout(new java.awt.GridBagLayout());
 
+        lblPeliculas.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lblPeliculas.setText("Películas");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weighty = 0.1;
         pnlContenido.add(lblPeliculas, gridBagConstraints);
 
+        tblPeliculas.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         tblPeliculas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -184,16 +193,18 @@ public class PnlPeliculas extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.gridwidth = 5;
         gridBagConstraints.gridheight = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 0.7;
         gridBagConstraints.weighty = 0.8;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
         pnlContenido.add(jspPeliculas, gridBagConstraints);
 
+        lblTextoIdPelicula.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lblTextoIdPelicula.setText("ID Película");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         gridBagConstraints.weightx = 0.1;
@@ -203,23 +214,24 @@ public class PnlPeliculas extends javax.swing.JPanel {
         lblId.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblId.setText("[ID]");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 0.1;
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 5);
         pnlContenido.add(lblId, gridBagConstraints);
 
+        lblTituloPelicula.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lblTituloPelicula.setText("Título");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         gridBagConstraints.weightx = 0.1;
         gridBagConstraints.insets = new java.awt.Insets(5, 15, 5, 5);
         pnlContenido.add(lblTituloPelicula, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
@@ -228,9 +240,10 @@ public class PnlPeliculas extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 5);
         pnlContenido.add(txtTitulo, gridBagConstraints);
 
+        lblDirector.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lblDirector.setText("Director");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         gridBagConstraints.weightx = 0.1;
@@ -243,7 +256,7 @@ public class PnlPeliculas extends javax.swing.JPanel {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
@@ -252,16 +265,19 @@ public class PnlPeliculas extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 5);
         pnlContenido.add(txtDirector, gridBagConstraints);
 
+        lblAño.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lblAño.setText("Año");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 4;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         gridBagConstraints.weightx = 0.1;
         gridBagConstraints.insets = new java.awt.Insets(5, 15, 5, 5);
         pnlContenido.add(lblAño, gridBagConstraints);
+
+        spiAño.setModel(new javax.swing.SpinnerNumberModel(2026, 1950, 2026, 1));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
@@ -269,16 +285,20 @@ public class PnlPeliculas extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 5);
         pnlContenido.add(spiAño, gridBagConstraints);
 
+        lblDuracion.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lblDuracion.setText("Duración");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridx = 7;
         gridBagConstraints.gridy = 4;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         gridBagConstraints.weightx = 0.1;
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 5);
         pnlContenido.add(lblDuracion, gridBagConstraints);
+
+        spiDuracion.setModel(new javax.swing.SpinnerNumberModel(1, 1, 300, 1));
+        spiDuracion.setToolTipText("");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 7;
+        gridBagConstraints.gridx = 8;
         gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
@@ -287,7 +307,7 @@ public class PnlPeliculas extends javax.swing.JPanel {
         pnlContenido.add(spiDuracion, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 7;
+        gridBagConstraints.gridx = 8;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
@@ -295,83 +315,125 @@ public class PnlPeliculas extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 5);
         pnlContenido.add(cbxGenero, gridBagConstraints);
 
+        lblGenero.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lblGenero.setText("Género");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridx = 7;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         gridBagConstraints.weightx = 0.1;
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 5);
         pnlContenido.add(lblGenero, gridBagConstraints);
 
+        btnAñadir.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnAñadir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/cinemamanagement/vista/paneles/Plus.png"))); // NOI18N
         btnAñadir.setText("Añadir");
+        btnAñadir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAñadirActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 7;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 20;
+        gridBagConstraints.ipadx = 30;
         gridBagConstraints.ipady = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_END;
         gridBagConstraints.weightx = 0.175;
         gridBagConstraints.weighty = 0.1;
-        gridBagConstraints.insets = new java.awt.Insets(5, 15, 5, 5);
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
         pnlContenido.add(btnAñadir, gridBagConstraints);
 
+        btnEditar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnEditar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/cinemamanagement/vista/paneles/Edit Pencil.png"))); // NOI18N
         btnEditar.setText("Editar");
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 7;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 20;
+        gridBagConstraints.ipadx = 30;
         gridBagConstraints.ipady = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_END;
         gridBagConstraints.weightx = 0.175;
         gridBagConstraints.weighty = 0.1;
-        gridBagConstraints.insets = new java.awt.Insets(5, 15, 5, 5);
+        gridBagConstraints.insets = new java.awt.Insets(5, 8, 5, 0);
         pnlContenido.add(btnEditar, gridBagConstraints);
 
+        btnGuardar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/cinemamanagement/vista/paneles/Upload to Cloud.png"))); // NOI18N
         btnGuardar.setText("Guardar");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 7;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 20;
+        gridBagConstraints.ipadx = 30;
         gridBagConstraints.ipady = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_END;
         gridBagConstraints.weightx = 0.175;
         gridBagConstraints.weighty = 0.1;
-        gridBagConstraints.insets = new java.awt.Insets(5, 15, 5, 5);
+        gridBagConstraints.insets = new java.awt.Insets(5, 8, 5, 0);
         pnlContenido.add(btnGuardar, gridBagConstraints);
 
+        btnCancelar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/cinemamanagement/vista/paneles/Return.png"))); // NOI18N
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 30;
+        gridBagConstraints.ipady = 2;
+        gridBagConstraints.weightx = 0.175;
+        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 8, 5, 0);
+        pnlContenido.add(btnCancelar, gridBagConstraints);
+
+        btnEliminar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/zabalburu/daw1/cinemamanagement/vista/paneles/Trash Can.png"))); // NOI18N
+        btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 7;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 20;
+        gridBagConstraints.ipadx = 30;
         gridBagConstraints.ipady = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_END;
         gridBagConstraints.weightx = 0.175;
         gridBagConstraints.weighty = 0.1;
-        gridBagConstraints.insets = new java.awt.Insets(5, 15, 5, 5);
-        pnlContenido.add(btnCancelar, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(5, 8, 5, 0);
+        pnlContenido.add(btnEliminar, gridBagConstraints);
 
+        lblSesiones.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lblSesiones.setText("Sesiones");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         pnlContenido.add(lblSesiones, gridBagConstraints);
 
+        lstSesiones.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jspSesiones.setViewportView(lstSesiones);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 6;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -387,13 +449,98 @@ public class PnlPeliculas extends javax.swing.JPanel {
     }//GEN-LAST:event_txtBarraBusquedaActionPerformed
 
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
-        CinemaServicio.cargarBBDD();
-        actualizarPanel();
+
+        if (JOptionPane.showConfirmDialog(this, "¿Está seguro que desea recargar la página?", "Aviso", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE) == JOptionPane.YES_OPTION) {
+            txtBarraBusqueda.setText("");
+            estado = Estado.CONSULTA;
+            CinemaServicio.cargarBBDD();
+            mostrar();
+        }
     }//GEN-LAST:event_btnActualizarActionPerformed
 
     private void txtDirectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDirectorActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtDirectorActionPerformed
+
+    private void btnAñadirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAñadirActionPerformed
+        estado = Estado.ALTA;
+        mostrar();
+        lstSesiones.setListData(new Vector<>());
+    }//GEN-LAST:event_btnAñadirActionPerformed
+
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        estado = Estado.MODIFICACION;
+        mostrar();
+    }//GEN-LAST:event_btnEditarActionPerformed
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        Pelicula p = new Pelicula();
+        if (estado == Estado.ALTA) {
+            p.setSesiones(new ArrayList<>());
+        }
+        if (estado == Estado.MODIFICACION) {
+            p = peliculaSeleccionada;
+        }
+        if (txtTitulo.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "¡El Título es OBLIGATORIO!",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        } else if (txtDirector.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "¡El Director es OBLIGATORIO!",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            p.setTitulo(txtTitulo.getText());
+            p.setDirector(txtDirector.getText());
+            p.setAño((Integer) spiAño.getValue());
+            p.setDuracion((Integer) spiDuracion.getValue());
+            p.setGenero((GeneroPelicula) cbxGenero.getSelectedItem());
+            if (estado == Estado.ALTA) {
+                try {
+                    servicio.addPelicula(p);
+                } catch (PeliculaNoValida ex) {
+                    System.getLogger(PnlPeliculas.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+                }
+            } else {
+                try {
+                    servicio.modifyPelicula(p);
+                } catch (PeliculaNoValida ex) {
+                    System.getLogger(PnlPeliculas.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+                }
+            }
+            CinemaServicio.cargarBBDD();
+            peliculas = servicio.getPeliculas();
+            pos = peliculas.indexOf(p);
+            estado = Estado.CONSULTA;
+            mostrar();
+            JOptionPane.showMessageDialog(this, "¡Película GUARDADA con éxito!");
+        }
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        if (JOptionPane.showConfirmDialog(this, "¿Está seguro que desea Eliminar la Película [%s]?".formatted(peliculaSeleccionada.getTitulo()), "Aviso", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE) == JOptionPane.YES_OPTION) {
+            boolean permitirBorrarPeliculaConSesiones = false;
+            if (!peliculaSeleccionada.getSesiones().isEmpty() && JOptionPane.showConfirmDialog(this, "La película tiene Sesiones asociadas, ¿Está seguro de su eliminación?".formatted(peliculaSeleccionada.getTitulo()), "Aviso IMPORTANTE", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION) {
+                //Si tiene sesiones y confirma.
+                permitirBorrarPeliculaConSesiones = true;
+            }
+            try {
+                servicio.removePelicula(peliculaSeleccionada.getIdPelicula(), permitirBorrarPeliculaConSesiones);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Error al eliminar: " + e.getMessage(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            pos = 0;
+            estado = Estado.CONSULTA;
+            CinemaServicio.cargarBBDD();
+            peliculas = servicio.getPeliculas();
+            mostrar();
+            JOptionPane.showMessageDialog(this, "¡Película ELIMINADA con éxito!");
+        }
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        estado = Estado.CONSULTA;
+        mostrar();
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -402,8 +549,9 @@ public class PnlPeliculas extends javax.swing.JPanel {
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnCerrarSesión;
     private javax.swing.JButton btnEditar;
+    private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnGuardar;
-    private javax.swing.JComboBox<String> cbxGenero;
+    private javax.swing.JComboBox<GeneroPelicula> cbxGenero;
     private javax.swing.Box.Filler fillerGlue1;
     private javax.swing.Box.Filler fillerGlue2;
     private javax.swing.JScrollPane jspPeliculas;
@@ -448,11 +596,17 @@ public class PnlPeliculas extends javax.swing.JPanel {
             public void changedUpdate(DocumentEvent e) {
                 buscarPeliculas();
             }
-
-            private void buscarPeliculas() {
-
-            }
         });
+    }
+
+    private void buscarPeliculas() {
+        String busqueda = txtBarraBusqueda.getText();
+        List<Pelicula> peliculasFiltradas = servicio.getPeliculas()
+                .stream()
+                .filter(p -> p.getTitulo().toLowerCase().contains(busqueda.toLowerCase()))
+                .toList();
+        peliculas = peliculasFiltradas;
+        actualizarPanel(peliculas);
     }
 
     private void inicializarTabla() {
@@ -505,11 +659,17 @@ public class PnlPeliculas extends javax.swing.JPanel {
 
         tblPeliculas.setModel(dtm);
         tblPeliculas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tblPeliculas.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && tblPeliculas.getSelectedRow() != -1) {
+                pos = tblPeliculas.getSelectedRow();
+                mostrar();
+            }
+        });
     }
 
-    private void actualizarPanel() {
+    private void actualizarPanel(List<Pelicula> peliculas) {
         dtm.setRowCount(0);
-        for (Pelicula p : servicio.getPeliculas()) {
+        for (Pelicula p : peliculas) {
             Vector vctFila = new Vector();
             vctFila.add(p.getIdPelicula());
             vctFila.add(p.getTitulo());
@@ -522,37 +682,73 @@ public class PnlPeliculas extends javax.swing.JPanel {
     }
 
     private void inicializarListaSesiones() {
-        lstSesiones.setListData(new Vector<>(servicio.getSesiones()
-                .stream()
-                .filter(s -> s.getPelicula().equals(peliculaSeleccionada))
-                .toList()));
-        lstSesiones.setCellRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
-                Sesion s = (Sesion) value;
-                lbl.setText("Sesión - %s ID:".formatted(s.getHora()) + s.getIdSesion().toString());
-                lbl.setToolTipText("""
+        if (peliculaSeleccionada != null) {
+            lstSesiones.setListData(new Vector<>(servicio.getSesiones()
+                    .stream()
+                    .filter(s -> s.getPelicula().equals(peliculaSeleccionada))
+                    .sorted((s1, s2) -> s2.getFecha().compareTo(s1.getFecha()))
+                    .toList()));
+            lstSesiones.setCellRenderer(new DefaultListCellRenderer() {
+                @Override
+                public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                    JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+                    Sesion s = (Sesion) value;
+                    lbl.setText("Sesión - %s ID:".formatted(s.getHora()) + s.getIdSesion().toString());
+                    lbl.setToolTipText("""
                                    ID Sesión: %d
                                    ID Película: %d
                                    Fecha y Hora: %s, %s
                                    Asientos Disponibles: %d
-                                   """.formatted(s.getIdSesion(),s.getPelicula().getIdPelicula(), s.getFecha().toString(),s.getHora(),s.getAsientosDisponibles()));
-                lbl.setFont(lbl.getFont().deriveFont(16f));
-                return lbl;
-            }
+                                   """.formatted(s.getIdSesion(), s.getPelicula().getIdPelicula(), s.getFecha().toString(), s.getHora(), s.getAsientosDisponibles()));
+                    lbl.setFont(lbl.getFont().deriveFont(16f));
+                    return lbl;
+                }
 
-        });
+            });
+        }
     }
 
     private void mostrar() {
-        if (servicio.getPeliculas().isEmpty()){
+        if (servicio.getPeliculas().isEmpty()) {
             estado = Estado.ALTA;
             pos = 0;
-        } 
+        }
         if (estado == Estado.ALTA) {
             lblId.setText("|Auto|");
+            txtTitulo.setText("");
+            txtDirector.setText("");
+            cbxGenero.setSelectedIndex(0);
+            spiAño.setValue(2026);
+        } else {
+            peliculaSeleccionada = servicio.getPeliculas().get(pos);
+            if (peliculaSeleccionada != null) {
+                lblId.setText(String.valueOf(peliculaSeleccionada.getIdPelicula()));
+                txtTitulo.setText(peliculaSeleccionada.getTitulo());
+                txtDirector.setText(peliculaSeleccionada.getDirector());
+                cbxGenero.setSelectedItem(peliculaSeleccionada.getGenero());
+                spiAño.setValue(peliculaSeleccionada.getAño());
+                spiDuracion.setValue(peliculaSeleccionada.getDuracion());
+            }
+            inicializarListaSesiones();
         }
-        actualizarPanel();
+        btnCancelar.setEnabled(estado != Estado.CONSULTA && servicio.getPeliculas().size() > 0);
+        btnGuardar.setEnabled(estado != Estado.CONSULTA);
+        btnEditar.setEnabled(estado == Estado.CONSULTA);
+        btnAñadir.setEnabled(estado == Estado.CONSULTA);
+        btnEliminar.setEnabled(estado == Estado.CONSULTA);
+        txtBarraBusqueda.setEnabled(estado == Estado.CONSULTA);
+        txtTitulo.setEnabled(estado != Estado.CONSULTA);
+        txtDirector.setEnabled(estado != Estado.CONSULTA);
+        cbxGenero.setEnabled(estado != Estado.CONSULTA);
+        spiAño.setEnabled(estado != Estado.CONSULTA);
+        spiDuracion.setEnabled(estado != Estado.CONSULTA);
+
+        actualizarPanel(peliculas);
+    }
+
+    private void cargarComboBox() {
+        for (GeneroPelicula value : GeneroPelicula.values()) {
+            cbxGenero.addItem(value);
+        }
     }
 }

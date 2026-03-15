@@ -94,19 +94,19 @@ public class CinemaServicio {
         }
     }
 
-    private boolean validarPelicula(Pelicula nueva) throws PeliculaNoValida {
-        if (nueva != null) {
-            if (nueva.getTitulo().isBlank()) {
+    private boolean validarPelicula(Pelicula p) throws PeliculaNoValida {
+        if (p != null) {
+            if (p.getTitulo().isBlank()) {
                 throw new PeliculaNoValida("Título OBLIGATORIO");
-            } else if (nueva.getDirector().isBlank()) {
+            } else if (p.getDirector().isBlank()) {
                 throw new PeliculaNoValida("Director OBLIGATORIO");
-            } else if (nueva.getAño() == null) {
+            } else if (p.getAño() == null) {
                 throw new PeliculaNoValida("Año OBLIGATORIO");
-            } else if (nueva.getDuracion() == null || nueva.getDuracion() <= 0) {
+            } else if (p.getDuracion() == null || p.getDuracion() <= 0) {
                 throw new PeliculaNoValida("Duración OBLIGATORIA");
-            } else if (nueva.getGenero() == null) {
+            } else if (p.getGenero() == null) {
                 throw new PeliculaNoValida("Genero OBLIGATORIO");
-            } else if (nueva.getSesiones() == null) {
+            } else if (p.getSesiones() == null) {
                 throw new PeliculaNoValida("La lista de sesiones no puede ser NULL");
             }
         } else {
@@ -166,7 +166,7 @@ public class CinemaServicio {
                 throw new SesionNoValida("Hora OBLIGATORIA (Formato hh:mm)");
             } else if (nueva.getSala() == null || nueva.getSala() <= 0) {
                 throw new SesionNoValida("Sala OBLIGATORIA");
-            } else if (nueva.getAsientosDisponibles() == null || nueva.getAsientosDisponibles() <= 0) {
+            } else if (nueva.getAsientosDisponibles() == null || nueva.getAsientosDisponibles() < 0) {
                 throw new SesionNoValida("Asientos Disponibles OBLIGATORIOS");
             }
         } else {

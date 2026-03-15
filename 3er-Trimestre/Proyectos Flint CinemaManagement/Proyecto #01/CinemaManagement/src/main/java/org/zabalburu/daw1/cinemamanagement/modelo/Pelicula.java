@@ -21,7 +21,6 @@ import org.zabalburu.daw1.cinemamanagement.util.GeneroPelicula;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@ToString
 public class Pelicula {
 
     @EqualsAndHashCode.Include
@@ -31,6 +30,10 @@ public class Pelicula {
     private Integer año;
     private Integer duracion;
     private GeneroPelicula genero;
-    @ToString.Exclude
     private List<Sesion> sesiones = new ArrayList();
+
+    @Override
+    public String toString() {
+        return titulo;
+    }
 }
