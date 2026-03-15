@@ -78,7 +78,7 @@ public class PnlDashboard extends javax.swing.JPanel {
                 LocalDateTime time = (LocalDateTime) value;
                 JLabel lbl = new JLabel();
                 lbl.setOpaque(true);
-                lbl.setText(time.format(DateTimeFormatter.ofPattern("dd MMM y HH:mm")));
+                
                 lbl.setHorizontalAlignment(JLabel.CENTER);
                 if (isSelected) {
                     lbl.setBackground(table.getSelectionBackground());

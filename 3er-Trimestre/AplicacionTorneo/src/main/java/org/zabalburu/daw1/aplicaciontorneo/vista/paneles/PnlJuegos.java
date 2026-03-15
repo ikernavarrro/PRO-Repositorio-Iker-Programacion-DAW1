@@ -412,7 +412,7 @@ public class PnlJuegos extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void inicializarCuadroBusqueda() {
-        txtBuscar.putClientProperty("JTextField.placeholderText", "🔍 Buscar Juego...");
+        txtBuscar.putClientProperty("JTextField.placeholderText", "🔍 Buscar Película...");
         txtBuscar.putClientProperty("JTextField.showClearButton", true);
         txtBuscar.getDocument().addDocumentListener(new DocumentListener() {
             @Override
