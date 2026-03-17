@@ -55,7 +55,10 @@
                     <include>**/*.png</include>
                     <include>**/*.jpg</include>
                 </includes>
-            </resource>            
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>         
         </resources> 
         <plugins>
             <plugin>
@@ -96,6 +99,7 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
-        </plugins>
+        </plugins> 
+         
     </build>
 </project>

@@ -3,6 +3,8 @@
   <persistence-unit name="UsuariosPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
     <class>org.zabalburu.daw1.pruebajpa.modelo.Usuario</class>
+    <class>org.zabalburu.daw1.pruebajpa.modelo.Tarea</class>
+    <validation-mode>NONE</validation-mode>
     <properties>
       <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
       <property name="hibernate.show_sql" value="true"/>
@@ -11,6 +13,10 @@
       <property name="jakarta.persistence.jdbc.user" value="daw1"/>
       <property name="jakarta.persistence.jdbc.driver" value="oracle.jdbc.OracleDriver"/>
       <property name="jakarta.persistence.jdbc.password" value="tiger"/>
+<<<<<<< HEAD
+=======
+      <property name="hibernate.hbm2ddl.auto" value="none"/>
+>>>>>>> 46d9f8c200299fcee483f70382d60348b7d56976
     </properties>
   </persistence-unit>
 </persistence>
