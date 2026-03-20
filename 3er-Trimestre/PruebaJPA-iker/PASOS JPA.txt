@@ -1,0 +1,6 @@
+PASOS JPA:
+
+1-Crear el proyecto.
+2-Añadir las dependencias.
+3-Configurar la Unidad de Persistencia persistence.xml
+4-Definir las clases y sus Entidades.

@@ -17,27 +17,31 @@ public class NoticiaDAOImpl implements NoticiaDAO {
 
     @Override
     public Noticia addNoticia(EntityManager em, Noticia nueva) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        em.persist(nueva);
+        return nueva;
     }
 
     @Override
     public Noticia getNoticia(EntityManager em, Integer idNoticia) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return em.find(Noticia.class, idNoticia);
     }
 
     @Override
     public List<Noticia> getNoticias(EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return em.createQuery("SELECT n FROM Noticia n", Noticia.class).getResultList();
     }
 
     @Override
     public Noticia modifyNoticia(EntityManager em, Noticia modificar) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return em.merge(modificar);
     }
 
     @Override
     public void removeNoticia(EntityManager em, Integer idNoticia) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Noticia n = getNoticia(em, idNoticia);
+        if (n != null){
+            em.remove(n);
+        }
     }
-    
+
 }
