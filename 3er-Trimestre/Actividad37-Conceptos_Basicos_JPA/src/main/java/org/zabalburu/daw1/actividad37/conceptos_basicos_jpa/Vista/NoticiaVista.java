@@ -14,33 +14,40 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import org.zabalburu.daw1.actividad37.conceptos_basicos_jpa.modelo.Noticia;
 import org.zabalburu.daw1.actividad37.conceptos_basicos_jpa.servicio.EditorialServicio;
+import org.zabalburu.daw1.actividad37.conceptos_basicos_jpa.util.Estado;
 
 /**
  *
- * 
- * 
- * 
+ *
+ *
+ *
  * @author Iker Navarro Pérez
  */
 public class NoticiaVista extends JFrame {
 
     private EditorialServicio servicio = EditorialServicio.getServicio();
+
+    Estado estado = Estado.CONSULTA;
+    Noticia noticiaSeleccionada;
+    int filaSeleccionada = 0;
 
     //=== TÍTULO ===
     JLabel lblTitulo = new JLabel("Gestor de Noticias");
@@ -70,16 +77,18 @@ public class NoticiaVista extends JFrame {
     JButton btnAñadir = new JButton("Añadir");
     JButton btnModificar = new JButton("Modificar");
     JButton btnEliminar = new JButton("Eliminar");
-    JButton btnLimpiar = new JButton("Limpiar");
+    JButton btnGuardar = new JButton("Guardar");
+    JButton btnCancelar = new JButton("Cancelar");
 
     public NoticiaVista() {
         this.setTitle("Gestión Noticias - Actividad37 - Iker Navarro Pérez");
         this.setSize(new Dimension(1200, 600));
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout());
 
         // === TÍTULO (Norte) ===
-        lblTitulo.setFont(lblTitulo.getFont().deriveFont(Font.BOLD, 18f));
+        lblTitulo.setFont(lblTitulo.getFont().deriveFont(Font.BOLD, 28f));
         lblTitulo.setHorizontalAlignment(JLabel.CENTER);
         this.add(lblTitulo, BorderLayout.NORTH);
 
@@ -103,6 +112,7 @@ public class NoticiaVista extends JFrame {
         gbcNoticia.fill = GridBagConstraints.HORIZONTAL;
         gbcNoticia.insets = new Insets(5, 5, 5, 10);
         txtIdNoticia.setPreferredSize(new Dimension(300, 25));
+        txtIdNoticia.setFont(txtIdNoticia.getFont().deriveFont(Font.BOLD, 14f));
         pnlNoticiaSeleccionada.add(txtIdNoticia, gbcNoticia);
 
         gbcNoticia = new GridBagConstraints();
@@ -206,13 +216,20 @@ public class NoticiaVista extends JFrame {
         });
         pnlBotones.add(btnEliminar);
 
-        btnLimpiar.addActionListener(e -> {
-            evtBotonLimpiar();
+        btnGuardar.addActionListener(e -> {
+            evtBotonGuardar();
         });
-        pnlBotones.add(btnLimpiar);
+        pnlBotones.add(btnGuardar);
+
+        btnCancelar.addActionListener(e -> {
+            evtBotonCancelar();
+        });
+        pnlBotones.add(btnCancelar);
 
         this.add(pnlBotones, BorderLayout.SOUTH);
 
+        // LLAMAMOS A MOSTRAR PARA DEPENDIENDO EL ESTADO ACTUALIZAR EL PANEL
+        mostrar();
     }
 
     private void iniciarTabla() {
@@ -228,6 +245,17 @@ public class NoticiaVista extends JFrame {
         tblNoticias.getTableHeader().setReorderingAllowed(false);
         tblNoticias.getTableHeader().setResizingAllowed(false);
         tblNoticias.setSize(400, 600);
+        tblNoticias.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    filaSeleccionada = tblNoticias.getSelectedRow();
+                    if (filaSeleccionada != -1) {
+                        mostrar();
+                    }
+                }
+            }
+        });
         jspNoticias.setViewportView(tblNoticias);
         jspNoticias.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
     }
@@ -246,36 +274,114 @@ public class NoticiaVista extends JFrame {
     }
 
     private void evtBotonAñadir() {
-        Noticia n = new Noticia();
-        n.setFecha(datePicker.getDate());
-        n.setTitular(txtTitular.getText());
-        n.setSinopsis(txaSinopsis.getText());
-        n.setUrl(txtUrl.getText());
-        servicio.addNoticia(n);
-        cargarTabla();
+        estado = Estado.ALTA;
+        mostrar();
     }
 
     private void evtBotonModificar() {
-        Noticia n = new Noticia();
-        n.setId(Integer.valueOf(txtIdNoticia.getText()));
-        n.setFecha(datePicker.getDate());
-        n.setTitular(txtTitular.getText());
-        n.setSinopsis(txaSinopsis.getText());
-        n.setUrl(txtUrl.getText());
-        servicio.modifyNoticia(n);
-        cargarTabla();
+        estado = Estado.MODIFICACION;
+        mostrar();
     }
 
     private void evtBotonEliminar() {
-        servicio.removeNoticia(Integer.valueOf(txtIdNoticia.getText()));
-        cargarTabla();
+        if (noticiaSeleccionada != null) {
+            int id = noticiaSeleccionada.getId();
+            servicio.removeNoticia(id);
+            estado = Estado.CONSULTA;
+            if (servicio.getNoticias().size() < filaSeleccionada) { // En caso de eliminar la ultima seleccionamos la anterior
+                filaSeleccionada = servicio.getNoticias().size();
+            }
+            // Recargamos la tabla con los nuevos datos.
+            cargarTabla();
+            // Finalmente actualizamos la vista.
+            mostrar();
+        }
     }
 
-    private void evtBotonLimpiar() {
-        txtIdNoticia.setText("");
-        datePicker.setDateToToday();
-        txtTitular.setText("");
-        txaSinopsis.setText("");
-        txtUrl.setText("");
+    private void evtBotonGuardar() {
+        if (txtTitular.getText().isBlank()) {
+            txtTitular.requestFocus();
+            mostrarAviso("El Titular no puede estár vacío!");
+        } else if (txaSinopsis.getText().isBlank()) {
+            txaSinopsis.requestFocus();
+            mostrarAviso("La Sinopsis no puede estár vacía!");
+        } else if (txtUrl.getText().isBlank()) {
+            txtUrl.requestFocus();
+            mostrarAviso("La URL no puede estár vacía!");
+        } else {
+            Noticia n = new Noticia();
+            n.setFecha(datePicker.getDate());
+            n.setTitular(txtTitular.getText());
+            n.setSinopsis(txaSinopsis.getText());
+            n.setUrl(txtUrl.getText());
+            if (estado == Estado.ALTA) { // Si estamos en ALTA creamos una nueva noticia apartir de la información.
+                servicio.addNoticia(n);
+            } else { // Si no estamos en ALTA Asumimos que está en MODIFICACION, en este caso recuperamos el id y actualizamos los datos.
+                n.setId(Integer.valueOf(txtIdNoticia.getText()));
+                servicio.modifyNoticia(n);
+            }
+            //Preguntamos si quiere seguir añadiendo mas noticias, en caso de que no quiera pasamos a CONSULTA.
+            if (estado == Estado.ALTA && JOptionPane.showConfirmDialog(this, "¿Desea añadir otra Noticia?", "Información", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+                estado = Estado.ALTA;
+            } else {
+                estado = Estado.CONSULTA;
+            }
+            // Recargamos la tabla con los nuevos datos.
+            cargarTabla();
+            // Finalmente actualizamos la vista.
+            mostrar();
+        }
+    }
+
+    private void evtBotonCancelar() {
+        estado = Estado.CONSULTA;
+        mostrar();
+    }
+
+    private void mostrarAviso(String texto) {
+        JOptionPane.showMessageDialog(this, texto, "Aviso", JOptionPane.WARNING_MESSAGE);
+    }
+
+    private void mostrar() {
+        if (servicio.getNoticias().isEmpty()) { //Cambiamos a estado ALTA en caso de que la lista esté vacía
+            noticiaSeleccionada = null;
+            estado = Estado.ALTA;
+        } else { //Asignamos la Noticia en caso de que la lista NO esté vacía y haya una noticia seleccionada VÁLIDA
+            if (filaSeleccionada != -1 && filaSeleccionada < servicio.getNoticias().size()) {
+                noticiaSeleccionada = servicio.getNoticias().get(filaSeleccionada);
+            } else { // Si no hay selección válida pero hay noticias, elegimos la primera por defecto
+                filaSeleccionada = 0;
+                noticiaSeleccionada = servicio.getNoticias().get(0);
+            }
+        }
+
+        if (estado == Estado.ALTA) {
+            txtIdNoticia.setText("| auto |");
+            datePicker.setDateToToday();
+            txtTitular.setText("");
+            txaSinopsis.setText("");
+            txtUrl.setText("");
+        } else {
+            txtIdNoticia.setText(String.valueOf(noticiaSeleccionada.getId()));
+            datePicker.setDate(noticiaSeleccionada.getFecha());
+            txtTitular.setText(noticiaSeleccionada.getTitular());
+            txaSinopsis.setText(noticiaSeleccionada.getSinopsis());
+            txtUrl.setText(noticiaSeleccionada.getUrl());
+        }
+        // Estados de los botones
+        btnAñadir.setEnabled(estado == Estado.CONSULTA);
+        btnModificar.setEnabled(estado == Estado.CONSULTA);
+        btnEliminar.setEnabled(estado == Estado.CONSULTA);
+        btnGuardar.setEnabled(estado != Estado.CONSULTA);
+        btnCancelar.setEnabled(estado != Estado.CONSULTA && !servicio.getNoticias().isEmpty());
+        // Estados de los campos
+        txtIdNoticia.setEnabled(false);
+        tblNoticias.setEnabled(estado == Estado.CONSULTA);
+        datePicker.setEnabled(estado != Estado.CONSULTA);
+        txtTitular.setEnabled(estado != Estado.CONSULTA);
+        txaSinopsis.setEnabled(estado != Estado.CONSULTA);
+        txtUrl.setEnabled(estado != Estado.CONSULTA);
+        // Volvemos a seleccionar
+        tblNoticias.getSelectionModel().setSelectionInterval(filaSeleccionada, filaSeleccionada);
     }
 }
