@@ -66,6 +66,12 @@
             <artifactId>org.eclipse.persistence.moxy</artifactId>
             <version>2.7.12</version>
         </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/at.favre.lib/bcrypt -->
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.4</version>
+        </dependency>
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>jakarta.persistence</artifactId>
@@ -98,6 +104,13 @@
             <resource>
                 <directory>src/main/resources/**</directory>
             </resource>
+            <resource>
+               <directory>src/main/java</directory>
+               <includes>
+                   <include>**/*.png</include>
+                   <include>**/*.jpg</include>
+               </includes>
+           </resource>
         </resources>
     </build>
 </project>

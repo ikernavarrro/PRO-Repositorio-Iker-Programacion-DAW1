@@ -24,7 +24,16 @@ public class TareasServicio {
     private TareasDAO tareasDAO;
     private UsuarioDAO usuarioDAO;
     
-    public TareasServicio(){
+    private static TareasServicio servicio = null;
+    
+    public static TareasServicio getServicio(){
+        if (servicio == null){
+            servicio = new TareasServicio();
+        }
+        return servicio;
+    }
+    
+    private TareasServicio(){
         tareasDAO = new TareasJPA();
         usuarioDAO = new UsuarioJPA();
     }
@@ -124,7 +133,7 @@ public class TareasServicio {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            tareasDAO.nuevaTarea(em, t); // Almacenar en la BBDD
+            tareasDAO.eliminarTarea(em, t.getId()); // Eliminar
             tx.commit();
             t.getUsuario().removeTarea(t); // Sincronizar en memoria
         } catch (Exception ex){
@@ -136,20 +145,31 @@ public class TareasServicio {
         }
     }
     
+    public Tarea getTarea(Integer id){
+        try (EntityManager em = JPAUtil.getEntityManager()){
+            return tareasDAO.getTarea(em, id);
+        }
+    }
+    
     public static void main(String[] args) {
         TareasServicio servicio = new TareasServicio();
         for(Usuario u : servicio.getUsuarios()){
             System.out.println(u);
         }
         Usuario u = servicio.getUsuario(953);
-        System.out.println(u.getTareas().size());
+        /*System.out.println(u.getTareas().size());
         Tarea t = new Tarea();
         t.setDescripcion("Nueva Tarea");
         t.setFecha(LocalDate.now());
         t.setFinalizada(Boolean.FALSE);
         t.setTitulo("Nueva Tarea");
         t.setUsuario(u);
-        servicio.nuevaTarea(t);
+        servicio.nuevaTarea(t);*/
+        System.out.println(u.getTareas());
+        Tarea eliminar = servicio.getTarea(602);
+        if (eliminar != null){
+            servicio.eliminarTarea(eliminar);
+        }
         System.out.println(u.getTareas());
     }
     
