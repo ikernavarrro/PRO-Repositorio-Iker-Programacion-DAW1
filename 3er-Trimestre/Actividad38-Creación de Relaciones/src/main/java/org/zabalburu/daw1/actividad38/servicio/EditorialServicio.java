@@ -39,12 +39,27 @@ public class EditorialServicio {
     // ================= Gestión Noticias =================
     public Noticia addNoticia(Noticia nueva) {
         if (nueva != null) {
+            Tema tMemoria = nueva.getTema();
             EntityManager em = JPAUtil.getEntityManager();
             EntityTransaction tx = em.getTransaction();
             try {
                 tx.begin();
-                noticiaDAO.addNoticia(em, nueva);
+                Tema tGestionado = temaDAO.getTema(em, tMemoria.getId());
+                if (tGestionado == null) {
+                    throw new IllegalArgumentException(
+                            "No existe el tema con id " + tMemoria.getId());
+                }
+                Noticia noticiaBD = new Noticia();
+                noticiaBD.setFecha(nueva.getFecha());
+                noticiaBD.setTitular(nueva.getTitular());
+                noticiaBD.setSinopsis(nueva.getSinopsis());
+                noticiaBD.setUrl(nueva.getUrl());
+                tGestionado.addNoticia(noticiaBD);
+                noticiaDAO.addNoticia(em, noticiaBD);
+                em.flush();
+                nueva.setId(noticiaBD.getId());
                 tx.commit();
+                tMemoria.addNoticia(nueva);
                 return nueva;
             } catch (Exception ex) {
                 if (tx.isActive()) {
@@ -100,6 +115,15 @@ public class EditorialServicio {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
+            Noticia noticiaBD = noticiaDAO.getNoticia(em, idNoticia);
+            if (noticiaBD == null) {
+                throw new IllegalArgumentException(
+                        "No existe la noticia con id " + idNoticia);
+            }
+            Tema temaBD = noticiaBD.getTema();
+            if (temaBD != null) {
+                temaBD.removeNoticia(noticiaBD);
+            }
             noticiaDAO.removeNoticia(em, idNoticia);
             tx.commit();
         } catch (Exception ex) {
@@ -188,7 +212,7 @@ public class EditorialServicio {
             temaDAO.removeTema(em, idTema);
             tx.commit();
         } catch (Exception ex) {
-            if (tx.isActive()){
+            if (tx.isActive()) {
                 tx.rollback();
             }
             throw ex;
