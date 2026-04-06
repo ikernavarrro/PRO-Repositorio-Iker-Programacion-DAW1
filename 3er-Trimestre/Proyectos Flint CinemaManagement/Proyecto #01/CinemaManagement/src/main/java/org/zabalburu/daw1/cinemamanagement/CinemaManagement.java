@@ -51,5 +51,6 @@ public class CinemaManagement {
         UIManager.put("ScrollPane.border", BorderFactory.createEmptyBorder());
         new FrmCinema().setVisible(true);
         System.out.println("Hello World!");
+        
     }
 }
