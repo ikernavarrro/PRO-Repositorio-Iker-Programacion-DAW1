@@ -4,6 +4,7 @@
  */
 package org.zabalburu.gestion_streamers.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -40,6 +41,7 @@ public class Streamer implements Serializable {
     
     private String apellidos;
     
+    @Column(unique = true, nullable = false)
     private String nick;
     
     private Integer seguidores;

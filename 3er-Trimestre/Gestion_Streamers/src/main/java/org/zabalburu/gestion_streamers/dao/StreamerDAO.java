@@ -25,4 +25,6 @@ public interface StreamerDAO {
     public void modifyStreamer(EntityManager em, Streamer modificar);
 
     public void removeStreamer(EntityManager em, Integer idStreamer);
+
+    public boolean existsNick(EntityManager em, String nick, Integer idStreamer);
 }
