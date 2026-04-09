@@ -8,23 +8,42 @@ import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.github.lgooddatepicker.components.DateTimePicker;
 import com.github.lgooddatepicker.components.TimePickerSettings;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Locale;
+import java.util.Vector;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import org.zabalburu.gestion_streamers.model.Sesion;
+import org.zabalburu.gestion_streamers.model.Streamer;
+import org.zabalburu.gestion_streamers.service.GestionService;
+import org.zabalburu.gestion_streamers.util.Categoria;
 
 /**
  *
  * @author Iker Navarro Pérez
  */
 public class PnlSesiones extends javax.swing.JPanel {
-    
+
+    private GestionService service = GestionService.getService();
+
     private DatePicker datePicker;
+    private DefaultTableModel dtm;
+
     /**
      * Creates new form PnlDashboard
      */
     public PnlSesiones() {
         initComponents();
         iniciarDatePicker();
+        inicializarTabla();
+        iniciarCombo();
+        actualizarTabla();
     }
 
     private void iniciarDatePicker() {
@@ -42,6 +61,113 @@ public class PnlSesiones extends javax.swing.JPanel {
         pnlCentro.add(datePicker, gridBagConstraints);
     }
 
+    private void inicializarTabla() {
+        Vector<String> vctColumnas = new Vector<>();
+        vctColumnas.add("ID");
+        vctColumnas.add("Streamer");
+        vctColumnas.add("Fecha");
+        vctColumnas.add("Duración");
+        vctColumnas.add("Categoría");
+
+        tblSesiones.setDefaultRenderer(Integer.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+
+                return lbl;
+            }
+        });
+
+        tblSesiones.setDefaultRenderer(Streamer.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+                Streamer streamer = (Streamer) value;
+                lbl.setText(streamer.getNick());
+                return lbl;
+            }
+        });
+
+        tblSesiones.setDefaultRenderer(LocalDate.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+
+                return lbl;
+            }
+        });
+
+        tblSesiones.setDefaultRenderer(Categoria.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+
+                return lbl;
+            }
+        });
+
+        dtm = new DefaultTableModel(vctColumnas, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return switch (columnIndex) {
+                    case 0, 3 ->
+                        Integer.class;
+                    case 1 ->
+                        Streamer.class;
+                    case 2 ->
+                        LocalDate.class;
+                    default ->
+                        Categoria.class;
+                };
+            }
+        };
+
+        tblSesiones.setModel(dtm);
+        tblSesiones.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        tblSesiones.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                cargarSesionSeleccionada();
+            }
+        });
+    }
+
+    private void cargarSesionSeleccionada() {
+        int fila = tblSesiones.getSelectedRow();
+        if (fila != -1) {
+            lblIdSesion.setText(tblSesiones.getValueAt(fila, 0).toString());
+            txtStreamer.setText(((Streamer) tblSesiones.getValueAt(fila, 1)).getNick());
+            datePicker.setDate((LocalDate) tblSesiones.getValueAt(fila, 2));
+            spiDuracion.setValue((Integer) tblSesiones.getValueAt(fila, 3));
+            cbxCategoria.setSelectedItem((Categoria) tblSesiones.getValueAt(fila, 4));
+        }
+    }
+
+    private void iniciarCombo() {
+        for (Categoria c : Categoria.values()) {
+            cbxCategoria.addItem(c);
+        }
+
+    }
+
+    private void actualizarTabla() {
+        dtm.setNumRows(0);
+        for (Sesion sesion : service.getSesiones()) {
+            Vector vctFila = new Vector();
+            vctFila.add(sesion.getId());
+            vctFila.add(sesion.getStreamer());
+            vctFila.add(sesion.getFecha());
+            vctFila.add(sesion.getDuracion());
+            vctFila.add(sesion.getCategoria());
+            dtm.addRow(vctFila);
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -55,8 +181,8 @@ public class PnlSesiones extends javax.swing.JPanel {
         pnlSuperior = new javax.swing.JPanel();
         lblSesiones = new javax.swing.JLabel();
         pnlCentro = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jspSesiones = new javax.swing.JScrollPane();
+        tblSesiones = new javax.swing.JTable();
         lblId = new javax.swing.JLabel();
         lblIdSesion = new javax.swing.JLabel();
         lblDuracion = new javax.swing.JLabel();
@@ -64,6 +190,14 @@ public class PnlSesiones extends javax.swing.JPanel {
         lblFecha = new javax.swing.JLabel();
         lblCategoria = new javax.swing.JLabel();
         cbxCategoria = new javax.swing.JComboBox<>();
+        lblStreamer = new javax.swing.JLabel();
+        txtStreamer = new javax.swing.JTextField();
+        pnlInferior = new javax.swing.JPanel();
+        btnAñadir = new javax.swing.JButton();
+        btnModificar = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
+        btnGuardar = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
 
         setPreferredSize(new java.awt.Dimension(620, 600));
         setLayout(new java.awt.BorderLayout());
@@ -79,33 +213,24 @@ public class PnlSesiones extends javax.swing.JPanel {
 
         pnlCentro.setLayout(new java.awt.GridBagLayout());
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        jspSesiones.setViewportView(tblSesiones);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        pnlCentro.add(jScrollPane1, gridBagConstraints);
+        gridBagConstraints.weighty = 0.8;
+        pnlCentro.add(jspSesiones, gridBagConstraints);
 
         lblId.setText("ID");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.ipadx = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         pnlCentro.add(lblId, gridBagConstraints);
 
-        lblIdSesion.setText("jLabel2");
+        lblIdSesion.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.ipadx = 7;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -116,8 +241,11 @@ public class PnlSesiones extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.ipadx = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         pnlCentro.add(lblDuracion, gridBagConstraints);
+
+        spiDuracion.setModel(new javax.swing.SpinnerNumberModel(1, null, null, 1));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -130,6 +258,7 @@ public class PnlSesiones extends javax.swing.JPanel {
         lblFecha.setText("Fecha");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.ipadx = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         pnlCentro.add(lblFecha, gridBagConstraints);
 
@@ -138,10 +267,9 @@ public class PnlSesiones extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.ipadx = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         pnlCentro.add(lblCategoria, gridBagConstraints);
-
-        cbxCategoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
@@ -151,23 +279,87 @@ public class PnlSesiones extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         pnlCentro.add(cbxCategoria, gridBagConstraints);
 
+        lblStreamer.setText("Streamer");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.ipadx = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnlCentro.add(lblStreamer, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 7;
+        gridBagConstraints.weightx = 0.3;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnlCentro.add(txtStreamer, gridBagConstraints);
+
         add(pnlCentro, java.awt.BorderLayout.CENTER);
+
+        pnlInferior.setLayout(new java.awt.GridBagLayout());
+
+        btnAñadir.setText("Añadir");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnlInferior.add(btnAñadir, gridBagConstraints);
+
+        btnModificar.setText("Modificar");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnlInferior.add(btnModificar, gridBagConstraints);
+
+        btnEliminar.setText("Eliminar");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnlInferior.add(btnEliminar, gridBagConstraints);
+
+        btnGuardar.setText("Guardar");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnlInferior.add(btnGuardar, gridBagConstraints);
+
+        btnCancelar.setText("Cancelar");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnlInferior.add(btnCancelar, gridBagConstraints);
+
+        add(pnlInferior, java.awt.BorderLayout.SOUTH);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> cbxCategoria;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JButton btnAñadir;
+    private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnEliminar;
+    private javax.swing.JButton btnGuardar;
+    private javax.swing.JButton btnModificar;
+    private javax.swing.JComboBox<Categoria> cbxCategoria;
+    private javax.swing.JScrollPane jspSesiones;
     private javax.swing.JLabel lblCategoria;
     private javax.swing.JLabel lblDuracion;
     private javax.swing.JLabel lblFecha;
     private javax.swing.JLabel lblId;
     private javax.swing.JLabel lblIdSesion;
     private javax.swing.JLabel lblSesiones;
+    private javax.swing.JLabel lblStreamer;
     private javax.swing.JPanel pnlCentro;
+    private javax.swing.JPanel pnlInferior;
     private javax.swing.JPanel pnlSuperior;
     private javax.swing.JSpinner spiDuracion;
+    private javax.swing.JTable tblSesiones;
+    private javax.swing.JTextField txtStreamer;
     // End of variables declaration//GEN-END:variables
 
 }

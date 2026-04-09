@@ -61,7 +61,7 @@ public class StreamerDAOImpl implements StreamerDAO {
     public boolean existsNick(EntityManager em, String nick, Integer idStreamer) {
         Query q = em.createQuery("""
                                  SELECT COUNT(s)
-                                 FROM Streamer s
+                                 FROM Streamer s 
                                  WHERE LOWER(s.nick) = LOWER(:nick)
                                  AND s.id <> :id
                                  """);

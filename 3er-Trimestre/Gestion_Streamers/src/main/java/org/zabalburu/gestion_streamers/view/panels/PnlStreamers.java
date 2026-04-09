@@ -4,17 +4,110 @@
  */
 package org.zabalburu.gestion_streamers.view.panels;
 
+import java.awt.Component;
+import java.util.Vector;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import org.zabalburu.gestion_streamers.model.Streamer;
+import org.zabalburu.gestion_streamers.service.GestionService;
+
 /**
  *
  * @author Iker Navarro Pérez
  */
 public class PnlStreamers extends javax.swing.JPanel {
 
+    private GestionService service = GestionService.getService();
+
+    private DefaultTableModel dtm;
+
     /**
      * Creates new form PnlDashboard
      */
     public PnlStreamers() {
         initComponents();
+        inicializarTabla();
+        actualizarTabla();
+    }
+
+    private void inicializarTabla() {
+        Vector<String> vctColumnas = new Vector<>();
+        vctColumnas.add("ID");
+        vctColumnas.add("Nombre");
+        vctColumnas.add("Apellidos");
+        vctColumnas.add("Nick");
+        vctColumnas.add("Seguidores");
+
+        tblStreamers.setDefaultRenderer(String.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+
+                return lbl;
+            }
+        });
+
+        tblStreamers.setDefaultRenderer(Integer.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+
+                return lbl;
+            }
+        });
+
+        dtm = new DefaultTableModel(vctColumnas, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return switch (columnIndex) {
+                    case 0, 4 ->
+                        Integer.class;
+                    default ->
+                        String.class;
+                };
+            }
+        };
+
+        tblStreamers.setModel(dtm);
+        tblStreamers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        tblStreamers.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                cargarStreamerSeleccionado();
+            }
+        });
+    }
+
+    private void cargarStreamerSeleccionado() {
+        int fila = tblStreamers.getSelectedRow();
+        if (fila != -1) {
+            lblIdStreamer.setText(tblStreamers.getValueAt(fila, 0).toString());
+            txtNombre.setText(tblStreamers.getValueAt(fila, 1).toString());
+            txtApellidos.setText(tblStreamers.getValueAt(fila, 2).toString());
+            txtNick.setText(tblStreamers.getValueAt(fila, 3).toString());
+            ftxSeguidores.setValue(tblStreamers.getValueAt(fila, 4).toString());
+        }
+    }
+
+    private void actualizarTabla() {
+        dtm.setNumRows(0);
+        for (Streamer streamer : service.getStreamers()) {
+            Vector vctFila = new Vector();
+            vctFila.add(streamer.getId());
+            vctFila.add(streamer.getNombre());
+            vctFila.add(streamer.getApellidos());
+            vctFila.add(streamer.getNick());
+            vctFila.add(streamer.getSeguidores());
+            dtm.addRow(vctFila);
+        }
     }
 
     /**
@@ -38,11 +131,17 @@ public class PnlStreamers extends javax.swing.JPanel {
         txtNombre = new javax.swing.JTextField();
         lblApellidos = new javax.swing.JLabel();
         txtApellidos = new javax.swing.JTextField();
-        txtNick = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        lblNick = new javax.swing.JLabel();
+        txtNick = new javax.swing.JTextField();
         lblSeguidores = new javax.swing.JLabel();
         ftxSeguidores = new javax.swing.JFormattedTextField();
         btnGestionarSesiones = new javax.swing.JButton();
+        pnlInferior = new javax.swing.JPanel();
+        btnAñadir = new javax.swing.JButton();
+        btnModificar = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
+        btnGuardar = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
 
         setPreferredSize(new java.awt.Dimension(620, 600));
         setLayout(new java.awt.BorderLayout());
@@ -58,17 +157,6 @@ public class PnlStreamers extends javax.swing.JPanel {
 
         pnlCentro.setLayout(new java.awt.GridBagLayout());
 
-        tblStreamers.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
         jspStreamers.setViewportView(tblStreamers);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -76,16 +164,18 @@ public class PnlStreamers extends javax.swing.JPanel {
         gridBagConstraints.gridy = 4;
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weighty = 0.8;
         pnlCentro.add(jspStreamers, gridBagConstraints);
 
         lblId.setText("ID");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.ipadx = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.1;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         pnlCentro.add(lblId, gridBagConstraints);
 
-        lblIdStreamer.setText("jLabel2");
+        lblIdStreamer.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.ipadx = 7;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -96,6 +186,7 @@ public class PnlStreamers extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.ipadx = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.1;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         pnlCentro.add(lblNombre, gridBagConstraints);
@@ -113,6 +204,7 @@ public class PnlStreamers extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.ipadx = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.1;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         pnlCentro.add(lblApellidos, gridBagConstraints);
@@ -125,14 +217,15 @@ public class PnlStreamers extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         pnlCentro.add(txtApellidos, gridBagConstraints);
 
-        txtNick.setText("Nick");
+        lblNick.setText("Nick");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.ipadx = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.1;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        pnlCentro.add(txtNick, gridBagConstraints);
+        pnlCentro.add(lblNick, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
@@ -140,11 +233,12 @@ public class PnlStreamers extends javax.swing.JPanel {
         gridBagConstraints.ipadx = 7;
         gridBagConstraints.weightx = 0.2;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        pnlCentro.add(jTextField3, gridBagConstraints);
+        pnlCentro.add(txtNick, gridBagConstraints);
 
         lblSeguidores.setText("Seguidores");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.ipadx = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.1;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         pnlCentro.add(lblSeguidores, gridBagConstraints);
@@ -163,25 +257,71 @@ public class PnlStreamers extends javax.swing.JPanel {
         pnlCentro.add(btnGestionarSesiones, gridBagConstraints);
 
         add(pnlCentro, java.awt.BorderLayout.CENTER);
+
+        pnlInferior.setLayout(new java.awt.GridBagLayout());
+
+        btnAñadir.setText("Añadir");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnlInferior.add(btnAñadir, gridBagConstraints);
+
+        btnModificar.setText("Modificar");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnlInferior.add(btnModificar, gridBagConstraints);
+
+        btnEliminar.setText("Eliminar");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnlInferior.add(btnEliminar, gridBagConstraints);
+
+        btnGuardar.setText("Guardar");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnlInferior.add(btnGuardar, gridBagConstraints);
+
+        btnCancelar.setText("Cancelar");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnlInferior.add(btnCancelar, gridBagConstraints);
+
+        add(pnlInferior, java.awt.BorderLayout.SOUTH);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAñadir;
+    private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnGestionarSesiones;
+    private javax.swing.JButton btnGuardar;
+    private javax.swing.JButton btnModificar;
     private javax.swing.JFormattedTextField ftxSeguidores;
-    private javax.swing.JTextField jTextField3;
     private javax.swing.JScrollPane jspStreamers;
     private javax.swing.JLabel lblApellidos;
     private javax.swing.JLabel lblDashboard;
     private javax.swing.JLabel lblId;
     private javax.swing.JLabel lblIdStreamer;
+    private javax.swing.JLabel lblNick;
     private javax.swing.JLabel lblNombre;
     private javax.swing.JLabel lblSeguidores;
     private javax.swing.JPanel pnlCentro;
+    private javax.swing.JPanel pnlInferior;
     private javax.swing.JPanel pnlStreamers;
     private javax.swing.JTable tblStreamers;
     private javax.swing.JTextField txtApellidos;
-    private javax.swing.JLabel txtNick;
+    private javax.swing.JTextField txtNick;
     private javax.swing.JTextField txtNombre;
     // End of variables declaration//GEN-END:variables
+
 }
