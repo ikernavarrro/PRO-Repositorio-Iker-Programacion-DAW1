@@ -27,7 +27,6 @@ import lombok.ToString;
 @Table(name = "streamersJPA")
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class Streamer implements Serializable {
@@ -47,6 +46,12 @@ public class Streamer implements Serializable {
     private Integer seguidores;
     
     @OneToMany(mappedBy = "streamer") 
-    @ToString.Exclude
     private List<Sesion> sesiones;
+
+    @Override
+    public String toString() {
+        return nick;
+    }
+    
+    
 }

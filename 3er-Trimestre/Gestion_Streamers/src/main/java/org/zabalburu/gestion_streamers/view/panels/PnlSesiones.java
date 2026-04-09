@@ -6,12 +6,9 @@ package org.zabalburu.gestion_streamers.view.panels;
 
 import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
-import com.github.lgooddatepicker.components.DateTimePicker;
-import com.github.lgooddatepicker.components.TimePickerSettings;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Vector;
 import javax.swing.JLabel;
@@ -23,6 +20,7 @@ import org.zabalburu.gestion_streamers.model.Sesion;
 import org.zabalburu.gestion_streamers.model.Streamer;
 import org.zabalburu.gestion_streamers.service.GestionService;
 import org.zabalburu.gestion_streamers.util.Categoria;
+import org.zabalburu.gestion_streamers.util.Estado;
 
 /**
  *
@@ -31,6 +29,7 @@ import org.zabalburu.gestion_streamers.util.Categoria;
 public class PnlSesiones extends javax.swing.JPanel {
 
     private GestionService service = GestionService.getService();
+    private Estado estado = Estado.CONSULTA;
 
     private DatePicker datePicker;
     private DefaultTableModel dtm;
@@ -42,8 +41,10 @@ public class PnlSesiones extends javax.swing.JPanel {
         initComponents();
         iniciarDatePicker();
         inicializarTabla();
-        iniciarCombo();
+        iniciarComboCategoria();
+        iniciarComboStreamer();
         actualizarTabla();
+        mostrar();
     }
 
     private void iniciarDatePicker() {
@@ -141,18 +142,23 @@ public class PnlSesiones extends javax.swing.JPanel {
         int fila = tblSesiones.getSelectedRow();
         if (fila != -1) {
             lblIdSesion.setText(tblSesiones.getValueAt(fila, 0).toString());
-            txtStreamer.setText(((Streamer) tblSesiones.getValueAt(fila, 1)).getNick());
+            cbxStreamer.setSelectedItem(((Streamer) tblSesiones.getValueAt(fila, 1)));
             datePicker.setDate((LocalDate) tblSesiones.getValueAt(fila, 2));
             spiDuracion.setValue((Integer) tblSesiones.getValueAt(fila, 3));
             cbxCategoria.setSelectedItem((Categoria) tblSesiones.getValueAt(fila, 4));
         }
     }
 
-    private void iniciarCombo() {
+    private void iniciarComboCategoria() {
         for (Categoria c : Categoria.values()) {
             cbxCategoria.addItem(c);
         }
+    }
 
+    private void iniciarComboStreamer() {
+        for (Streamer streamer : service.getStreamers()) {
+            cbxStreamer.addItem(streamer);
+        }
     }
 
     private void actualizarTabla() {
@@ -166,6 +172,40 @@ public class PnlSesiones extends javax.swing.JPanel {
             vctFila.add(sesion.getCategoria());
             dtm.addRow(vctFila);
         }
+
+        if (dtm.getRowCount() > 0) {
+            tblSesiones.setRowSelectionInterval(0, 0);
+            cargarSesionSeleccionada();
+        }
+
+    }
+
+    private void mostrar() {
+        if (service.getSesiones().isEmpty()) {
+            estado = Estado.ALTA;
+        }
+
+        if (estado == Estado.ALTA) {
+            lblIdSesion.setText("AUTO");
+            cbxStreamer.setSelectedIndex(0);
+            datePicker.setDateToToday();
+            spiDuracion.setValue(0);
+            cbxCategoria.setSelectedIndex(0);
+        } else {
+            cargarSesionSeleccionada();
+        }
+
+        btnAñadir.setEnabled(estado == Estado.CONSULTA);
+        btnModificar.setEnabled(estado == Estado.CONSULTA);
+        btnEliminar.setEnabled(estado == Estado.CONSULTA);
+        btnGuardar.setEnabled(estado != Estado.CONSULTA);
+        btnCancelar.setEnabled(estado != Estado.CONSULTA && !service.getStreamers().isEmpty());
+
+        cbxStreamer.setEnabled(estado != Estado.CONSULTA);
+        datePicker.setEnabled(estado != Estado.CONSULTA);
+        spiDuracion.setEnabled(estado != Estado.CONSULTA);
+        cbxCategoria.setEnabled(estado != Estado.CONSULTA);
+
     }
 
     /**
@@ -191,7 +231,7 @@ public class PnlSesiones extends javax.swing.JPanel {
         lblCategoria = new javax.swing.JLabel();
         cbxCategoria = new javax.swing.JComboBox<>();
         lblStreamer = new javax.swing.JLabel();
-        txtStreamer = new javax.swing.JTextField();
+        cbxStreamer = new javax.swing.JComboBox<>();
         pnlInferior = new javax.swing.JPanel();
         btnAñadir = new javax.swing.JButton();
         btnModificar = new javax.swing.JButton();
@@ -245,7 +285,7 @@ public class PnlSesiones extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         pnlCentro.add(lblDuracion, gridBagConstraints);
 
-        spiDuracion.setModel(new javax.swing.SpinnerNumberModel(1, null, null, 1));
+        spiDuracion.setModel(new javax.swing.SpinnerNumberModel(1, 0, null, 1));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -294,7 +334,7 @@ public class PnlSesiones extends javax.swing.JPanel {
         gridBagConstraints.ipadx = 7;
         gridBagConstraints.weightx = 0.3;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        pnlCentro.add(txtStreamer, gridBagConstraints);
+        pnlCentro.add(cbxStreamer, gridBagConstraints);
 
         add(pnlCentro, java.awt.BorderLayout.CENTER);
 
@@ -346,6 +386,7 @@ public class PnlSesiones extends javax.swing.JPanel {
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnModificar;
     private javax.swing.JComboBox<Categoria> cbxCategoria;
+    private javax.swing.JComboBox<Streamer> cbxStreamer;
     private javax.swing.JScrollPane jspSesiones;
     private javax.swing.JLabel lblCategoria;
     private javax.swing.JLabel lblDuracion;
@@ -359,7 +400,6 @@ public class PnlSesiones extends javax.swing.JPanel {
     private javax.swing.JPanel pnlSuperior;
     private javax.swing.JSpinner spiDuracion;
     private javax.swing.JTable tblSesiones;
-    private javax.swing.JTextField txtStreamer;
     // End of variables declaration//GEN-END:variables
 
 }

@@ -13,6 +13,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import org.zabalburu.gestion_streamers.model.Streamer;
 import org.zabalburu.gestion_streamers.service.GestionService;
+import org.zabalburu.gestion_streamers.util.Estado;
 
 /**
  *
@@ -21,6 +22,7 @@ import org.zabalburu.gestion_streamers.service.GestionService;
 public class PnlStreamers extends javax.swing.JPanel {
 
     private GestionService service = GestionService.getService();
+    private Estado estado = Estado.CONSULTA;
 
     private DefaultTableModel dtm;
 
@@ -31,6 +33,7 @@ public class PnlStreamers extends javax.swing.JPanel {
         initComponents();
         inicializarTabla();
         actualizarTabla();
+        mostrar();
     }
 
     private void inicializarTabla() {
@@ -108,6 +111,39 @@ public class PnlStreamers extends javax.swing.JPanel {
             vctFila.add(streamer.getSeguidores());
             dtm.addRow(vctFila);
         }
+
+        if (dtm.getRowCount() > 0) {
+            tblStreamers.setRowSelectionInterval(0, 0);
+            cargarStreamerSeleccionado();
+        }
+
+    }
+
+    private void mostrar() {
+        if (service.getStreamers().isEmpty()) {
+            estado = Estado.ALTA;
+        }
+
+        if (estado == Estado.ALTA) {
+            lblIdStreamer.setText("AUTO");
+            txtNombre.setText("");
+            txtApellidos.setText("");
+            txtNick.setText("");
+            ftxSeguidores.setValue(0);
+        } else {
+            cargarStreamerSeleccionado();
+        }
+        
+        btnAñadir.setEnabled(estado == Estado.CONSULTA);
+        btnModificar.setEnabled(estado == Estado.CONSULTA);
+        btnEliminar.setEnabled(estado == Estado.CONSULTA);
+        btnGuardar.setEnabled(estado != Estado.CONSULTA);
+        btnCancelar.setEnabled(estado != Estado.CONSULTA && !service.getStreamers().isEmpty());
+        
+        txtNombre.setEnabled(estado != Estado.CONSULTA);
+        txtApellidos.setEnabled(estado != Estado.CONSULTA);
+        txtNick.setEnabled(estado != Estado.CONSULTA);
+        ftxSeguidores.setEnabled(estado != Estado.CONSULTA);
     }
 
     /**
