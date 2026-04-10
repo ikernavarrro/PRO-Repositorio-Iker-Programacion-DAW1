@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.util.Locale;
 import java.util.Vector;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -156,6 +157,7 @@ public class PnlSesiones extends javax.swing.JPanel {
     }
 
     private void iniciarComboStreamer() {
+        cbxStreamer.removeAllItems();
         for (Streamer streamer : service.getStreamers()) {
             cbxStreamer.addItem(streamer);
         }
@@ -200,11 +202,14 @@ public class PnlSesiones extends javax.swing.JPanel {
         btnEliminar.setEnabled(estado == Estado.CONSULTA);
         btnGuardar.setEnabled(estado != Estado.CONSULTA);
         btnCancelar.setEnabled(estado != Estado.CONSULTA && !service.getStreamers().isEmpty());
+        tblSesiones.setEnabled(estado == Estado.CONSULTA);
 
         cbxStreamer.setEnabled(estado != Estado.CONSULTA);
         datePicker.setEnabled(estado != Estado.CONSULTA);
         spiDuracion.setEnabled(estado != Estado.CONSULTA);
         cbxCategoria.setEnabled(estado != Estado.CONSULTA);
+        
+        iniciarComboStreamer();
 
     }
 
@@ -341,6 +346,11 @@ public class PnlSesiones extends javax.swing.JPanel {
         pnlInferior.setLayout(new java.awt.GridBagLayout());
 
         btnAñadir.setText("Añadir");
+        btnAñadir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAñadirActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.1;
@@ -348,6 +358,11 @@ public class PnlSesiones extends javax.swing.JPanel {
         pnlInferior.add(btnAñadir, gridBagConstraints);
 
         btnModificar.setText("Modificar");
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.1;
@@ -355,6 +370,11 @@ public class PnlSesiones extends javax.swing.JPanel {
         pnlInferior.add(btnModificar, gridBagConstraints);
 
         btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.1;
@@ -362,6 +382,11 @@ public class PnlSesiones extends javax.swing.JPanel {
         pnlInferior.add(btnEliminar, gridBagConstraints);
 
         btnGuardar.setText("Guardar");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.1;
@@ -369,6 +394,11 @@ public class PnlSesiones extends javax.swing.JPanel {
         pnlInferior.add(btnGuardar, gridBagConstraints);
 
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.1;
@@ -377,6 +407,56 @@ public class PnlSesiones extends javax.swing.JPanel {
 
         add(pnlInferior, java.awt.BorderLayout.SOUTH);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAñadirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAñadirActionPerformed
+        estado = Estado.ALTA;
+        mostrar();
+    }//GEN-LAST:event_btnAñadirActionPerformed
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        estado = Estado.MODIFICACION;
+        mostrar();
+    }//GEN-LAST:event_btnModificarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        estado = Estado.CONSULTA;
+        mostrar();
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        if (tblSesiones.getSelectedRow() != -1) { // ¿Hay alguna Sesión seleccionada?
+            if (JOptionPane.showConfirmDialog(this, "¿Está seguro que desea eliminar la Sesión seleccionada?", "Aviso", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
+                int idSesion = Integer.valueOf(lblIdSesion.getText());
+                service.removeSesion(idSesion);
+                actualizarTabla();
+                mostrar(); // Recargamos los datos de la vista.
+                JOptionPane.showMessageDialog(this, "¡Sesión ELIMINADA correctamente!", "Información", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } else { // Aquí sabemos que no hay nada seleccionado.
+            JOptionPane.showMessageDialog(this, "Debe seleccionar una Sesión para poder ELIMINARLA", "Aviso", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        Sesion s = new Sesion();
+        s.setStreamer((Streamer) cbxStreamer.getSelectedItem());
+        s.setFecha(datePicker.getDate());
+        s.setDuracion((Integer) spiDuracion.getValue());
+        s.setCategoria((Categoria) cbxCategoria.getSelectedItem());
+
+        if (estado == Estado.ALTA) {
+            service.addSesion(s);
+            JOptionPane.showMessageDialog(this, "¡Sesión añadida EXITOSAMENTE!", "Información", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            s.setId(Integer.valueOf(lblIdSesion.getText()));
+            service.modifySesion(s);
+            JOptionPane.showMessageDialog(this, "¡Sesión modificada EXITOSAMENTE!", "Información", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+        estado = Estado.CONSULTA;
+        actualizarTabla();
+        mostrar();
+    }//GEN-LAST:event_btnGuardarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

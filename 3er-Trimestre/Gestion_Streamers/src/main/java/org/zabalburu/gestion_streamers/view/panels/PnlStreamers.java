@@ -7,6 +7,7 @@ package org.zabalburu.gestion_streamers.view.panels;
 import java.awt.Component;
 import java.util.Vector;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -20,10 +21,10 @@ import org.zabalburu.gestion_streamers.util.Estado;
  * @author Iker Navarro Pérez
  */
 public class PnlStreamers extends javax.swing.JPanel {
-
+    
     private GestionService service = GestionService.getService();
     private Estado estado = Estado.CONSULTA;
-
+    
     private DefaultTableModel dtm;
 
     /**
@@ -35,7 +36,7 @@ public class PnlStreamers extends javax.swing.JPanel {
         actualizarTabla();
         mostrar();
     }
-
+    
     private void inicializarTabla() {
         Vector<String> vctColumnas = new Vector<>();
         vctColumnas.add("ID");
@@ -43,7 +44,7 @@ public class PnlStreamers extends javax.swing.JPanel {
         vctColumnas.add("Apellidos");
         vctColumnas.add("Nick");
         vctColumnas.add("Seguidores");
-
+        
         tblStreamers.setDefaultRenderer(String.class, new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -52,7 +53,7 @@ public class PnlStreamers extends javax.swing.JPanel {
                 return lbl;
             }
         });
-
+        
         tblStreamers.setDefaultRenderer(Integer.class, new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -61,13 +62,13 @@ public class PnlStreamers extends javax.swing.JPanel {
                 return lbl;
             }
         });
-
+        
         dtm = new DefaultTableModel(vctColumnas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
-
+            
             @Override
             public Class<?> getColumnClass(int columnIndex) {
                 return switch (columnIndex) {
@@ -78,17 +79,17 @@ public class PnlStreamers extends javax.swing.JPanel {
                 };
             }
         };
-
+        
         tblStreamers.setModel(dtm);
         tblStreamers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
+        
         tblStreamers.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 cargarStreamerSeleccionado();
             }
         });
     }
-
+    
     private void cargarStreamerSeleccionado() {
         int fila = tblStreamers.getSelectedRow();
         if (fila != -1) {
@@ -99,7 +100,7 @@ public class PnlStreamers extends javax.swing.JPanel {
             ftxSeguidores.setValue(tblStreamers.getValueAt(fila, 4).toString());
         }
     }
-
+    
     private void actualizarTabla() {
         dtm.setNumRows(0);
         for (Streamer streamer : service.getStreamers()) {
@@ -111,19 +112,19 @@ public class PnlStreamers extends javax.swing.JPanel {
             vctFila.add(streamer.getSeguidores());
             dtm.addRow(vctFila);
         }
-
+        
         if (dtm.getRowCount() > 0) {
             tblStreamers.setRowSelectionInterval(0, 0);
             cargarStreamerSeleccionado();
         }
-
+        
     }
-
+    
     private void mostrar() {
         if (service.getStreamers().isEmpty()) {
             estado = Estado.ALTA;
         }
-
+        
         if (estado == Estado.ALTA) {
             lblIdStreamer.setText("AUTO");
             txtNombre.setText("");
@@ -139,6 +140,7 @@ public class PnlStreamers extends javax.swing.JPanel {
         btnEliminar.setEnabled(estado == Estado.CONSULTA);
         btnGuardar.setEnabled(estado != Estado.CONSULTA);
         btnCancelar.setEnabled(estado != Estado.CONSULTA && !service.getStreamers().isEmpty());
+        tblStreamers.setEnabled(estado == Estado.CONSULTA);
         
         txtNombre.setEnabled(estado != Estado.CONSULTA);
         txtApellidos.setEnabled(estado != Estado.CONSULTA);
@@ -297,6 +299,11 @@ public class PnlStreamers extends javax.swing.JPanel {
         pnlInferior.setLayout(new java.awt.GridBagLayout());
 
         btnAñadir.setText("Añadir");
+        btnAñadir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAñadirActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.1;
@@ -304,6 +311,11 @@ public class PnlStreamers extends javax.swing.JPanel {
         pnlInferior.add(btnAñadir, gridBagConstraints);
 
         btnModificar.setText("Modificar");
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.1;
@@ -311,6 +323,11 @@ public class PnlStreamers extends javax.swing.JPanel {
         pnlInferior.add(btnModificar, gridBagConstraints);
 
         btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.1;
@@ -318,6 +335,11 @@ public class PnlStreamers extends javax.swing.JPanel {
         pnlInferior.add(btnEliminar, gridBagConstraints);
 
         btnGuardar.setText("Guardar");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.1;
@@ -325,6 +347,11 @@ public class PnlStreamers extends javax.swing.JPanel {
         pnlInferior.add(btnGuardar, gridBagConstraints);
 
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.1;
@@ -333,6 +360,56 @@ public class PnlStreamers extends javax.swing.JPanel {
 
         add(pnlInferior, java.awt.BorderLayout.SOUTH);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAñadirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAñadirActionPerformed
+        estado = Estado.ALTA;
+        mostrar();
+    }//GEN-LAST:event_btnAñadirActionPerformed
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        estado = Estado.MODIFICACION;
+        mostrar();
+    }//GEN-LAST:event_btnModificarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        estado = Estado.CONSULTA;
+        mostrar();
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        if (tblStreamers.getSelectedRow() != -1) { // ¿Hay algún Streamer seleccionado?
+            if (JOptionPane.showConfirmDialog(this, "¿Está seguro que desea eliminar el Streamer seleccionado?", "Aviso", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
+                int idStreamer = Integer.valueOf(lblIdStreamer.getText());
+                service.removeStreamer(idStreamer);
+                actualizarTabla();
+                mostrar(); // Recargamos los datos.
+                JOptionPane.showMessageDialog(this, "¡Streamer ELIMINADO correctamente!", "Información", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } else { // Aquí sabemos que no hay nada seleccionado.
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un Streamer para poder ELIMINARLO", "Aviso", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        Streamer s = new Streamer();
+        s.setNombre(txtNombre.getText());
+        s.setApellidos(txtApellidos.getText());
+        s.setNick(txtNick.getText());
+        s.setSeguidores(Integer.valueOf(ftxSeguidores.getText()));
+        
+        if (estado == Estado.ALTA) {
+            service.addStreamer(s);
+            JOptionPane.showMessageDialog(this, "¡Streamer añadido EXITOSAMENTE!", "Información", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            s.setId(Integer.valueOf(lblIdStreamer.getText()));
+            service.modifyStreamer(s);
+            JOptionPane.showMessageDialog(this, "¡Streamer modificada EXITOSAMENTE!", "Información", JOptionPane.INFORMATION_MESSAGE);
+        }
+        
+        estado = Estado.CONSULTA;
+        actualizarTabla();
+        mostrar();
+    }//GEN-LAST:event_btnGuardarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
