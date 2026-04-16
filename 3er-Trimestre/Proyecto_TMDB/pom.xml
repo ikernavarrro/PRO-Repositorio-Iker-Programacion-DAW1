@@ -11,6 +11,14 @@
         <exec.mainClass>org.zabalburu.seriesjpa.proyecto_tmdb.Proyecto_TMDB</exec.mainClass>
     </properties>
     <dependencies>
+        
+        <dependency>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc11</artifactId>
+            <version>23.26.1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
@@ -34,7 +42,7 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>5.10.3</version>
-            <scope>test</scope>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

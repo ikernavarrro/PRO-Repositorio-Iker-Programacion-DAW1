@@ -58,6 +58,10 @@ public class Valoracion {
         this.serie = serie;
     }
 
+    public Valoracion(Usuario usuario, Serie serie, int estrellas, String comentario, LocalDate now) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
     public Serie getSerie() {
         return serie;
     }
