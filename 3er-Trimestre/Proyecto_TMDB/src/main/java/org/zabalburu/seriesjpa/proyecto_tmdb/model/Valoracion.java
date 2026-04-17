@@ -49,6 +49,7 @@ public class Valoracion {
     public Valoracion() {
     }
 
+    // Constructor completo
     public Valoracion(Long id, LocalDate fecha, int estrellas, String comentario, Usuario usuario, Serie serie) {
         this.id = id;
         this.fecha = fecha;
@@ -58,8 +59,18 @@ public class Valoracion {
         this.serie = serie;
     }
 
-    public Valoracion(Usuario usuario, Serie serie, int estrellas, String comentario, LocalDate now) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    // Constructor recomendado para usar en DataInitializer
+    public Valoracion(int estrellas, String comentario, LocalDate fecha) {
+        this.estrellas = estrellas;
+        this.comentario = comentario;
+        this.fecha = fecha;
+    }
+
+    // Constructor simplificado (asume fecha actual)
+    public Valoracion(int estrellas, String comentario) {
+        this.estrellas = estrellas;
+        this.comentario = comentario;
+        this.fecha = LocalDate.now();
     }
 
     public Serie getSerie() {

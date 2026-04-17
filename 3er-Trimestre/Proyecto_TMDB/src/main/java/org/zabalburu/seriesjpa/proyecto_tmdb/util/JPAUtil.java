@@ -9,10 +9,22 @@ import jakarta.persistence.Persistence;
 
 public class JPAUtil {
 
-    private static final EntityManagerFactory emf
-            = Persistence.createEntityManagerFactory("seriesjpa_test");
+    private static EntityManagerFactory emf;
 
     public static EntityManagerFactory getEntityManagerFactory() {
+        if (emf == null) {
+            emf = Persistence.createEntityManagerFactory("seriesjpa_dev");
+        }
         return emf;
+    }
+
+    public static EntityManagerFactory getEntityManagerFactory(String persistenceUnitName) {
+        return Persistence.createEntityManagerFactory(persistenceUnitName);
+    }
+
+    public static void close() {
+        if (emf != null && emf.isOpen()) {
+            emf.close();
+        }
     }
 }

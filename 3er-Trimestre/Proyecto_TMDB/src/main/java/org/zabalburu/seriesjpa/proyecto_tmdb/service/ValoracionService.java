@@ -26,14 +26,14 @@ public class ValoracionService {
     private final SerieDAOImpl serieDAO;
     private final ValoracionDAOImpl valoracionDAO;
 
-    public ValoracionService(EntityManagerFactory emf, UsuarioDAOImpl usuarioDAO, SerieDAOImpl serieDAO, ValoracionDAOImpl  valoracionDAO) {
+    public ValoracionService(EntityManagerFactory emf, UsuarioDAOImpl usuarioDAO, SerieDAOImpl serieDAO, ValoracionDAOImpl valoracionDAO) {
         this.emf = emf;
         this.usuarioDAO = usuarioDAO;
         this.serieDAO = serieDAO;
         this.valoracionDAO = valoracionDAO;
     }
 
-   public void anadirValoracion(Long usuarioId, Long serieId, int estrellas, String comentario) {
+    public void anadirValoracion(Long usuarioId, Long serieId, int estrellas, String comentario) {
         if (estrellas < 1 || estrellas > 5) {
             throw new IllegalArgumentException("La puntuación debe estar entre 1 y 5.");
         }
@@ -52,12 +52,16 @@ public class ValoracionService {
             }
 
             Valoracion existente = valoracionDAO.findByUsuarioAndSerie(em, usuarioId, serieId);
-            if (existente != null){
+            if (existente != null) {
                 valoracionDAO.delete(em, existente);
                 usuario.removeValoracion(existente);
                 serie.removeValoracion(existente);
             }
-            Valoracion nueva = new Valoracion(usuario, serie, estrellas, comentario, LocalDate.now());
+            Valoracion nueva = new Valoracion();
+            nueva.setUsuario(usuario);
+            nueva.setSerie(serie);
+            nueva.setEstrellas(estrellas);
+            nueva.setComentario(comentario);
             valoracionDAO.insert(em, nueva);
             usuario.addValoracion(nueva);
             serie.addValoracion(nueva);
